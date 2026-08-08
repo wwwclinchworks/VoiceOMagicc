@@ -236,14 +236,27 @@ ${context}`;
   function addMessage(role, text) {
     const box = document.querySelector("#vomAiMessages");
     if (!box) return;
+
     const row = document.createElement("div");
     row.className = "vom-ai-msg " + role;
+
     const bubble = document.createElement("div");
     bubble.className = "vom-ai-bubble";
-    bubble.textContent = text;
+
+    if (role === "assistant") {
+      bubble.innerHTML = renderMarkdown(text);
+    } else {
+      // Never render user input as HTML.
+      bubble.textContent = text;
+    }
+
     row.appendChild(bubble);
     box.appendChild(row);
     box.scrollTop = box.scrollHeight;
+  }
+  row.appendChild(bubble);
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
   }
 
   function addTyping() {
@@ -260,7 +273,96 @@ ${context}`;
     const root = document.querySelector(".vom-ai-root");
     if (root) root.classList.toggle("vom-ai-dark", currentDark());
   }
-
+  function renderMarkdown(text) {
+    let html = String(text || "");
+  
+    // Escape HTML first for security.
+    html = html
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  
+    // Code blocks
+    html = html.replace(
+      /```([\s\S]*?)```/g,
+      '<pre class="vom-ai-code"><code>$1</code></pre>'
+    );
+  
+    // Inline code
+    html = html.replace(
+      /`([^`]+)`/g,
+      "<code>$1</code>"
+    );
+  
+    // Bold + italic
+    html = html.replace(
+      /\*\*\*(.*?)\*\*\*/g,
+      "<strong><em>$1</em></strong>"
+    );
+  
+    html = html.replace(
+      /\*\*(.*?)\*\*/g,
+      "<strong>$1</strong>"
+    );
+  
+    html = html.replace(
+      /__(.*?)__/g,
+      "<strong>$1</strong>"
+    );
+  
+    html = html.replace(
+      /\*(.*?)\*/g,
+      "<em>$1</em>"
+    );
+  
+    html = html.replace(
+      /_(.*?)_/g,
+      "<em>$1</em>"
+    );
+  
+    // Headings
+    html = html.replace(
+      /^### (.+)$/gm,
+      '<h5>$1</h5>'
+    );
+  
+    html = html.replace(
+      /^## (.+)$/gm,
+      '<h4>$1</h4>'
+    );
+  
+    html = html.replace(
+      /^# (.+)$/gm,
+      '<h3>$1</h3>'
+    );
+  
+    // Unordered lists
+    html = html.replace(
+      /^[\t ]*[-*] (.+)$/gm,
+      '<li>$1</li>'
+    );
+  
+    // Group consecutive list items
+    html = html.replace(
+      /(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs,
+      "<ul>$1</ul>"
+    );
+  
+    // Numbered lists
+    html = html.replace(
+      /^[\t ]*\d+\.\s+(.+)$/gm,
+      '<li>$1</li>'
+    );
+  
+    // Line breaks
+    html = html.replace(/\n{2,}/g, "<br><br>");
+    html = html.replace(/\n/g, "<br>");
+  
+    return html;
+  }
+  
   window.addEventListener("load", () => {
     render();
     const observer = new MutationObserver(syncTheme);
