@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Voice-O-Magic — Shalini Mukund</title>
+    <meta name="description" content="Voice-O-Magic by Shalini Mukund — Public Speaker, Communication Coach & Author. Keynotes, Youth Academy, Corporate Training, and Published Works.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script>
+        // Tailwind config — must run before cdn.tailwindcss.com loads
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: 'var(--gold)',
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind safelist injection to prevent purging of dynamic classes
+        if (window.tailwind && window.tailwind.config) {
+            window.tailwind.config.safelist = [
+                'bg-theme','bg-surface','bg-surface-warm','bg-gold-light','bg-green-light','bg-red-light',
+                'text-heading','text-sec','text-muted','text-gold','text-gold-hover','text-green','text-red','text-main',
+                'border-theme','border-light','border-gold-muted',
+                'shadow-card','shadow-card-hover','shadow-gold','shadow-gold-hover',
+                'bg-theme/95','hover:bg-gold-light','hover:text-gold','hover:text-gold-hover','hover:text-heading',
+                'hover:border-gold-muted','group-hover:text-gold','group-hover:border-gold-muted',
+                'divide-light','bg-gold','border-gold'
+            ];
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-theme text-main font-sans antialiased custom-scrollbar min-h-screen flex flex-col justify-between relative">
+
+    <div id="toastContainer"></div>
+
+    <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
+        <div class="hidden md:flex items-center space-x-3">
+            <span class="bg-gold text-white text-[10px] uppercase font-bold px-2.5 py-0.5 rounded tracking-wider">Verified Winner</span>
+            <span class="text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span>
+        </div>
+        <div class="mx-auto md:mx-0 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-gold"></i>
+            <span>Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings</span>
+        </div>
+        <a href="contact.html" class="hidden lg:inline-flex items-center text-xs font-bold hover:underline transition">Inquire Now <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i></a>
+    </div>
+
+    <header class="sticky top-0 z-50 bg-theme/95 backdrop-blur-md border-b border-theme transition-all duration-300" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-3 group cursor-pointer" aria-label="Go to homepage">
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
+                    <img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span>
+                    <span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
+                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Home</a><a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">About</a><a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Keynotes</a><a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Academy</a><a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Corporate</a><a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Books</a><a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Resources</a>
+            </nav>
+
+            <div class="hidden lg:flex items-center space-x-3">
+                <button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <a href="contact.html" class="btn-primary text-sm">Contact Us</a>
+            </div>
+
+            <div class="lg:hidden flex items-center gap-2">
+                <button onclick="toggleTheme()" id="themeToggleBtnMobile" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="text-sec p-2 rounded-full hover:bg-surface-warm focus:outline-none transition" aria-label="Toggle Navigation Menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden lg:hidden bg-theme border-b border-theme px-4 pt-2 pb-6 space-y-1 shadow-card">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a><a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a><a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a><a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a><a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a><a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a><a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a><a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a>
+            <div class="pt-4 px-2">
+                <a href="contact.html" class="block w-full btn-primary text-sm text-center">Book Keynote Event</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+
+        <div class="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="text-sm font-bold text-gold tracking-widest uppercase">The Founder</span>
+                <div class="gold-divider mx-auto mt-3 mb-5"></div>
+                <h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">About Shalini Mukund</h1>
+                <p class="text-sec text-base mt-6 leading-relaxed">Educator, National Awardee, Certified Counselor, Storyteller, and Founder of Voice-O-Magic with over 22 years of transformational teaching across India.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 items-start">
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="material-card overflow-hidden img-zoom">
+                        <img src="shalini-mukund.jpg" alt="Shalini Mukund Portrait" class="w-full h-auto object-cover" onerror="this.onerror=null; this.src='https://placehold.co/800x1000/FAFAF8/5C5C5C?text=Shalini+Mukund';">
+                    </div>
+                    <div class="material-card p-7 bg-gold-light border-gold-muted">
+                        <h4 class="font-bold text-gold-hover text-xs uppercase tracking-widest mb-3">Core Philosophy</h4>
+                        <p class="text-heading text-sm italic font-display leading-relaxed">"To lead others effectively, one must first master self-expression. True articulate power comes not from performance, but from authentic connection."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-7 space-y-10">
+                    <div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-heading mb-6">A Legacy of Pedagogical Excellence</h2>
+                        <div class="space-y-5 text-sec text-sm sm:text-base leading-relaxed">
+                            <p>Shalini Mukund's career spans over 22 years of rich teaching and training experience across prestigious schools in Bangalore and throughout India. Her deep pedagogical methodology is built upon rigorous academic research combined with real-world communication dynamics.</p>
+                            <p>Having earned a double postgraduate degree and a Post Graduate Diploma in the Teaching of English (PGDTE) from the world-renowned English and Foreign Languages University (EFLU) in Hyderabad, Shalini brings unprecedented diagnostic precision to vocal mechanics and phonetics.</p>
+                            <p>She further broadened her holistic approach to human development by certifying as a professional counselor at Banjara Academy and as a storyteller at the Kathalaya Storytelling Institute. In October 2020, her vision for Voice-O-Magic was strategically honed when she graduated from the Women Start-up Program at the Indian Institute of Management Bangalore (IIMB-NSRCEL).</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-heading text-lg mb-5">Qualification & Credential Matrix</h3>
+                        <div class="material-card overflow-x-auto">
+                            <table class="w-full text-left text-sm text-main border-collapse min-w-[600px] data-table">
+                                <thead>
+                                    <tr>
+                                        <th class="py-4 px-6 font-bold text-sec text-xs uppercase tracking-wider">Strategic Pillar</th>
+                                        <th class="py-4 px-6 font-bold text-sec text-xs uppercase tracking-wider">Qualification / Honor</th>
+                                        <th class="py-4 px-6 font-bold text-sec text-xs uppercase tracking-wider">Institution</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-light">
+                                    <tr><td class="py-4 px-6 font-semibold text-sm">Academic Excellence</td><td class="py-4 px-6 text-sm">Double Post-Graduate & PGDTE</td><td class="py-4 px-6 text-sec text-sm">EFLU Hyderabad</td></tr>
+                                    <tr><td class="py-4 px-6 font-semibold text-sm">National Teaching Honor</td><td class="py-4 px-6 text-sm">3x National Best Teacher & CENTA TPO 2017</td><td class="py-4 px-6 text-sec text-sm">CENTA India</td></tr>
+                                    <tr><td class="py-4 px-6 font-semibold text-sm">Entrepreneurial Leadership</td><td class="py-4 px-6 text-sm">Women Start-up Program (WSP)</td><td class="py-4 px-6 text-sec text-sm">IIM Bangalore (NSRCEL)</td></tr>
+                                    <tr><td class="py-4 px-6 font-semibold text-sm">Psychological Counseling</td><td class="py-4 px-6 text-sm">Certified Counselor</td><td class="py-4 px-6 text-sec text-sm">Banjara Academy</td></tr>
+                                    <tr><td class="py-4 px-6 font-semibold text-sm">Narrative Performance</td><td class="py-4 px-6 text-sm">Certified Storyteller</td><td class="py-4 px-6 text-sec text-sm">Kathalaya Institute</td></tr>
+                                    <tr><td class="py-4 px-6 font-semibold text-sm">Multilingual Ability</td><td class="py-4 px-6 text-sm">Fluent in 5 Languages</td><td class="py-4 px-6 text-sec text-sm">English, Hindi, Tamil, Kannada, Bengali</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="resourceModal" class="fixed inset-0 z-[60] modal-backdrop hidden items-center justify-center p-4">
+        <div class="material-card max-w-md w-full p-8 relative bg-theme">
+            <button onclick="closeResourceModal()" class="absolute top-4 right-4 text-muted hover:text-heading transition" aria-label="Close Resource Modal">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 rounded-full bg-gold-light flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-file-arrow-down text-2xl text-gold"></i>
+                </div>
+                <h3 class="font-bold text-xl text-heading">Download Resource</h3>
+                <p id="modalResourceTitle" class="text-sm text-sec mt-1">Resource Title</p>
+            </div>
+            <form onsubmit="handleResourceSubmit(event)" class="space-y-4" novalidate>
+                <div>
+                    <label class="block text-sm font-medium text-sec mb-1.5">Full Name</label>
+                    <input type="text" id="resourceName" required placeholder="Your name" class="md-input">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-sec mb-1.5">Email Address</label>
+                    <input type="email" id="resourceEmail" required placeholder="email@example.com" class="md-input">
+                </div>
+                <button type="submit" class="btn-primary w-full mt-2">Get Free Download</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="videoModal" class="fixed inset-0 z-[60] video-backdrop hidden items-center justify-center p-4">
+        <div class="max-w-4xl w-full relative">
+            <button onclick="closeVideoModal()" class="absolute -top-10 right-0 text-white/70 hover:text-white text-2xl transition" aria-label="Close Video Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="aspect-video bg-black rounded-xl overflow-hidden shadow-card-hover">
+                <iframe id="videoIframe" class="w-full h-full" src="" title="Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer class="pt-14 pb-10 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+                <div class="space-y-4 md:col-span-2 lg:col-span-1">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-9 h-9 rounded-full border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
+                            <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
+                        </div>
+                        <span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span>
+                    </div>
+                    <p class="leading-relaxed text-sec">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p>
+                    <div class="flex space-x-4 pt-1">
+                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Instagram"><i class="fa-brands fa-instagram text-base"></i></a>
+                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Facebook"><i class="fa-brands fa-facebook text-base"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+                    <ul class="space-y-3 text-sec">
+                        <li><a href="about.html" class="hover:text-gold transition">About Founder</a></li>
+                        <li><a href="keynotes.html" class="hover:text-gold transition">Keynotes</a></li>
+                        <li><a href="academy.html" class="hover:text-gold transition">Youth Academy</a></li>
+                        <li><a href="corporate.html" class="hover:text-gold transition">Corporate</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-2 lg:col-span-2">
+                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Channels</h4>
+                    <p class="mb-5 text-sec leading-relaxed">Follow Shalini on Instagram and Facebook for public speaking tips, inspiration, and updates.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs">
+                            <i class="fa-brands fa-instagram mr-2"></i> @mukundshalini
+                        </a>
+                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs">
+                            <i class="fa-brands fa-facebook mr-2"></i> Facebook
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-theme flex flex-col sm:flex-row justify-between items-center text-xs gap-4 text-muted">
+                <div>&copy; 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-heading transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-heading transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/chatbot-config.js"></script>
+    <script src="js/chatbot.js"></script>
+</body>
+</html>
