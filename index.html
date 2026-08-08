@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Voice-O-Magic — Shalini Mukund</title>
+    <meta name="description" content="Voice-O-Magic by Shalini Mukund — Public Speaker, Communication Coach & Author. Keynotes, Youth Academy, Corporate Training, and Published Works.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script>
+        // Tailwind config — must run before cdn.tailwindcss.com loads
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: 'var(--gold)',
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind safelist injection to prevent purging of dynamic classes
+        if (window.tailwind && window.tailwind.config) {
+            window.tailwind.config.safelist = [
+                'bg-theme','bg-surface','bg-surface-warm','bg-gold-light','bg-green-light','bg-red-light',
+                'text-heading','text-sec','text-muted','text-gold','text-gold-hover','text-green','text-red','text-main',
+                'border-theme','border-light','border-gold-muted',
+                'shadow-card','shadow-card-hover','shadow-gold','shadow-gold-hover',
+                'bg-theme/95','hover:bg-gold-light','hover:text-gold','hover:text-gold-hover','hover:text-heading',
+                'hover:border-gold-muted','group-hover:text-gold','group-hover:border-gold-muted',
+                'divide-light','bg-gold','border-gold'
+            ];
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-theme text-main font-sans antialiased custom-scrollbar min-h-screen flex flex-col justify-between relative">
+
+    <div id="toastContainer"></div>
+
+    <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
+        <div class="hidden md:flex items-center space-x-3">
+            <span class="bg-gold text-white text-[10px] uppercase font-bold px-2.5 py-0.5 rounded tracking-wider">Verified Winner</span>
+            <span class="text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span>
+        </div>
+        <div class="mx-auto md:mx-0 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-gold"></i>
+            <span>Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings</span>
+        </div>
+        <a href="contact.html" class="hidden lg:inline-flex items-center text-xs font-bold hover:underline transition">Inquire Now <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i></a>
+    </div>
+
+    <header class="sticky top-0 z-50 bg-theme/95 backdrop-blur-md border-b border-theme transition-all duration-300" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-3 group cursor-pointer" aria-label="Go to homepage">
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
+                    <img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span>
+                    <span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
+                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">Home</a><a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">About</a><a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Keynotes</a><a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Academy</a><a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Corporate</a><a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Books</a><a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Resources</a>
+            </nav>
+
+            <div class="hidden lg:flex items-center space-x-3">
+                <button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <a href="contact.html" class="btn-primary text-sm">Contact Us</a>
+            </div>
+
+            <div class="lg:hidden flex items-center gap-2">
+                <button onclick="toggleTheme()" id="themeToggleBtnMobile" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="text-sec p-2 rounded-full hover:bg-surface-warm focus:outline-none transition" aria-label="Toggle Navigation Menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden lg:hidden bg-theme border-b border-theme px-4 pt-2 pb-6 space-y-1 shadow-card">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a><a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a><a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a><a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a><a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a><a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a><a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a><a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a>
+            <div class="pt-4 px-2">
+                <a href="contact.html" class="block w-full btn-primary text-sm text-center">Book Keynote Event</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+
+        <div class="relative py-20 lg:py-28 bg-theme border-b border-theme overflow-hidden">
+            <div class="absolute inset-0 hero-glow pointer-events-none"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-10 items-center">
+                    <div class="lg:col-span-7 space-y-7 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 bg-gold-light text-gold-hover text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider border border-gold-muted">
+                            <i class="fa-solid fa-star text-[10px]"></i> Award-Winning Coach
+                        </div>
+                        <h1 class="font-display text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-heading leading-[1.1] tracking-tight">
+                            Transform Your Voice.<br><span class="text-gold">Master the Stage.</span><br>Command the Room.
+                        </h1>
+                        <p class="text-sec text-base lg:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                            Empowering young minds and high-performing leaders with world-class public speaking, creating well-defined content, executive presence, and transformative storytelling.
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                            <a href="contact.html" class="btn-primary w-full sm:w-auto text-sm px-8 py-3.5">Book Shalini for Keynotes</a>
+                            <a href="academy.html" class="btn-secondary w-full sm:w-auto text-sm px-8 py-3.5">Explore Youth Academy</a>
+                        </div>
+                        <div class="pt-8 grid grid-cols-3 gap-6 text-center lg:text-left border-t border-light pt-8">
+                            <div><div class="text-3xl font-bold text-heading font-display">22+</div><div class="text-xs text-sec font-medium mt-1.5 uppercase tracking-wide">Years Mastery</div></div>
+                            <div><div class="text-3xl font-bold text-heading font-display">3x</div><div class="text-xs text-sec font-medium mt-1.5 uppercase tracking-wide">National Awards</div></div>
+                            <div><div class="text-3xl font-bold text-heading font-display">10k+</div><div class="text-xs text-sec font-medium mt-1.5 uppercase tracking-wide">Lives Transformed</div></div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5 relative">
+                        <div class="material-card animate-float relative z-10 w-full max-w-sm mx-auto">
+                            <div class="bg-surface-warm p-5 border-b border-theme flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-11 h-11 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
+                                        <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-heading text-sm">Voice-O-Magic</h3>
+                                        <p class="text-xs text-sec">Official Profile</p>
+                                    </div>
+                                </div>
+                                <div class="bg-green-light text-green px-2.5 py-1 rounded text-[10px] font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check"></i> VERIFIED
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <div class="aspect-[4/5] w-full rounded-xl overflow-hidden mb-5 border border-theme img-zoom">
+                                    <img src="shalini-mukund.jpg" alt="Shalini Mukund" class="w-full h-full object-cover object-center" onerror="this.onerror=null; this.src='https://placehold.co/800x1000/FAFAF8/5C5C5C?text=Shalini+Mukund';">
+                                </div>
+                                <h2 class="text-xl font-bold text-heading">Shalini Mukund</h2>
+                                <p class="text-sm text-gold font-semibold mt-1">Founder & Chief Communication Coach</p>
+                                <div class="mt-4 space-y-2.5 text-xs text-sec">
+                                    <div class="flex items-center gap-2.5"><i class="fa-solid fa-graduation-cap w-4 text-center text-gold"></i> EFLU Hyderabad (PGDTE)</div>
+                                    <div class="flex items-center gap-2.5"><i class="fa-solid fa-award w-4 text-center text-gold"></i> CENTA National Winner</div>
+                                    <div class="flex items-center gap-2.5"><i class="fa-solid fa-building-columns w-4 text-center text-gold"></i> IIMB WSP Alumna</div>
+                                    <div class="flex items-center gap-2.5"><i class="fa-solid fa-lightbulb w-4 text-center text-gold"></i> Instructional Design – KPMG</div>
+                                </div>
+                                <div class="mt-5 pt-4 border-t border-light flex justify-between items-center">
+                                    <span class="text-[10px] font-mono text-muted">ID: VOM-FNDR-01</span>
+                                    <button onclick="openVideoModal('https://www.youtube.com/embed/KKNCiRWd_j0')" class="text-gold text-xs font-bold hover:text-gold-hover transition flex items-center gap-1.5" aria-label="Watch Keynote Reel">
+                                        <i class="fa-solid fa-play-circle text-sm"></i> Watch Reel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-20 sm:py-28 bg-surface border-b border-theme">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
+                    <span class="text-sm font-bold text-gold tracking-widest uppercase">Tailored Solutions</span>
+                    <div class="gold-divider mx-auto mt-4 mb-4"></div>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-heading">Choose Your Path To Mastery</h2>
+                    <p class="text-sec text-base mt-4 leading-relaxed">Whether you are seeking transformational programs for young learners or executive articulation for your corporate leadership team.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="material-card p-8 flex flex-col justify-between h-full group">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-gold-light flex items-center justify-center text-gold text-2xl mb-6 transition group-hover:scale-110">
+                                <i class="fa-solid fa-child-reaching"></i>
+                            </div>
+                            <span class="text-xs font-bold text-muted uppercase tracking-widest">For K-12 Students</span>
+                            <h3 class="text-2xl font-bold text-heading mt-1.5 mb-4">Youth Academy & Phonetics</h3>
+                            <p class="text-sec text-sm leading-relaxed mb-6">Nurturing articulation, reading strategies, vocal modulation, and stage confidence in children ages 5–18 through scientifically grounded pedagogical tools.</p>
+                            <ul class="space-y-3 text-sm text-main">
+                                <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green mt-0.5"></i> <span>Mastering Stage Presence (Ages 9-18)</span></li>
+                                <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green mt-0.5"></i> <span>Storytelling & Public Speaking (Ages 9-18)</span></li>
+                                <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green mt-0.5"></i> <span>Debate, Oratory & Leadership (Ages 9-18)</span></li>
+                            </ul>
+                        </div>
+                        <div class="pt-8 mt-auto">
+                            <a href="academy.html" class="btn-secondary w-full">Explore Youth Programs</a>
+                        </div>
+                    </div>
+                    <div class="material-card p-8 flex flex-col justify-between h-full group">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-gold-light flex items-center justify-center text-gold text-2xl mb-6 transition group-hover:scale-110">
+                                <i class="fa-solid fa-briefcase"></i>
+                            </div>
+                            <span class="text-xs font-bold text-muted uppercase tracking-widest">For Corporate Leaders</span>
+                            <h3 class="text-2xl font-bold text-heading mt-1.5 mb-4">Keynotes & Executive Coaching</h3>
+                            <p class="text-sec text-sm leading-relaxed mb-6">Keynotes and tailored corporate workshops designed to elevate executive presence, team articulation, and pitch persuasion.</p>
+                            <ul class="space-y-3 text-sm text-main">
+                                <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green mt-0.5"></i> <span>High-Impact Keynote Addresses & Educational Sessions</span></li>
+                                <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green mt-0.5"></i> <span>Workshops on Soft Skills (Game-Based Facilitation)</span></li>
+                                <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green mt-0.5"></i> <span>Corporate Training Programs (Game-Based Facilitation)</span></li>
+                            </ul>
+                        </div>
+                        <div class="pt-8 mt-auto">
+                            <a href="corporate.html" class="btn-secondary w-full">Corporate Solutions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-20 sm:py-24 bg-theme">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-4 text-center lg:text-left">
+                        <span class="text-sm font-bold text-gold tracking-widest uppercase">Library</span>
+                        <div class="gold-divider mt-3 mb-4 mx-auto lg:mx-0"></div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-heading">Authored Books & Works</h2>
+                        <p class="text-sec text-sm mt-4 leading-relaxed">Discover Shalini Mukund's published biography and co-authored parenting guides that inspire resilience and confidence.</p>
+                        <a href="books.html" class="mt-6 text-gold font-bold text-sm hover:text-gold-hover transition flex items-center justify-center lg:justify-start gap-2">
+                            View Published Books <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                    <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="material-card p-6 flex gap-5 items-center cursor-pointer group" onclick="window.location.href='books.html'">
+                            <div class="w-20 h-28 bg-surface-warm border border-theme rounded-lg flex-shrink-0 flex items-center justify-center text-center p-3 shadow-card">
+                                <span class="font-display text-xs text-heading font-bold leading-tight">Inspiration<br>Unbound</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-heading text-sm group-hover:text-gold transition">Inspiration Unbound</h4>
+                                <p class="text-[11px] text-muted font-semibold mt-1 uppercase tracking-wide">Notion Press (2021)</p>
+                                <p class="text-xs text-sec mt-2 line-clamp-2">Biography of Moolchand Singhvi exploring resilience and values.</p>
+                            </div>
+                        </div>
+                        <div class="material-card p-6 flex gap-5 items-center cursor-pointer group" onclick="window.location.href='books.html'">
+                            <div class="w-20 h-28 bg-surface-warm border border-theme rounded-lg flex-shrink-0 flex items-center justify-center text-center p-3 shadow-card">
+                                <span class="font-display text-xs text-heading font-bold leading-tight">Back to<br>School</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-heading text-sm group-hover:text-gold transition">Back to School, a Useful Guide to Navigate Through the Pandemic</h4>
+                                <p class="text-[11px] text-muted font-semibold mt-1 uppercase tracking-wide">Co-authored with Lavitha Vaas</p>
+                                <p class="text-xs text-sec mt-2 line-clamp-2">Practical roadmap for nurturing youth confidence.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="resourceModal" class="fixed inset-0 z-[60] modal-backdrop hidden items-center justify-center p-4">
+        <div class="material-card max-w-md w-full p-8 relative bg-theme">
+            <button onclick="closeResourceModal()" class="absolute top-4 right-4 text-muted hover:text-heading transition" aria-label="Close Resource Modal">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 rounded-full bg-gold-light flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-file-arrow-down text-2xl text-gold"></i>
+                </div>
+                <h3 class="font-bold text-xl text-heading">Download Resource</h3>
+                <p id="modalResourceTitle" class="text-sm text-sec mt-1">Resource Title</p>
+            </div>
+            <form onsubmit="handleResourceSubmit(event)" class="space-y-4" novalidate>
+                <div>
+                    <label class="block text-sm font-medium text-sec mb-1.5">Full Name</label>
+                    <input type="text" id="resourceName" required placeholder="Your name" class="md-input">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-sec mb-1.5">Email Address</label>
+                    <input type="email" id="resourceEmail" required placeholder="email@example.com" class="md-input">
+                </div>
+                <button type="submit" class="btn-primary w-full mt-2">Get Free Download</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="videoModal" class="fixed inset-0 z-[60] video-backdrop hidden items-center justify-center p-4">
+        <div class="max-w-4xl w-full relative">
+            <button onclick="closeVideoModal()" class="absolute -top-10 right-0 text-white/70 hover:text-white text-2xl transition" aria-label="Close Video Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="aspect-video bg-black rounded-xl overflow-hidden shadow-card-hover">
+                <iframe id="videoIframe" class="w-full h-full" src="" title="Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer class="pt-14 pb-10 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+                <div class="space-y-4 md:col-span-2 lg:col-span-1">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-9 h-9 rounded-full border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
+                            <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
+                        </div>
+                        <span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span>
+                    </div>
+                    <p class="leading-relaxed text-sec">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p>
+                    <div class="flex space-x-4 pt-1">
+                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Instagram"><i class="fa-brands fa-instagram text-base"></i></a>
+                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Facebook"><i class="fa-brands fa-facebook text-base"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+                    <ul class="space-y-3 text-sec">
+                        <li><a href="about.html" class="hover:text-gold transition">About Founder</a></li>
+                        <li><a href="keynotes.html" class="hover:text-gold transition">Keynotes</a></li>
+                        <li><a href="academy.html" class="hover:text-gold transition">Youth Academy</a></li>
+                        <li><a href="corporate.html" class="hover:text-gold transition">Corporate</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-2 lg:col-span-2">
+                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Channels</h4>
+                    <p class="mb-5 text-sec leading-relaxed">Follow Shalini on Instagram and Facebook for public speaking tips, inspiration, and updates.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs">
+                            <i class="fa-brands fa-instagram mr-2"></i> @mukundshalini
+                        </a>
+                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs">
+                            <i class="fa-brands fa-facebook mr-2"></i> Facebook
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-theme flex flex-col sm:flex-row justify-between items-center text-xs gap-4 text-muted">
+                <div>&copy; 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-heading transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-heading transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/chatbot-config.js"></script>
+    <script src="js/chatbot.js"></script>
+</body>
+</html>
