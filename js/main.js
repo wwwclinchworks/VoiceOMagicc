@@ -1,18 +1,50 @@
 (function () {
   'use strict';
+
   const state = { cms: null };
+  const WHATSAPP_PHONE = '919902148227';
+  const CMS_TIMEOUT_MS = 8000;
+  let lastModalTrigger = null;
+
+  function storageGet(key) {
+    try { return window.localStorage.getItem(key); } catch { return null; }
+  }
+
+  function storageSet(key, value) {
+    try { window.localStorage.setItem(key, value); } catch { /* Storage may be unavailable. */ }
+  }
 
   function setTheme(dark) {
     document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('vom-theme', dark ? 'dark' : 'light');
+    storageSet('vom-theme', dark ? 'dark' : 'light');
     document.querySelectorAll('#themeToggleBtn, #themeToggleBtnMobile').forEach((btn) => {
-      btn.innerHTML = dark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      const icon = document.createElement('i');
+      icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      btn.replaceChildren(icon);
       btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      btn.setAttribute('aria-label', btn.title);
     });
   }
 
   window.toggleTheme = () => setTheme(!document.documentElement.classList.contains('dark'));
-  window.toggleMobileMenu = () => document.getElementById('mobileMenu')?.classList.toggle('hidden');
+
+  window.toggleMobileMenu = () => {
+    const menu = document.getElementById('mobileMenu');
+    const button = document.getElementById('mobileMenuBtn');
+    if (!menu) return;
+    const willOpen = menu.classList.contains('hidden');
+    menu.classList.toggle('hidden', !willOpen);
+    if (button) button.setAttribute('aria-expanded', String(willOpen));
+  };
+
+  function setupNavigationAccessibility() {
+    const menu = document.getElementById('mobileMenu');
+    const button = document.getElementById('mobileMenuBtn');
+    if (!menu || !button) return;
+    if (!menu.id) menu.id = 'mobileMenu';
+    button.setAttribute('aria-controls', menu.id);
+    button.setAttribute('aria-expanded', String(!menu.classList.contains('hidden')));
+  }
 
   function ensureSharedComponentsStyles() {
     if (document.querySelector('link[data-vom-components]')) return;
@@ -23,18 +55,43 @@
     document.head.appendChild(link);
   }
 
+  function openModal(modal, focusSelector) {
+    if (!modal) return;
+    lastModalTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    const focusTarget = focusSelector ? modal.querySelector(focusSelector) : null;
+    if (focusTarget instanceof HTMLElement) window.setTimeout(() => focusTarget.focus(), 0);
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modal.removeAttribute('role');
+    modal.removeAttribute('aria-modal');
+    if (lastModalTrigger instanceof HTMLElement && document.contains(lastModalTrigger)) {
+      lastModalTrigger.focus({ preventScroll: true });
+    }
+    lastModalTrigger = null;
+  }
+
   window.closeVideoModal = () => {
-    const modal = document.getElementById('videoModal');
     const frame = document.getElementById('videoIframe');
     if (frame) frame.src = '';
-    if (modal) modal.classList.add('hidden');
+    closeModal('videoModal');
   };
 
   window.openVideoModal = (url) => {
     const modal = document.getElementById('videoModal');
     const frame = document.getElementById('videoIframe');
-    if (frame && typeof url === 'string' && /^https:\/\//.test(url)) frame.src = url;
-    if (modal) modal.classList.remove('hidden');
+    if (frame && typeof url === 'string' && /^https:\/\/(?:www\.)?(?:youtube\.com|youtube-nocookie\.com)\//i.test(url)) {
+      frame.src = url;
+      openModal(modal, 'button[aria-label^="Close"]');
+    }
   };
 
   window.playNativeVideo = () => {
@@ -47,41 +104,78 @@
       iframe.src = 'https://www.youtube-nocookie.com/embed/KKNCiRWd_j0?autoplay=1';
       iframe.title = 'Voice-O-Magic featured video';
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
       iframe.allowFullscreen = true;
       container.appendChild(iframe);
     }
   };
 
-  window.closeResourceModal = () => document.getElementById('resourceModal')?.classList.add('hidden');
+  window.closeResourceModal = () => closeModal('resourceModal');
+
   window.openResourceModal = (title) => {
     const modal = document.getElementById('resourceModal');
     const label = document.getElementById('modalResourceTitle');
     if (label && title) label.textContent = title;
-    if (modal) modal.classList.remove('hidden');
+    openModal(modal, 'button[aria-label^="Close"]');
   };
 
   window.handleFormSubmit = (event) => {
     if (event) event.preventDefault();
     const form = event?.target;
-    const data = form ? new FormData(form) : null;
-    const name = data?.get('name') || '';
-    const message = data?.get('message') || 'Hello, I would like to contact Voice-O-Magic.';
-    const phone = '919999999999';
-    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent('Hello Voice-O-Magic,\n\n' + (name ? 'Name: ' + name + '\n' : '') + message), '_blank', 'noopener,noreferrer');
+    if (!(form instanceof HTMLFormElement)) return false;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return false;
+    }
+
+    const value = (id) => document.getElementById(id)?.value?.trim() || '';
+    const name = value('formName');
+    const email = value('formEmail');
+    const phone = value('formPhone');
+    const organization = value('formOrg');
+    const message = value('formMsg');
+    const inquiryType = form.querySelector('input[name="inquiry_type"]:checked')?.value || 'general';
+    const lines = [
+      'Hello Voice-O-Magic,',
+      '',
+      `Inquiry: ${inquiryType}`,
+      `Name: ${name}`,
+      `Email: ${email}`,
+      phone ? `Phone: ${phone}` : '',
+      organization ? `Organization / Child age: ${organization}` : '',
+      `Message: ${message}`
+    ].filter(Boolean);
+
+    window.open(
+      `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(lines.join('\n'))}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
     return false;
   };
 
   window.handleResourceSubmit = (event) => {
     if (event) event.preventDefault();
     const form = event?.target;
-    const pending = window.__VOM_PENDING_DOWNLOAD_URL;
-    if (pending && /^https:\/\//.test(pending)) {
-      window.location.href = pending;
-    } else {
-      const email = form ? new FormData(form).get('email') : '';
-      window.alert(email ? 'Thank you. Your resource request has been recorded.' : 'Please enter your email.');
-      if (form) form.reset();
+    if (!(form instanceof HTMLFormElement)) return false;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return false;
     }
+
+    const pending = window.__VOM_PENDING_DOWNLOAD_URL;
+    if (typeof pending === 'string' && /^https:\/\//.test(pending)) {
+      window.location.href = pending;
+      return false;
+    }
+
+    const name = document.getElementById('resourceName')?.value?.trim() || '';
+    const email = document.getElementById('resourceEmail')?.value?.trim() || '';
+    const resource = document.getElementById('modalResourceTitle')?.textContent?.trim() || 'the requested resource';
+    const message = `Hello Voice-O-Magic,\n\nI'd like to request: ${resource}\nName: ${name}\nEmail: ${email}`;
+    window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+    form.reset();
+    closeModal('resourceModal');
     return false;
   };
 
@@ -94,6 +188,7 @@
   };
 
   function clean(value) { return String(value ?? '').trim(); }
+
   function safeUrl(value, hosts) {
     try {
       const url = new URL(value);
@@ -102,6 +197,7 @@
       return url.toString();
     } catch { return null; }
   }
+
   function create(tag, cls, text) {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -178,14 +274,15 @@
     const main = document.querySelector('main');
     if (!main || !state.cms) return;
     main.replaceChildren();
+    const settings = state.cms.settings || {};
     const intro = create('section', 'py-20 sm:py-28');
-    intro.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', state.cms.settings.resourcesLabel));
-    intro.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', state.cms.settings.resourcesHeading));
-    intro.append(create('p', 'text-sec text-base mt-5 leading-relaxed', state.cms.settings.resourcesParagraph));
-    if (state.cms.settings.resourcesExtraParagraph) intro.append(create('p', 'text-sec text-base mt-3 leading-relaxed', state.cms.settings.resourcesExtraParagraph));
+    intro.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', settings.resourcesLabel || 'Free Resources'));
+    intro.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', settings.resourcesHeading || 'Resources'));
+    intro.append(create('p', 'text-sec text-base mt-5 leading-relaxed', settings.resourcesParagraph || ''));
+    if (settings.resourcesExtraParagraph) intro.append(create('p', 'text-sec text-base mt-3 leading-relaxed', settings.resourcesExtraParagraph));
     main.append(intro);
 
-    const video = state.cms.featuredVideo;
+    const video = state.cms.featuredVideo || {};
     const videoBox = create('section', 'material-card max-w-4xl mx-auto p-4');
     const videoArea = create('div', 'aspect-video bg-black rounded-xl overflow-hidden');
     if (video.published) {
@@ -203,18 +300,20 @@
         }
       } catch {}
     }
-    videoBox.append(videoArea, create('h3', 'font-bold text-heading text-xl mt-5', video.title), create('p', 'text-sec text-sm mt-2 leading-relaxed', video.description));
+    videoBox.append(videoArea, create('h3', 'font-bold text-heading text-xl mt-5', video.title || 'Featured Video'), create('p', 'text-sec text-sm mt-2 leading-relaxed', video.description || ''));
     main.append(videoBox);
 
+    const resources = Array.isArray(state.cms.resources) ? state.cms.resources : [];
     const grid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-12');
-    [...state.cms.resources].filter((x) => x.published).sort((a,b) => a.order - b.order).forEach((x) => grid.append(resourceCard(x)));
+    resources.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => grid.append(resourceCard(x)));
     main.append(grid);
 
     const toolkit = create('section', 'mt-16');
-    toolkit.append(create('h2', 'font-display text-3xl font-bold text-heading', state.cms.settings.toolkitHeading));
-    toolkit.append(create('p', 'text-sec text-base mt-3', state.cms.settings.toolkitDescription));
+    toolkit.append(create('h2', 'font-display text-3xl font-bold text-heading', settings.toolkitHeading || 'Speaker Toolkit'));
+    toolkit.append(create('p', 'text-sec text-base mt-3', settings.toolkitDescription || ''));
     const toolkitGrid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-7');
-    [...state.cms.toolkit].filter((x) => x.published).sort((a,b) => a.order - b.order).forEach((x) => toolkitGrid.append(resourceCard(x)));
+    const toolkitItems = Array.isArray(state.cms.toolkit) ? state.cms.toolkit : [];
+    toolkitItems.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => toolkitGrid.append(resourceCard(x)));
     toolkit.append(toolkitGrid);
     main.append(toolkit);
     showMaintenance();
@@ -226,8 +325,9 @@
     if (imageUrl) {
       const image = document.createElement('img');
       image.src = imageUrl;
-      image.alt = item.title;
+      image.alt = item.title || 'Book cover';
       image.loading = 'lazy';
+      image.decoding = 'async';
       image.style.cssText = 'width:140px;height:190px;object-fit:cover;border-radius:12px';
       card.append(image);
     }
@@ -250,25 +350,35 @@
     const main = document.querySelector('main');
     if (!main || !state.cms) return;
     main.replaceChildren();
+    const settings = state.cms.settings || {};
     const section = create('section', 'py-20 sm:py-28');
-    section.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', state.cms.settings.booksLabel));
-    section.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', state.cms.settings.booksHeading));
-    section.append(create('p', 'text-sec text-base mt-5 leading-relaxed', state.cms.settings.booksParagraph));
+    section.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', settings.booksLabel || 'Published Works'));
+    section.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', settings.booksHeading || 'Published Works'));
+    section.append(create('p', 'text-sec text-base mt-5 leading-relaxed', settings.booksParagraph || ''));
     const grid = create('div', 'grid grid-cols-1 md:grid-cols-2 gap-8 mt-12');
-    [...state.cms.books].filter((x) => x.published).sort((a,b) => a.order - b.order).forEach((x) => grid.append(bookCard(x)));
+    const books = Array.isArray(state.cms.books) ? state.cms.books : [];
+    books.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => grid.append(bookCard(x)));
     section.append(grid);
     main.append(section);
     showMaintenance();
   }
 
   async function loadCms() {
-    const response = await fetch(`/data/knowledge.json?cms=${Date.now()}`, { cache: 'no-store' });
-    if (!response.ok) return;
-    const data = await response.json();
-    state.cms = data.cms || null;
-    if (!state.cms) return;
-    if (location.pathname.endsWith('/resources.html')) renderResources();
-    else if (location.pathname.endsWith('/books.html')) renderBooks();
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), CMS_TIMEOUT_MS);
+    try {
+      const response = await fetch(`/data/knowledge.json?cms=${Date.now()}`, { cache: 'no-store', signal: controller.signal });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (!data || typeof data.cms !== 'object' || !data.cms) return;
+      state.cms = data.cms;
+      if (location.pathname.endsWith('/resources.html')) renderResources();
+      else if (location.pathname.endsWith('/books.html')) renderBooks();
+    } catch {
+      // Static page content remains available if the CMS source is unavailable.
+    } finally {
+      window.clearTimeout(timeout);
+    }
   }
 
   function adminLoginScreen() {
@@ -278,27 +388,27 @@
     meta.name = 'robots';
     meta.content = 'noindex,nofollow,noarchive,nosnippet';
     document.head.append(meta);
-    const shell = create('div', 'min-h-screen flex items-center justify-center p-6 bg-gray-50');
+    const shell = create('div', 'min-h-screen flex items-center justify-center p-6 bg-theme');
     const card = create('div', 'material-card p-8 w-full max-w-md');
     card.append(create('div', 'text-sm font-semibold text-gold uppercase tracking-widest', 'Private Control Center'), create('h1', 'font-display text-3xl font-bold text-heading mt-2', 'Voice-O-Magic Admin'), create('p', 'text-sec text-sm mt-2', 'Authorized administrator access only.'));
     const form = create('form', 'space-y-4 mt-7');
     const label = create('label', 'block text-sm font-medium text-sec');
     label.append(create('span', '', 'Administrator password'));
     const password = document.createElement('input');
-    password.type = 'password'; password.name = 'password'; password.autocomplete = 'current-password'; password.required = true; password.className = 'w-full mt-1.5 border border-gray-300 rounded-lg p-3';
+    password.type = 'password'; password.name = 'password'; password.autocomplete = 'current-password'; password.required = true; password.className = 'md-input mt-1.5';
     label.append(password);
-    const note = create('p', 'text-sm text-red-700'); note.hidden = true;
+    const note = create('p', 'text-sm text-red'); note.hidden = true;
     const button = create('button', 'btn-primary w-full', 'Sign in'); button.type = 'submit';
     form.append(label, note, button);
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); note.hidden = true; button.disabled = true; button.textContent = 'Signing in…';
       try {
         const response = await fetch('/api/chat?mode=admin-login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password.value }) });
-        const result = await response.json();
+        const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || 'Login failed.');
         window.location.reload();
       } catch (error) {
-        note.textContent = error.message; note.hidden = false; button.disabled = false; button.textContent = 'Sign in';
+        note.textContent = error.message || 'Login failed.'; note.hidden = false; button.disabled = false; button.textContent = 'Sign in';
       }
     });
     card.append(form); shell.append(card); document.body.append(shell);
@@ -306,16 +416,26 @@
 
   function start() {
     ensureSharedComponentsStyles();
-    const saved = localStorage.getItem('vom-theme');
-    setTheme(saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setupNavigationAccessibility();
+    const saved = storageGet('vom-theme');
+    const prefersDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : false;
+    setTheme(saved ? saved === 'dark' : prefersDark);
     updateRequestedAcademyCopy();
     addTestimonialsNavigation();
     if (new URLSearchParams(location.search).get('admin') === '1') {
       const meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex,nofollow,noarchive,nosnippet'; document.head.append(meta);
       adminLoginScreen(); return;
     }
-    loadCms().catch(() => {});
+    loadCms();
   }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const video = document.getElementById('videoModal');
+    const resource = document.getElementById('resourceModal');
+    if (video && !video.classList.contains('hidden')) window.closeVideoModal();
+    else if (resource && !resource.classList.contains('hidden')) window.closeResourceModal();
+  });
 
   document.addEventListener('DOMContentLoaded', start);
 })();
