@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials | Voice-O-Magic — Shalini Mukund</title>
+    <meta name="description" content="Testimonials, learner highlights, community moments, and social proof from Voice-O-Magic. Explore the latest public content from the Voice-O-Magic Instagram community.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: 'var(--gold)',
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (window.tailwind && window.tailwind.config) {
+            window.tailwind.config.safelist = [
+                'bg-theme','bg-surface','bg-surface-warm','bg-gold-light','bg-green-light',
+                'text-heading','text-sec','text-muted','text-gold','text-gold-hover','text-main',
+                'border-theme','border-light','border-gold-muted',
+                'shadow-card','shadow-card-hover','shadow-gold','shadow-gold-hover',
+                'bg-theme/95','hover:bg-gold-light','hover:text-gold','hover:text-gold-hover','hover:text-heading',
+                'hover:border-gold-muted','group-hover:text-gold','group-hover:border-gold-muted',
+                'divide-light','bg-gold','border-gold'
+            ];
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-theme text-main font-sans antialiased custom-scrollbar min-h-screen flex flex-col justify-between relative">
+
+    <div id="toastContainer"></div>
+
+    <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
+        <div class="hidden md:flex items-center space-x-3">
+            <span class="bg-gold text-white text-[10px] uppercase font-bold px-2.5 py-0.5 rounded tracking-wider">Verified Winner</span>
+            <span class="text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span>
+        </div>
+        <div class="mx-auto md:mx-0 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-gold"></i>
+            <span>Community Stories & Voice-O-Magic Highlights</span>
+        </div>
+        <a href="contact.html" class="hidden lg:inline-flex items-center text-xs font-bold hover:underline transition">Inquire Now <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i></a>
+    </div>
+
+    <header class="sticky top-0 z-50 bg-theme/95 backdrop-blur-md border-b border-theme transition-all duration-300" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-3 group cursor-pointer" aria-label="Go to homepage">
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
+                    <img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain">
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span>
+                    <span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
+                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Home</a>
+                <a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">About</a>
+                <a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Keynotes</a>
+                <a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Academy</a>
+                <a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Corporate</a>
+                <a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Books</a>
+                <a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Resources</a>
+                <a href="testimonials.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">Testimonials</a>
+            </nav>
+
+            <div class="hidden lg:flex items-center space-x-3">
+                <button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <a href="contact.html" class="btn-primary text-sm">Contact Us</a>
+            </div>
+
+            <div class="lg:hidden flex items-center gap-2">
+                <button onclick="toggleTheme()" id="themeToggleBtnMobile" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="text-sec p-2 rounded-full hover:bg-surface-warm focus:outline-none transition" aria-label="Toggle Navigation Menu">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden lg:hidden bg-theme border-b border-theme px-4 pt-2 pb-6 space-y-1 shadow-card">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a>
+            <a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a>
+            <a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a>
+            <a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a>
+            <a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a>
+            <a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a>
+            <a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a>
+            <a href="testimonials.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Testimonials</a>
+            <a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a>
+            <div class="pt-4 px-2">
+                <a href="contact.html" class="block w-full btn-primary text-sm text-center">Book Keynote Event</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section class="py-20 sm:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-14">
+                    <span class="text-sm font-bold text-gold tracking-widest uppercase">Social Proof</span>
+                    <div class="gold-divider mx-auto mt-3 mb-5"></div>
+                    <h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">Testimonials & Community Stories</h1>
+                    <p class="text-sec text-base mt-6 leading-relaxed">Explore public feedback, learner wins, workshop moments, mentoring stories, and community highlights shared by Voice-O-Magic.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
+                    <div class="material-card p-7">
+                        <div class="w-12 h-12 rounded-2xl bg-gold-light flex items-center justify-center text-gold text-xl mb-5"><i class="fa-solid fa-comments"></i></div>
+                        <h2 class="font-bold text-heading text-lg mb-2">Real Community Feedback</h2>
+                        <p class="text-sec text-sm leading-relaxed">Use the live social feed below to see the latest public reactions, appreciation, learner milestones, and Voice-O-Magic community moments.</p>
+                    </div>
+                    <div class="material-card p-7">
+                        <div class="w-12 h-12 rounded-2xl bg-gold-light flex items-center justify-center text-gold text-xl mb-5"><i class="fa-solid fa-trophy"></i></div>
+                        <h2 class="font-bold text-heading text-lg mb-2">Learner & Mentor Wins</h2>
+                        <p class="text-sec text-sm leading-relaxed">Celebrate speaking breakthroughs, mentoring outcomes, competition milestones, and leadership journeys shared through the community.</p>
+                    </div>
+                    <div class="material-card p-7">
+                        <div class="w-12 h-12 rounded-2xl bg-gold-light flex items-center justify-center text-gold text-xl mb-5"><i class="fa-brands fa-instagram"></i></div>
+                        <h2 class="font-bold text-heading text-lg mb-2">Latest on Instagram</h2>
+                        <p class="text-sec text-sm leading-relaxed">The Instagram profile is embedded live so the page can stay current without copying or fabricating social posts.</p>
+                        <a href="https://www.instagram.com/voiceomagic/" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-2 text-gold font-bold text-sm hover:text-gold-hover transition">Open @voiceomagic <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></a>
+                    </div>
+                </div>
+
+                <div class="material-card p-5 sm:p-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div>
+                            <span class="text-xs font-bold text-gold uppercase tracking-widest">From the official profile</span>
+                            <h2 class="font-display text-2xl sm:text-3xl font-bold text-heading mt-1">Voice-O-Magic Instagram</h2>
+                        </div>
+                        <a href="https://www.instagram.com/voiceomagic/" target="_blank" rel="noopener noreferrer" class="btn-secondary text-sm">Visit Instagram</a>
+                    </div>
+                    <div class="flex justify-center overflow-hidden rounded-xl bg-surface-warm border border-theme p-2 sm:p-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/voiceomagic/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:12px; margin:0; max-width:540px; min-width:280px; width:100%; padding:0;">
+                            <div style="padding:40px 16px; text-align:center;">
+                                <i class="fa-brands fa-instagram text-3xl text-gold mb-4"></i>
+                                <p class="text-sm text-sec">Loading the latest public Voice-O-Magic Instagram content…</p>
+                                <a href="https://www.instagram.com/voiceomagic/" target="_blank" rel="noopener noreferrer" class="text-gold font-semibold text-sm">Open @voiceomagic on Instagram</a>
+                            </div>
+                        </blockquote>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12">
+                    <p class="text-xs text-muted max-w-2xl mx-auto leading-relaxed">Social content is loaded from the public Voice-O-Magic Instagram profile. This keeps the testimonials/community section current and avoids presenting unverified or invented quotations.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="pt-14 pb-10 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+                <div class="space-y-4 md:col-span-2 lg:col-span-1">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-9 h-9 rounded-full border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
+                            <img src="logo.png" alt="Logo" class="w-full h-full object-contain">
+                        </div>
+                        <span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span>
+                    </div>
+                    <p class="leading-relaxed text-sec">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p>
+                    <div class="flex space-x-4 pt-1">
+                        <a href="https://www.instagram.com/voiceomagic/" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Voice-O-Magic Instagram"><i class="fa-brands fa-instagram text-base"></i></a>
+                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Facebook"><i class="fa-brands fa-facebook text-base"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+                    <ul class="space-y-3 text-sec">
+                        <li><a href="about.html" class="hover:text-gold transition">About Founder</a></li>
+                        <li><a href="keynotes.html" class="hover:text-gold transition">Keynotes</a></li>
+                        <li><a href="academy.html" class="hover:text-gold transition">Youth Academy</a></li>
+                        <li><a href="corporate.html" class="hover:text-gold transition">Corporate</a></li>
+                        <li><a href="testimonials.html" class="hover:text-gold transition">Testimonials</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-2 lg:col-span-2">
+                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Instagram Community</h4>
+                    <p class="mb-5 text-sec leading-relaxed">Follow Voice-O-Magic for speaking tips, learner stories, mentoring moments, awards, and updates.</p>
+                    <a href="https://www.instagram.com/voiceomagic/" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs"><i class="fa-brands fa-instagram mr-2"></i> @voiceomagic</a>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-theme flex flex-col sm:flex-row justify-between items-center text-xs gap-4 text-muted">
+                <div>&copy; 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-heading transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-heading transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/chatbot-config.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script async src="https://www.instagram.com/embed.js"></script>
+</body>
+</html>
