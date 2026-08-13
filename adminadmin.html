@@ -12,15 +12,41 @@
   <script>window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{gold:'var(--gold)'}}}};</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
   <style>
     :root{--gold:#c9a227}
-    body{background:#f7f6f2}
-    .admin-input{width:100%;border:1px solid #d8d8d2;border-radius:10px;padding:10px 12px;background:#fff;outline:none}
+    body{background:var(--theme-bg, #f7f6f2)}
+    .admin-input{width:100%;border:1px solid var(--theme-border,#d8d8d2);border-radius:10px;padding:10px 12px;background:var(--theme-surface,#fff);color:var(--theme-text,#242424);outline:none}
     .admin-input:focus{border-color:#c9a227;box-shadow:0 0 0 3px rgba(201,162,39,.12)}
     .toast{position:fixed;right:20px;bottom:20px;z-index:100;max-width:360px;padding:12px 14px;border-radius:12px;color:#fff;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+    html.dark .toast{box-shadow:0 12px 30px rgba(0,0,0,.45)}
   </style>
 </head>
 <body class="bg-theme text-main font-sans antialiased min-h-screen">
   <script src="js/admin.js"></script>
+  <script>
+  (function(){
+    function apply(dark){
+      document.documentElement.classList.toggle('dark',dark);
+      try{localStorage.setItem('vom-theme',dark?'dark':'light')}catch{}
+      document.querySelectorAll('[data-admin-theme-toggle]').forEach(function(btn){
+        btn.innerHTML=dark?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>';
+        btn.title=dark?'Switch to light mode':'Switch to dark mode';
+        btn.setAttribute('aria-label',btn.title);
+      });
+    }
+    function initial(){try{const s=localStorage.getItem('vom-theme');if(s)return s==='dark'}catch{}return window.matchMedia('(prefers-color-scheme: dark)').matches}
+    function ensure(){
+      if(document.querySelector('[data-admin-theme-toggle]'))return;
+      const save=document.getElementById('saveAll');
+      const btn=document.createElement('button');
+      btn.type='button';btn.className='theme-toggle';btn.dataset.adminThemeToggle='true';
+      btn.onclick=function(){apply(!document.documentElement.classList.contains('dark'))};
+      if(save){const header=save.closest('header');const actions=header&&header.querySelector(':scope > div:last-child');if(actions){actions.prepend(btn);apply(document.documentElement.classList.contains('dark'));return}}
+      btn.classList.add('fixed','top-4','right-4','z-[120]');document.body.appendChild(btn);apply(document.documentElement.classList.contains('dark'));
+    }
+    apply(initial());new MutationObserver(ensure).observe(document.body,{childList:true,subtree:true});ensure();
+  })();
+  </script>
 </body>
 </html>
