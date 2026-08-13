@@ -15,12 +15,15 @@
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    :root { --gold: #c9a227; }
-    body { background: #f7f6f2; }
-  </style>
+  <style>:root{--gold:#c9a227}body{background:#f7f6f2}</style>
 </head>
 <body class="bg-theme text-main font-sans antialiased min-h-screen">
+  <script>
+    // Dedicated admin entry point: the shared application then renders only the authenticated admin flow.
+    const url = new URL(window.location.href);
+    url.searchParams.set('admin', '1');
+    window.history.replaceState({}, '', url.toString());
+  </script>
   <script src="js/main.js"></script>
 </body>
 </html>
