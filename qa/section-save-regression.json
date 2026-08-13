@@ -1,0 +1,1 @@
+{"cases":["saving one section preserves unrelated unsaved edits","saving all persists every section","reload reflects saved state","item add/edit/delete/reorder/publish stay local until section save","concurrent server data is merged by section","unauthorized and invalid-origin writes stay rejected"]}
