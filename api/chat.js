@@ -36,6 +36,7 @@ function yt(value){try{const u=new URL(value);const h=u.hostname.toLowerCase();l
 function uid(x){return/^[A-Za-z0-9_-]{8,80}$/.test(String(x||''))?String(x):crypto.randomUUID()}
 function itemBase(x,isBook=false){const out={id:uid(x.id),title:clean(x.title,200),description:clean(x.description,1500),buttonText:clean(x.buttonText||(isBook?'Learn More':'Download PDF'),60),order:Number.isInteger(x.order)?x.order:0,published:x.published!==false};if(!out.title)throw Error('Every item needs a title.');if(isBook){out.bookHeading=clean(x.bookHeading,200);out.authors=clean(x.authors,240);out.categoryLabel=clean(x.categoryLabel,160);out.coverImageUrl=clean(x.coverImageUrl,1000);out.destinationUrl=clean(x.destinationUrl,2000);if(!out.authors)throw Error('Every book needs author names.');if(out.coverImageUrl&&!https(out.coverImageUrl))throw Error('Cover URL must use HTTPS.');if(out.destinationUrl&&!https(out.destinationUrl))throw Error('Book destination must use HTTPS.')}else{out.driveUrl=clean(x.driveUrl,2000);if(out.driveUrl&&!drive(out.driveUrl))throw Error('Drive URL must be a Google Drive/Docs HTTPS URL.')}return out}
 function normalizeCms(input){const c={...DEFAULT_CMS,...(input||{})};c.settings={...DEFAULT_CMS.settings,...(input?.settings||{})};for(const [k,m] of Object.entries({resourcesLabel:120,resourcesHeading:200,resourcesParagraph:1500,resourcesExtraParagraph:1500,toolkitHeading:200,toolkitDescription:1500,booksLabel:120,booksHeading:200,booksParagraph:1500}))c.settings[k]=clean(c.settings[k],m);c.settings.maintenanceMode=Boolean(c.settings.maintenanceMode);c.featuredVideo={url:yt(c.featuredVideo?.url||DEFAULT_CMS.featuredVideo.url)||DEFAULT_CMS.featuredVideo.url,title:clean(c.featuredVideo?.title,160)||DEFAULT_CMS.featuredVideo.title,description:clean(c.featuredVideo?.description,1000),published:c.featuredVideo?.published!==false};c.resources=(Array.isArray(c.resources)?c.resources:[]).map(x=>itemBase(x,false));c.toolkit=(Array.isArray(c.toolkit)?c.toolkit:[]).map(x=>itemBase(x,false));c.books=(Array.isArray(c.books)?c.books:[]).map(x=>itemBase(x,true));c.history=Array.isArray(c.history)?c.history.slice(-50):[];c.audit=Array.isArray(c.audit)?c.audit.slice(-100):[];return c}
+function editableSnapshot(cms){const c=normalizeCms(cms);return{settings:c.settings,featuredVideo:c.featuredVideo,resources:c.resources,toolkit:c.toolkit,books:c.books}}
 async function github(method,path,body){const token=process.env.CMS_GITHUB_TOKEN;if(!token)throw Error('CMS_GITHUB_TOKEN is not configured.');const r=await fetch(`https://api.github.com${path}`,{method,headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});const t=await r.text();let b;try{b=t?JSON.parse(t):null}catch{b=t}if(!r.ok)throw Object.assign(new Error(b?.message||'GitHub request failed'),{status:r.status});return b}
 async function readFile(){const d=await github('GET',`/repos/${REPO}/contents/${PATH}?ref=${encodeURIComponent(BRANCH)}`);return{sha:d.sha,data:JSON.parse(Buffer.from(d.content.replace(/\n/g,''),'base64').toString('utf8'))}}
 async function writeFile(data,sha,message){const content=Buffer.from(JSON.stringify(data,null,2)+'\n').toString('base64');return github('PUT',`/repos/${REPO}/contents/${PATH}`,{message,content,sha,branch:BRANCH})}
@@ -45,7 +46,7 @@ function hardenAdminResponse(res){res.setHeader('Cache-Control','no-store, max-a
 export default async function handler(req,res){
   const mode=req.query?.mode||'';
   try{
-    if(mode){hardenAdminResponse(res)}
+    if(mode)hardenAdminResponse(res);
     if(mode==='admin-login'){
       if(req.method!=='POST')return json(res,405,{error:'Method not allowed'});
       if(!process.env.CMS_ADMIN_PASSWORD||!process.env.CMS_SESSION_SECRET||process.env.CMS_SESSION_SECRET.length<32)return json(res,500,{error:'CMS security variables are not configured correctly.'});
@@ -58,11 +59,15 @@ export default async function handler(req,res){
     if(mode==='admin-data'){if(!requireSession(req,res))return;const f=await readFile();return json(res,200,{cms:normalizeCms(f.data.cms)})}
     if(mode==='admin-save'){
       if(req.method!=='POST'||!requireSession(req,res)||!originOk(req))return;
-      const next=normalizeCms(req.body?.cms),f=await readFile(),previous=normalizeCms(f.data.cms);next.history=[...(previous.history||[]),{id:crypto.randomUUID(),at:new Date().toISOString(),snapshot:previous}].slice(-50);next.audit=[...(previous.audit||[]),{at:new Date().toISOString(),action:'save'}].slice(-100);f.data.cms=next;await writeFile(f.data,f.sha,'cms: update Voice-O-Magic content');return json(res,200,{ok:true,cms:next});
+      const next=normalizeCms(req.body?.cms),f=await readFile(),previous=normalizeCms(f.data.cms);
+      next.history=[...(previous.history||[]),{id:crypto.randomUUID(),at:new Date().toISOString(),snapshot:editableSnapshot(previous)}].slice(-50);
+      next.audit=[...(previous.audit||[]),{at:new Date().toISOString(),action:'save'}].slice(-100);
+      f.data.cms=next;await writeFile(f.data,f.sha,'cms: update Voice-O-Magic content');return json(res,200,{ok:true,cms:next});
     }
     if(mode==='admin-restore'){
       if(req.method!=='POST'||!requireSession(req,res)||!originOk(req))return;
-      const f=await readFile(),current=normalizeCms(f.data.cms),version=current.history.find(x=>x.id===req.body?.versionId);if(!version)return json(res,404,{error:'Version not found.'});const restored=normalizeCms(version.snapshot);restored.history=current.history;restored.audit=[...(current.audit||[]),{at:new Date().toISOString(),action:'restore',versionId:version.id}].slice(-100);f.data.cms=restored;await writeFile(f.data,f.sha,'cms: restore content version');return json(res,200,{ok:true,cms:restored});
+      const f=await readFile(),current=normalizeCms(f.data.cms),version=current.history.find(x=>x.id===req.body?.versionId);if(!version)return json(res,404,{error:'Version not found.'});
+      const restored=normalizeCms(version.snapshot);restored.history=current.history;restored.audit=[...(current.audit||[]),{at:new Date().toISOString(),action:'restore',versionId:version.id}].slice(-100);f.data.cms=restored;await writeFile(f.data,f.sha,'cms: restore content version');return json(res,200,{ok:true,cms:restored});
     }
     if(mode)return json(res,404,{error:'Unknown mode'});
     if(req.method!=='POST'){res.setHeader('Allow','POST');return json(res,405,{error:'Method not allowed'})}
