@@ -1,0 +1,1 @@
+{"invariant":"saving one CMS section must not discard unrelated unsaved client edits","mergeStrategy":"fetch latest server CMS, replace only selected section, keep other local drafts in memory","saveAll":"persists the complete current draft","security":"server authentication, authorization and validation remain unchanged"}
