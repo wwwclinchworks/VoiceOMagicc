@@ -14,6 +14,15 @@
   window.toggleTheme = () => setTheme(!document.documentElement.classList.contains('dark'));
   window.toggleMobileMenu = () => document.getElementById('mobileMenu')?.classList.toggle('hidden');
 
+  function ensureSharedComponentsStyles() {
+    if (document.querySelector('link[data-vom-components]')) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'css/components.css';
+    link.dataset.vomComponents = 'true';
+    document.head.appendChild(link);
+  }
+
   window.closeVideoModal = () => {
     const modal = document.getElementById('videoModal');
     const frame = document.getElementById('videoIframe');
@@ -99,10 +108,49 @@
     if (text !== undefined) node.textContent = text;
     return node;
   }
+
+  function updateRequestedAcademyCopy() {
+    const replacements = [
+      ['Youth Academy & Phonetics', 'Youth Academy & Confidence Skills'],
+      ['Phonetics & Foundations', 'Foundations of Creating Content & Writing']
+    ];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    nodes.forEach((textNode) => {
+      let value = textNode.nodeValue;
+      replacements.forEach(([from, to]) => { value = value.split(from).join(to); });
+      if (value !== textNode.nodeValue) textNode.nodeValue = value;
+    });
+  }
+
+  function addTestimonialsNavigation() {
+    const desktopNav = document.querySelector('nav[aria-label="Main Navigation"]');
+    if (desktopNav && !desktopNav.querySelector('a[href="testimonials.html"]')) {
+      const resourceLink = desktopNav.querySelector('a[href="resources.html"]');
+      const link = document.createElement('a');
+      link.href = 'testimonials.html';
+      link.className = 'nav-btn px-4 py-2 rounded-full text-sm font-medium transition';
+      link.textContent = 'Testimonials';
+      if (resourceLink) resourceLink.insertAdjacentElement('afterend', link);
+      else desktopNav.appendChild(link);
+    }
+
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileMenu && !mobileMenu.querySelector('a[href="testimonials.html"]')) {
+      const link = document.createElement('a');
+      link.href = 'testimonials.html';
+      link.className = 'block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition';
+      link.textContent = 'Testimonials';
+      const contact = mobileMenu.querySelector('a[href="contact.html"]');
+      if (contact) contact.before(link); else mobileMenu.appendChild(link);
+    }
+  }
+
   function showMaintenance() {
     if (!state.cms?.settings?.maintenanceMode || document.querySelector('.cms-maintenance')) return;
     const bar = create('div', 'cms-maintenance', 'Site content is temporarily in maintenance mode.');
-    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:1000;padding:10px;text-align:center;background:#111;color:#fff;font-size:13px';
     document.body.appendChild(bar);
   }
 
@@ -110,7 +158,6 @@
     const card = create('article', 'material-card p-7 flex flex-col justify-between h-full');
     card.append(create('h3', 'font-bold text-heading', item.title));
     card.append(create('p', 'text-sm text-sec leading-relaxed mt-2 mb-6', item.description || ''));
-
     const drive = safeUrl(item.driveUrl || '', ['drive.google.com', 'docs.google.com']);
     if (drive) {
       const link = create('a', 'btn-secondary text-sm text-center', item.buttonText || 'Download');
@@ -131,7 +178,6 @@
     const main = document.querySelector('main');
     if (!main || !state.cms) return;
     main.replaceChildren();
-
     const intro = create('section', 'py-20 sm:py-28');
     intro.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', state.cms.settings.resourcesLabel));
     intro.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', state.cms.settings.resourcesHeading));
@@ -155,7 +201,7 @@
           iframe.allowFullscreen = true;
           videoArea.append(iframe);
         }
-      } catch { /* invalid content is ignored client-side; API validates writes */ }
+      } catch {}
     }
     videoBox.append(videoArea, create('h3', 'font-bold text-heading text-xl mt-5', video.title), create('p', 'text-sec text-sm mt-2 leading-relaxed', video.description));
     main.append(videoBox);
@@ -232,7 +278,6 @@
     meta.name = 'robots';
     meta.content = 'noindex,nofollow,noarchive,nosnippet';
     document.head.append(meta);
-
     const shell = create('div', 'min-h-screen flex items-center justify-center p-6 bg-gray-50');
     const card = create('div', 'material-card p-8 w-full max-w-md');
     card.append(create('div', 'text-sm font-semibold text-gold uppercase tracking-widest', 'Private Control Center'), create('h1', 'font-display text-3xl font-bold text-heading mt-2', 'Voice-O-Magic Admin'), create('p', 'text-sec text-sm mt-2', 'Authorized administrator access only.'));
@@ -260,8 +305,11 @@
   }
 
   function start() {
+    ensureSharedComponentsStyles();
     const saved = localStorage.getItem('vom-theme');
     setTheme(saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+    updateRequestedAcademyCopy();
+    addTestimonialsNavigation();
     if (new URLSearchParams(location.search).get('admin') === '1') {
       const meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex,nofollow,noarchive,nosnippet'; document.head.append(meta);
       adminLoginScreen(); return;
