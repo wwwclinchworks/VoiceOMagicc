@@ -1,0 +1,7 @@
+/* Voice-O-Magic private admin panel */
+.admin-input{width:100%;border:1px solid #dedbd2;border-radius:11px;padding:11px 13px;background:#fff;color:#171717;outline:none}.admin-input:focus{border-color:#c9a227;box-shadow:0 0 0 3px rgba(201,162,39,.12)}
+.admin-primary{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:0;border-radius:11px;padding:10px 15px;background:#c9a227;color:#fff;font-weight:700}.admin-primary:hover{background:#a88312}
+.admin-secondary{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1px solid #d5d1c8;border-radius:10px;padding:9px 13px;background:#fff;color:#2a2a2a;font-weight:600}.admin-secondary:hover{background:#faf9f6;border-color:#c7c0b4}
+.admin-modal-backdrop{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,15,13,.58);backdrop-filter:blur(4px)}
+.admin-modal{width:min(760px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;border:1px solid #d8d4ca;box-shadow:0 24px 80px rgba(0,0,0,.28)}
+.admin-toast{position:fixed;right:18px;bottom:18px;z-index:1100;max-width:min(420px,calc(100vw - 36px));border-radius:12px;padding:12px 14px;color:#fff;background:#111827;box-shadow:0 14px 44px rgba(0,0,0,.2)}
