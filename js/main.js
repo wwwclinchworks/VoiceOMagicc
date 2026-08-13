@@ -65,9 +65,51 @@
     alert("Speaker Kit download can be connected to your final PDF/resource URL.");
   };
 
+  function updateRequestedAcademyCopy() {
+    const replacements = [
+      ["Youth Academy & Phonetics", "Youth Academy & Confidence Skills"],
+      ["Phonetics & Foundations", "Foundations of Creating Content & Writing"]
+    ];
+
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) textNodes.push(node);
+
+    textNodes.forEach(textNode => {
+      let value = textNode.nodeValue;
+      replacements.forEach(([from, to]) => {
+        value = value.split(from).join(to);
+      });
+      if (value !== textNode.nodeValue) textNode.nodeValue = value;
+    });
+  }
+
+  function addTestimonialsNavigation() {
+    const desktopNav = document.querySelector('nav[aria-label="Main Navigation"]');
+    if (desktopNav && !desktopNav.querySelector('a[href="testimonials.html"]')) {
+      const link = document.createElement("a");
+      link.href = "testimonials.html";
+      link.className = "nav-btn px-4 py-2 rounded-full text-sm font-medium transition";
+      link.textContent = "Testimonials";
+      desktopNav.appendChild(link);
+    }
+
+    const mobileMenu = document.getElementById("mobileMenu");
+    if (mobileMenu && !mobileMenu.querySelector('a[href="testimonials.html"]')) {
+      const link = document.createElement("a");
+      link.href = "testimonials.html";
+      link.className = "block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition";
+      link.textContent = "Testimonials";
+      mobileMenu.insertBefore(link, mobileMenu.querySelector('a[href="contact.html"]'));
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const saved = localStorage.getItem("vom-theme");
     const dark = saved ? saved === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
     setTheme(dark);
+    updateRequestedAcademyCopy();
+    addTestimonialsNavigation();
   });
 })();
