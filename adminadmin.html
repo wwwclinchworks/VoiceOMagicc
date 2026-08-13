@@ -30,12 +30,12 @@
       document.documentElement.classList.toggle('dark',dark);
       try{localStorage.setItem('vom-theme',dark?'dark':'light')}catch{}
       document.querySelectorAll('[data-admin-theme-toggle]').forEach(function(btn){
-        btn.innerHTML=dark?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>';
+        btn.textContent=dark?'☀':'☾';
         btn.title=dark?'Switch to light mode':'Switch to dark mode';
         btn.setAttribute('aria-label',btn.title);
       });
     }
-    function initial(){try{const s=localStorage.getItem('vom-theme');if(s)return s==='dark'}catch{}return window.matchMedia('(prefers-color-scheme: dark)').matches}
+    function initial(){try{const s=localStorage.getItem('vom-theme');if(s)return s==='dark'}catch{}return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
     function ensure(){
       if(document.querySelector('[data-admin-theme-toggle]'))return;
       const save=document.getElementById('saveAll');

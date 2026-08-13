@@ -1,157 +1,29 @@
-(function(){
-'use strict';
-
-const state={cms:null,dirty:false};
-const esc=s=>String(s??'');
-const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e};
-
-async function api(mode,opt={}){
-  const r=await fetch('/api/chat?mode='+encodeURIComponent(mode),{cache:'no-store',...opt,headers:{...(opt.headers||{})}});
-  const body=await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error(body.error||'Request failed');
-  return body;
-}
-function toast(message,bad=false){
-  const t=el('div','fixed right-5 bottom-5 z-[100] max-w-md rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-xl',message);
-  t.style.background=bad?'#b42318':'#111827';document.body.append(t);setTimeout(()=>t.remove(),3200);
-}
-function markDirty(){state.dirty=true;const b=document.getElementById('saveAll');if(b){b.textContent='Save All Changes • Unsaved';b.disabled=false}}
-function markClean(){state.dirty=false;const b=document.getElementById('saveAll');if(b)b.textContent='Save All Changes'}
-function uid(){return globalThis.crypto?.randomUUID?crypto.randomUUID():'item-'+Date.now()+'-'+Math.random().toString(36).slice(2)}
-
-function login(){
-  document.body.innerHTML='';
-  document.title='Private Admin | Voice-O-Magic';
-  const shell=el('main','min-h-screen flex items-center justify-center p-6 bg-[#f7f6f2]');
-  const card=el('section','w-full max-w-md rounded-2xl bg-white p-8 shadow-xl border border-gray-200');
-  card.append(el('div','text-xs font-bold uppercase tracking-[0.18em] text-[#c9a227]','Private Control Center'),el('h1','text-3xl font-bold mt-2','Voice-O-Magic Admin'),el('p','text-sm text-gray-600 mt-2','Authorized administrator access only.'));
-  const form=el('form','space-y-4 mt-7');
-  const label=el('label','block');label.append(el('span','block text-sm font-semibold mb-1.5','Administrator password'));
-  const input=document.createElement('input');input.type='password';input.autocomplete='current-password';input.className='w-full border border-gray-300 rounded-xl px-3 py-3 outline-none focus:border-[#c9a227]';label.append(input);
-  const error=el('p','text-sm text-red-700');error.hidden=true;
-  const btn=el('button','w-full rounded-xl bg-[#111827] text-white py-3 font-semibold','Sign in');btn.type='submit';
-  form.append(label,error,btn);form.addEventListener('submit',async e=>{
-    e.preventDefault();error.hidden=true;btn.disabled=true;btn.textContent='Signing in…';
-    try{await api('admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:input.value})});const d=await api('admin-data');state.cms=d.cms;state.dirty=false;renderDashboard();}
-    catch(err){error.textContent=err.message;error.hidden=false;btn.disabled=false;btn.textContent='Sign in'}
-  });
-  card.append(form);shell.append(card);document.body.append(shell);
-}
-
-function textField(label,name,value,type='text',onInput){
-  const w=el('label','block');w.append(el('span','block text-sm font-semibold mb-1.5',label));
-  const i=document.createElement(type==='textarea'?'textarea':'input');
-  i.name=name;i.value=esc(value);i.className='w-full border border-gray-300 rounded-xl px-3 py-2.5 outline-none focus:border-[#c9a227]';
-  if(type==='textarea'){i.rows=4;i.classList.add('resize-y')}
-  if(onInput)i.addEventListener('input',()=>{onInput(i.value);markDirty()});
-  w.append(i);return w;
-}
-function checkbox(label,checked,onChange){const w=el('label','inline-flex items-center gap-2 text-sm font-semibold cursor-pointer');const i=document.createElement('input');i.type='checkbox';i.checked=Boolean(checked);i.addEventListener('change',()=>{onChange(i.checked);markDirty()});w.append(i,el('span','',label));return w}
-function primaryButton(text){const b=el('button','rounded-xl bg-[#111827] text-white px-4 py-2.5 font-semibold hover:opacity-90',text);b.type='button';return b}
-function secondaryButton(text){const b=el('button','rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-semibold hover:bg-gray-50',text);b.type='button';return b}
-
-function sectionMeta(key){return {resources:{title:'Resources',singular:'Resource',icon:'📄'},toolkit:{title:'Speaker Toolkit',singular:'Toolkit Item',icon:'🎤'},books:{title:'Books',singular:'Book',icon:'📚'}}[key]}
-function blankItem(key){
-  const base={id:uid(),title:'',description:'',buttonText:key==='books'?'Learn More':'Download',order:state.cms[key].length,published:true};
-  if(key==='books')Object.assign(base,{bookHeading:'',authors:'',categoryLabel:'',coverImageUrl:'',destinationUrl:''});
-  else base.driveUrl='';
-  return base;
-}
-function duplicateItem(key,item){const clone=JSON.parse(JSON.stringify(item));clone.id=uid();clone.title=clone.title?clone.title+' (Copy)':'New '+sectionMeta(key).singular;clone.order=state.cms[key].length;state.cms[key].push(clone);markDirty();renderLists();}
-function moveItem(key,index,dir){const list=state.cms[key];const target=index+dir;if(target<0||target>=list.length)return;const a=list[index],b=list[target];[a.order,b.order]=[b.order,a.order];markDirty();renderLists()}
-function togglePublish(key,item){item.published=!item.published;markDirty();renderLists()}
-function deleteItem(key,item){if(!confirm('Delete this item? This is not saved until you click Save All Changes.'))return;state.cms[key]=state.cms[key].filter(x=>x!==item);state.cms[key].forEach((x,i)=>x.order=i);markDirty();renderLists()}
-
-function openEditor(key,item){
-  const meta=sectionMeta(key);const overlay=el('div','fixed inset-0 z-[90] bg-black/50 p-4 md:p-8 overflow-y-auto');
-  const modal=el('section','max-w-3xl mx-auto rounded-2xl bg-white shadow-2xl');
-  const head=el('div','flex items-center justify-between gap-4 p-5 border-b border-gray-200');
-  head.append(el('div','',meta.icon+'  '+(item.title||'New '+meta.singular)), (()=>{const b=secondaryButton('Close');b.onclick=()=>overlay.remove();return b})());modal.append(head);
-  const body=el('div','p-5 space-y-4');
-  body.append(textField('Title','title',item.title,'text',v=>item.title=v));
-  if(key==='books'){
-    body.append(textField('Book heading','bookHeading',item.bookHeading,'text',v=>item.bookHeading=v));
-    body.append(textField('Author name(s)','authors',item.authors,'text',v=>item.authors=v));
-    body.append(textField('Category / label','categoryLabel',item.categoryLabel,'text',v=>item.categoryLabel=v));
-    body.append(textField('Description','description',item.description,'textarea',v=>item.description=v));
-    body.append(textField('Cover image HTTPS URL','coverImageUrl',item.coverImageUrl,'text',v=>item.coverImageUrl=v));
-    body.append(textField('Destination HTTPS URL','destinationUrl',item.destinationUrl,'text',v=>item.destinationUrl=v));
-    body.append(textField('Button text','buttonText',item.buttonText,'text',v=>item.buttonText=v));
-  }else{
-    body.append(textField('Description','description',item.description,'textarea',v=>item.description=v));
-    body.append(textField('Google Drive / Docs HTTPS URL','driveUrl',item.driveUrl,'text',v=>item.driveUrl=v));
-    body.append(textField('Button text','buttonText',item.buttonText,'text',v=>item.buttonText=v));
-  }
-  body.append(textField('Display order','order',item.order,'number',v=>{item.order=Number(v)||0}));
-  body.append(checkbox('Published',item.published,v=>item.published=v));
-  const actions=el('div','flex flex-wrap justify-end gap-2 p-5 border-t border-gray-200');
-  const save=primaryButton('Done');save.onclick=()=>{markDirty();overlay.remove();renderLists()};actions.append(save);modal.append(body,actions);overlay.append(modal);overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove()});document.body.append(overlay);
-}
-
-function itemCard(key,item,index){
-  const meta=sectionMeta(key);const card=el('article','rounded-2xl border border-gray-200 bg-white p-4 shadow-sm');
-  const top=el('div','flex flex-col md:flex-row md:items-start justify-between gap-3');
-  const summary=el('div','min-w-0');summary.append(el('div','font-bold text-lg truncate',item.title||'Untitled '+meta.singular),el('div','text-sm text-gray-500 mt-1',item.description||'No description yet.'));
-  const status=el('span','inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold '+(item.published?'bg-green-100 text-green-700':'bg-gray-100 text-gray-600'),item.published?'Published':'Hidden');summary.append(status);top.append(summary);
-  const buttons=el('div','flex flex-wrap gap-2 justify-end');
-  const edit=secondaryButton('Edit');edit.onclick=()=>openEditor(key,item);
-  const duplicate=secondaryButton('Duplicate');duplicate.onclick=()=>duplicateItem(key,item);
-  const toggle=secondaryButton(item.published?'Hide':'Publish');toggle.onclick=()=>togglePublish(key,item);
-  const up=secondaryButton('↑');up.title='Move up';up.disabled=index===0;up.onclick=()=>moveItem(key,index,-1);
-  const down=secondaryButton('↓');down.title='Move down';down.disabled=index===state.cms[key].length-1;down.onclick=()=>moveItem(key,index,1);
-  const del=secondaryButton('Delete');del.classList.add('text-red-700');del.onclick=()=>deleteItem(key,item);
-  buttons.append(edit,duplicate,toggle,up,down,del);top.append(buttons);card.append(top);return card;
-}
-
-function renderLists(){
-  Object.entries(sectionRefs).forEach(([key,ref])=>{
-    const list=ref.list;list.replaceChildren();
-    const items=[...state.cms[key]].sort((a,b)=>a.order-b.order);
-    if(!items.length){const empty=el('div','rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500','No items yet. Use Add '+sectionMeta(key).singular+' below.');list.append(empty)}
-    items.forEach((item,i)=>list.append(itemCard(key,item,i)));
-  });
-}
-const sectionRefs={};
-function buildSection(root,key){
-  const meta=sectionMeta(key);const sec=el('section','rounded-2xl bg-white border border-gray-200 shadow-sm p-5');
-  const head=el('div','flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between');
-  head.append(el('div','',meta.icon+'  '+meta.title));
-  const addTop=primaryButton('+ Add '+meta.singular);addTop.onclick=()=>openEditor(key,blankItem(key));head.append(addTop);sec.append(head);
-  const list=el('div','space-y-3 mt-5');sec.append(list);
-  const addBottom=secondaryButton('+ Add Another '+meta.singular);addBottom.classList.add('w-full','mt-4');addBottom.onclick=()=>openEditor(key,blankItem(key));sec.append(addBottom);
-  sectionRefs[key]={list};root.append(sec);
-}
-
-function renderPageSettings(root){
-  const sec=el('section','rounded-2xl bg-white border border-gray-200 shadow-sm p-5');sec.append(el('h2','text-2xl font-bold','Page Content'));
-  const grid=el('div','grid md:grid-cols-2 gap-4 mt-5');const s=state.cms.settings;
-  [['Resources label','resourcesLabel'],['Resources heading','resourcesHeading'],['Resources paragraph','resourcesParagraph','textarea'],['Extra paragraph','resourcesExtraParagraph','textarea'],['Toolkit heading','toolkitHeading'],['Toolkit description','toolkitDescription','textarea'],['Books label','booksLabel'],['Books heading','booksHeading'],['Books paragraph','booksParagraph','textarea']].forEach(([l,k,t])=>grid.append(textField(l,k,s[k],t||'text',v=>s[k]=v)));
-  grid.append(checkbox('Maintenance mode',s.maintenanceMode,v=>s.maintenanceMode=v));sec.append(grid);root.append(sec);
-}
-function renderVideo(root){
-  const sec=el('section','rounded-2xl bg-white border border-gray-200 shadow-sm p-5');sec.append(el('h2','text-2xl font-bold','Featured YouTube Video'));const v=state.cms.featuredVideo;const grid=el('div','grid md:grid-cols-2 gap-4 mt-5');
-  grid.append(textField('YouTube URL','url',v.url,'text',x=>v.url=x),textField('Video title','title',v.title,'text',x=>v.title=x),textField('Description','description',v.description,'textarea',x=>v.description=x),checkbox('Published',v.published,x=>v.published=x));sec.append(grid);root.append(sec);
-}
-function renderHistory(root){
-  const sec=el('section','rounded-2xl bg-white border border-gray-200 shadow-sm p-5');sec.append(el('h2','text-2xl font-bold','Version History'));
-  const rows=Array.isArray(state.cms.history)?state.cms.history.slice().reverse():[];
-  if(!rows.length)sec.append(el('p','text-sm text-gray-500 mt-3','No saved versions yet.'));
-  rows.forEach(v=>{const row=el('div','flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-gray-200 p-3 mt-3');row.append(el('div','text-sm text-gray-600',new Date(v.at).toLocaleString()));const b=secondaryButton('Restore');b.onclick=async()=>{if(!confirm('Restore this version?'))return;try{const d=await api('admin-restore',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({versionId:v.id})});state.cms=d.cms;state.dirty=false;renderDashboard();toast('Version restored.')}catch(e){toast(e.message,true)}};row.append(b);sec.append(row)});root.append(sec);
-}
-
-function renderDashboard(){
-  document.body.innerHTML='';document.title='Voice-O-Magic Admin';
-  const root=el('main','max-w-7xl mx-auto p-5 md:p-8 space-y-6');
-  const header=el('header','rounded-2xl bg-[#111827] text-white p-5 md:p-6 flex flex-col md:flex-row justify-between gap-4 items-start md:items-center');
-  const title=el('div','');title.append(el('div','text-xs font-bold uppercase tracking-[0.18em] text-[#d7bd62]','Private Control Center'),el('h1','text-2xl md:text-3xl font-bold mt-1','Voice-O-Magic CMS'),el('p','text-sm text-gray-300 mt-1','Edit public content without touching the website code.'));header.append(title);
-  const actions=el('div','flex flex-wrap gap-2');const save=primaryButton('Save All Changes');save.id='saveAll';const logout=secondaryButton('Logout');logout.classList.add('bg-white');actions.append(save,logout);header.append(actions);root.append(header);
-  const info=el('div','flex flex-wrap gap-3 text-sm');info.append(el('div','rounded-full bg-white border border-gray-200 px-3 py-1.5','Changes stay local until saved.'));if(state.dirty)info.append(el('div','rounded-full bg-amber-100 text-amber-800 px-3 py-1.5 font-semibold','Unsaved changes'));root.append(info);
-  const content=el('div','space-y-6');renderPageSettings(content);renderVideo(content);buildSection(content,'resources');buildSection(content,'toolkit');buildSection(content,'books');renderHistory(content);root.append(content);document.body.append(root);
-  renderLists();
-  save.onclick=async()=>{try{save.disabled=true;save.textContent='Saving…';const d=await api('admin-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cms:state.cms})});state.cms=d.cms;markClean();renderDashboard();toast('All changes saved successfully.')}catch(e){save.disabled=false;save.textContent='Save All Changes';toast(e.message,true)}};
-  logout.onclick=async()=>{try{await api('admin-logout',{method:'POST'})}finally{login()}};
-}
-
-(async()=>{try{const d=await api('admin-data');state.cms=d.cms;renderDashboard()}catch(e){login()}})();
-
+(function(){'use strict';
+const S={cms:null,dirty:false,versions:[]};
+const el=(t,c,x)=>{const n=document.createElement(t);if(c)n.className=c;if(x!==undefined)n.textContent=String(x);return n};
+const api=async(m,o={})=>{const r=await fetch('/api/chat?mode='+encodeURIComponent(m),{cache:'no-store',...o,headers:{...(o.headers||{})}});const b=await r.json().catch(()=>({}));if(!r.ok)throw Error(b.error||'Request failed');return b};
+const load=async()=>{const b=await api('admin-data');S.cms=b.cms;S.versions=Array.isArray(b.versions)?b.versions:[]};
+const dirty=()=>{S.dirty=true;const b=document.getElementById('saveAll');if(b){b.disabled=false;b.textContent='Save All Changes • Unsaved'}};
+const clean=()=>{S.dirty=false;const b=document.getElementById('saveAll');if(b)b.textContent='Save All Changes'};
+const toast=(m,bad=false)=>{const n=el('div','fixed right-5 bottom-5 z-[100] max-w-md rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-xl',m);n.style.background=bad?'#b42318':'#111827';document.body.append(n);setTimeout(()=>n.remove(),3200)};
+const primary=x=>{const b=el('button','btn-primary',x);b.type='button';return b};
+const secondary=x=>{const b=el('button','btn-secondary',x);b.type='button';return b};
+const meta=k=>({resources:['Resources','Resource','📄'],toolkit:['Speaker Toolkit','Toolkit Item','🎤'],books:['Books','Book','📚']})[k];
+const uid=()=>globalThis.crypto?.randomUUID?crypto.randomUUID():'item-'+Date.now();
+function login(){document.body.replaceChildren();document.title='Private Admin | Voice-O-Magic';const shell=el('main','min-h-screen flex items-center justify-center p-6 bg-theme'),card=el('section','material-card w-full max-w-md p-8');card.append(el('div','text-xs font-bold uppercase tracking-[0.18em] text-gold','Private Control Center'),el('h1','font-display text-3xl font-bold mt-2 text-heading','Voice-O-Magic Admin'),el('p','text-sm text-sec mt-2','Authorized administrator access only.'));const f=el('form','space-y-4 mt-7'),lab=el('label','block text-sm font-semibold text-sec','Administrator password'),i=document.createElement('input');i.type='password';i.autocomplete='current-password';i.required=true;i.className='md-input';lab.append(i);const err=el('p','text-sm text-red');err.hidden=true;const b=el('button','btn-primary w-full','Sign in');b.type='submit';f.append(lab,err,b);f.onsubmit=async e=>{e.preventDefault();err.hidden=true;b.disabled=true;b.textContent='Signing in…';try{await api('admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:i.value})});await load();render()}catch(x){err.textContent=x.message||'Login failed.';err.hidden=false;b.disabled=false;b.textContent='Sign in'}};card.append(f);shell.append(card);document.body.append(shell);i.focus()}
+function field(label,name,val,type,fn){const w=el('label','block');w.append(el('span','block text-sm font-semibold mb-1.5 text-sec',label));const i=document.createElement(type==='textarea'?'textarea':'input');i.value=String(val??'');i.className='md-input';if(type==='textarea')i.rows=4;i.addEventListener('input',()=>{fn(i.value);dirty()});w.append(i);return w}
+function check(label,val,fn){const w=el('label','inline-flex items-center gap-2 text-sm font-semibold text-sec cursor-pointer'),i=document.createElement('input');i.type='checkbox';i.checked=!!val;i.onchange=()=>{fn(i.checked);dirty()};w.append(i,el('span','',label));return w}
+function edit(k,item){const overlay=el('div','fixed inset-0 z-[90] bg-black/50 p-4 md:p-8 overflow-y-auto'),modal=el('section','material-card max-w-3xl mx-auto'),head=el('header','flex items-center justify-between gap-4 p-5 border-b border-theme');head.append(el('div','font-bold text-heading',meta(k)[2]+'  '+(item.title||'New '+meta(k)[1])));const close=secondary('Close');close.onclick=()=>overlay.remove();head.append(close);modal.append(head);const body=el('div','p-5 space-y-4');body.append(field('Title','title',item.title,'text',v=>item.title=v));if(k==='books')body.append(field('Book heading','bookHeading',item.bookHeading,'text',v=>item.bookHeading=v),field('Author name(s)','authors',item.authors,'text',v=>item.authors=v),field('Category / label','categoryLabel',item.categoryLabel,'text',v=>item.categoryLabel=v),field('Description','description',item.description,'textarea',v=>item.description=v),field('Cover image HTTPS URL','coverImageUrl',item.coverImageUrl,'text',v=>item.coverImageUrl=v),field('Destination HTTPS URL','destinationUrl',item.destinationUrl,'text',v=>item.destinationUrl=v));else body.append(field('Description','description',item.description,'textarea',v=>item.description=v),field('Google Drive / Docs HTTPS URL','driveUrl',item.driveUrl,'text',v=>item.driveUrl=v));body.append(field('Button text','buttonText',item.buttonText,'text',v=>item.buttonText=v),field('Display order','order',item.order,'number',v=>item.order=Number(v)||0),check('Published',item.published,v=>item.published=v));const foot=el('footer','flex justify-end p-5 border-t border-theme'),done=primary('Done');done.onclick=()=>{dirty();overlay.remove();lists()};foot.append(done);modal.append(body,foot);overlay.append(modal);overlay.onclick=e=>{if(e.target===overlay)overlay.remove()};document.body.append(overlay)}
+function itemCard(k,item,index){const card=el('article','material-card p-4'),top=el('div','flex flex-col md:flex-row md:items-start justify-between gap-3'),info=el('div','min-w-0');info.append(el('div','font-bold text-lg truncate text-heading',item.title||'Untitled '+meta(k)[1]),el('div','text-sm text-sec mt-1',item.description||'No description yet.'),el('span','inline-flex items-center rounded-full px-2.5 py-1 mt-2 text-xs font-bold '+(item.published?'bg-green-light text-green':'bg-gray-100 text-gray-600'),item.published?'Published':'Hidden'));top.append(info);const a=el('div','flex flex-wrap gap-2 justify-end'),e=secondary('Edit');e.onclick=()=>edit(k,item),d=secondary('Duplicate');d.onclick=()=>{const c=JSON.parse(JSON.stringify(item));c.id=uid();c.title=(c.title||'New '+meta(k)[1])+' (Copy)';c.order=S.cms[k].length;S.cms[k].push(c);dirty();lists()};p=secondary(item.published?'Hide':'Publish');p.onclick=()=>{item.published=!item.published;dirty();lists()};u=secondary('↑');u.disabled=index===0;u.onclick=()=>move(k,index,-1);dn=secondary('↓');dn.disabled=index===S.cms[k].length-1;dn.onclick=()=>move(k,index,1);del=secondary('Delete');del.classList.add('text-red');del.onclick=()=>{if(!confirm('Delete this item? This is not saved until Save All Changes.'))return;S.cms[k]=S.cms[k].filter(x=>x!==item);S.cms[k].forEach((x,i)=>x.order=i);dirty();lists()};a.append(e,d,p,u,dn,del);top.append(a);card.append(top);return card}
+function move(k,i,d){const l=S.cms[k],j=i+d;if(j<0||j>=l.length)return;[l[i].order,l[j].order]=[l[j].order,l[i].order];dirty();lists()}
+const refs={};
+function section(root,k){const box=el('section','material-card p-5'),head=el('div','flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between');head.append(el('div','font-bold text-heading',meta(k)[2]+'  '+meta(k)[0]));const add=primary('+ Add '+meta(k)[1]);add.onclick=()=>edit(k,blank(k));head.append(add);box.append(head);const list=el('div','space-y-3 mt-5');refs[k]={list};box.append(list);const more=secondary('+ Add Another '+meta(k)[1]);more.classList.add('w-full','mt-4');more.onclick=()=>edit(k,blank(k));box.append(more);root.append(box)}
+function blank(k){const x={id:uid(),title:'',description:'',buttonText:k==='books'?'Learn More':'Download',order:S.cms[k].length,published:true};if(k==='books')Object.assign(x,{bookHeading:'',authors:'',categoryLabel:'',coverImageUrl:'',destinationUrl:''});else x.driveUrl='';return x}
+function lists(){Object.entries(refs).forEach(([k,r])=>{r.list.replaceChildren();const items=[...S.cms[k]].sort((a,b)=>a.order-b.order);if(!items.length)r.list.append(el('div','rounded-xl border border-dashed border-theme p-8 text-center text-muted','No items yet. Use Add '+meta(k)[1]+' below.'));items.forEach((x,i)=>r.list.append(itemCard(k,x,i)))})}
+function settings(root){const box=el('section','material-card p-5');box.append(el('h2','text-2xl font-bold text-heading','Page Content'));const g=el('div','grid md:grid-cols-2 gap-4 mt-5'),s=S.cms.settings;[['Resources label','resourcesLabel'],['Resources heading','resourcesHeading'],['Resources paragraph','resourcesParagraph','textarea'],['Extra paragraph','resourcesExtraParagraph','textarea'],['Toolkit heading','toolkitHeading'],['Toolkit description','toolkitDescription','textarea'],['Books label','booksLabel'],['Books heading','booksHeading'],['Books paragraph','booksParagraph','textarea']].forEach(([l,k,t])=>g.append(field(l,k,s[k],t||'text',v=>s[k]=v)));g.append(check('Maintenance mode',s.maintenanceMode,v=>s.maintenanceMode=v));box.append(g);root.append(box)}
+function video(root){const box=el('section','material-card p-5');box.append(el('h2','text-2xl font-bold text-heading','Featured YouTube Video'));const v=S.cms.featuredVideo,g=el('div','grid md:grid-cols-2 gap-4 mt-5');g.append(field('YouTube URL','url',v.url,'text',x=>v.url=x),field('Video title','title',v.title,'text',x=>v.title=x),field('Description','description',v.description,'textarea',x=>v.description=x),check('Published',v.published,x=>v.published=x));box.append(g);root.append(box)}
+function history(root){const box=el('section','material-card p-5');box.append(el('h2','text-2xl font-bold text-heading','Version History'));if(!S.versions.length)box.append(el('p','text-sm text-muted mt-3','No CMS versions found in Git history.'));S.versions.forEach((v,i)=>{const row=el('div','flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-theme p-3 mt-3'),info=el('div','min-w-0');info.append(el('span','block text-sm font-semibold text-heading',v.at?new Date(v.at).toLocaleString():'Unknown time'),el('span','block text-xs text-muted mt-1 truncate',v.message||'CMS update'));row.append(info);const b=secondary(i===0?'Current':'Restore');b.disabled=i===0;b.onclick=async()=>{if(!confirm('Restore this version? The current content remains available in Git history.'))return;b.disabled=true;b.textContent='Restoring…';try{const r=await api('admin-restore',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({versionId:v.id})});S.cms=r.cms;S.dirty=false;await load();render();toast('Version restored.')}catch(e){b.disabled=false;b.textContent='Restore';toast(e.message,true)}};row.append(b);box.append(row)});root.append(box)}
+function render(){document.body.replaceChildren();document.title='Voice-O-Magic Admin';const root=el('main','max-w-7xl mx-auto p-5 md:p-8 space-y-6'),head=el('header','rounded-2xl bg-[#111827] text-white p-5 md:p-6 flex flex-col md:flex-row justify-between gap-4 items-start md:items-center'),title=el('div','');title.append(el('div','text-xs font-bold uppercase tracking-[0.18em] text-[#d7bd62]','Private Control Center'),el('h1','text-2xl md:text-3xl font-bold mt-1','Voice-O-Magic CMS'),el('p','text-sm text-gray-300 mt-1','Edit public content without touching the website code.'));head.append(title);const actions=el('div','flex flex-wrap gap-2'),save=primary('Save All Changes');save.id='saveAll';const logout=secondary('Logout');actions.append(save,logout);head.append(actions);root.append(head);const info=el('div','flex flex-wrap gap-3 text-sm');info.append(el('div','rounded-full bg-white border border-gray-200 px-3 py-1.5','Changes stay local until saved.'));if(S.dirty)info.append(el('div','rounded-full bg-amber-100 text-amber-800 px-3 py-1.5 font-semibold','Unsaved changes'));root.append(info);const content=el('div','space-y-6');settings(content);video(content);section(content,'resources');section(content,'toolkit');section(content,'books');history(content);root.append(content);document.body.append(root);lists();save.onclick=async()=>{save.disabled=true;save.textContent='Saving…';try{const r=await api('admin-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cms:S.cms})});S.cms=r.cms;await load();clean();render();toast('All changes saved successfully.')}catch(e){save.disabled=false;save.textContent='Save All Changes';toast(e.message,true)}};logout.onclick=async()=>{try{await api('admin-logout',{method:'POST'})}finally{S.cms=null;S.versions=[];S.dirty=false;login()}}}
+window.addEventListener('beforeunload',e=>{if(S.dirty){e.preventDefault();e.returnValue=''}});
+(async()=>{try{await load();render()}catch{login()}})();
 })();
