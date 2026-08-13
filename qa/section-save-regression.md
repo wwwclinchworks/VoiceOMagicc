@@ -1,0 +1,1 @@
+Admin CMS section-save regression checklist: saving one section must not discard unsaved edits in other sections; saving all persists every edited section; reloading after each save reflects persisted values; item add/edit/delete/reorder/publish operations remain local until their section is saved; authentication, origin checks, and server validation remain enforced.
