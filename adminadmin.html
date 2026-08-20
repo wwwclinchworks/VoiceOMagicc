@@ -7,7 +7,7 @@
   <meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
   <title>Private Admin | Voice-O-Magic</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <script>window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{gold:'var(--gold)'}}}};</script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +30,31 @@
     };
   })();
   </script>
-  <script src="js/admin.js"></script>
+  <script>
+  (async function(){
+    try{
+      const response=await fetch('js/admin.js',{cache:'no-store'});
+      if(!response.ok)throw new Error('Unable to load admin client.');
+      let source=await response.text();
+      source=source.replace(
+        "const sectionKeys={Page_Copy:'settings',Featured_Video:'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit',Books:'books'};",
+        "const sectionKeys={Page_Copy:'settings',Featured_Video:'featuredVideo',Resources:'resources','Speaker Toolkit':'toolkit',Books:'books'};"
+      );
+      const script=document.createElement('script');
+      script.textContent=source;
+      document.body.append(script);
+    }catch(error){
+      document.body.replaceChildren();
+      const box=document.createElement('main');
+      box.className='min-h-screen flex items-center justify-center p-6 text-center';
+      const message=document.createElement('p');
+      message.className='text-red font-semibold';
+      message.textContent=error.message||'Unable to load the admin console.';
+      box.append(message);
+      document.body.append(box);
+    }
+  })();
+  </script>
   <script>
   (function(){
     function apply(dark){
@@ -48,7 +72,6 @@
       shell.dataset.adminLogin='true';
       const card=document.createElement('section');
       card.className='material-card w-full max-w-md p-7 md:p-8';
-      card.innerHTML='';
       const eyebrow=document.createElement('div');
       eyebrow.className='text-xs font-bold uppercase tracking-[0.18em] text-gold';
       eyebrow.textContent='Private Control Center';
