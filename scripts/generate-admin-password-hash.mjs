@@ -5,7 +5,9 @@ const N = 32768;
 const r = 8;
 const p = 1;
 const KEY_LENGTH = 32;
-const MAXMEM = 32 * 1024 * 1024;
+// N * r * 128 bytes is ~32 MiB before OpenSSL overhead.
+// Node/OpenSSL needs headroom above that working set.
+const MAXMEM = 64 * 1024 * 1024;
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const ask = (question) => new Promise((resolve) => rl.question(question, resolve));
