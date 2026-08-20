@@ -15,6 +15,21 @@
   <link rel="stylesheet" href="css/components.css">
 </head>
 <body class="bg-theme text-main font-sans antialiased min-h-screen">
+  <script>
+  (function(){
+    const originalFetch=window.fetch.bind(window);
+    window.fetch=async function(input,init){
+      const response=await originalFetch(input,init);
+      try{
+        const url=typeof input==='string'?input:input?.url||'';
+        if(url.includes('mode=admin-data') && response.status===401){
+          window.__vomAdminUnauthorized=true;
+        }
+      }catch{}
+      return response;
+    };
+  })();
+  </script>
   <script src="js/admin.js"></script>
   <script>
   (function(){
@@ -25,6 +40,71 @@
     function initial(){try{const s=localStorage.getItem('vom-theme');if(s)return s==='dark'}catch{}return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
     apply(initial());
     window.addEventListener('vom-admin-theme-toggle',function(event){apply(Boolean(event.detail));});
+
+    function showLogin(){
+      if(document.querySelector('[data-admin-login]'))return;
+      const shell=document.createElement('main');
+      shell.className='min-h-screen flex items-center justify-center p-5 bg-theme';
+      shell.dataset.adminLogin='true';
+      const card=document.createElement('section');
+      card.className='material-card w-full max-w-md p-7 md:p-8';
+      card.innerHTML='';
+      const eyebrow=document.createElement('div');
+      eyebrow.className='text-xs font-bold uppercase tracking-[0.18em] text-gold';
+      eyebrow.textContent='Private Control Center';
+      const title=document.createElement('h1');
+      title.className='font-display text-3xl font-bold mt-2 text-heading';
+      title.textContent='Voice-O-Magic Admin';
+      const copy=document.createElement('p');
+      copy.className='text-sm text-sec mt-2';
+      copy.textContent='Authorized administrator access only.';
+      const form=document.createElement('form');
+      form.className='space-y-4 mt-7';
+      const label=document.createElement('label');
+      label.className='block text-sm font-semibold text-sec';
+      label.textContent='Administrator password';
+      const input=document.createElement('input');
+      input.type='password';
+      input.autocomplete='current-password';
+      input.required=true;
+      input.className='md-input mt-1.5';
+      label.append(input);
+      const error=document.createElement('p');
+      error.className='text-sm text-red';
+      error.hidden=true;
+      const button=document.createElement('button');
+      button.className='btn-primary w-full';
+      button.type='submit';
+      button.textContent='Sign in';
+      form.append(label,error,button);
+      form.addEventListener('submit',async function(event){
+        event.preventDefault();
+        error.hidden=true;
+        button.disabled=true;
+        button.textContent='Signing in…';
+        try{
+          const response=await fetch('/api/chat?mode=admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:input.value})});
+          const body=await response.json().catch(()=>({}));
+          if(!response.ok)throw new Error(body.error||'Login failed.');
+          location.reload();
+        }catch(err){
+          error.textContent=err.message||'Login failed.';
+          error.hidden=false;
+          button.disabled=false;
+          button.textContent='Sign in';
+        }
+      });
+      card.append(eyebrow,title,copy,form);
+      shell.append(card);
+      document.body.replaceChildren(shell);
+      input.focus();
+    }
+
+    function inspect(){
+      if(window.__vomAdminUnauthorized)showLogin();
+    }
+    inspect();
+    new MutationObserver(inspect).observe(document.body,{childList:true,subtree:true});
   })();
   </script>
 </body>
