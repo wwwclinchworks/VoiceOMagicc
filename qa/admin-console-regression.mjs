@@ -11,6 +11,7 @@ const admin=fs.readFileSync('adminadmin.html','utf8');
 const script=fs.readFileSync('js/admin.js','utf8');
 const api=fs.readFileSync('api/chat.js','utf8');
 for(const marker of ['js/admin.js','css/style.css','css/components.css'])if(!admin.includes(marker))failures.push(`Admin bootstrap missing ${marker}`);
+for(const marker of ['mode=admin-data','status===401','__vomAdminUnauthorized','data-admin-login','mode=admin-login','location.reload()'])if(!admin.includes(marker))failures.push(`Admin login bootstrap marker missing: ${marker}`);
 for(const marker of ['admin-login','admin-data','admin-save','admin-restore','admin-logout'])if(!api.includes(`mode==='${marker}'`))failures.push(`Admin API mode missing: ${marker}`);
 for(const marker of ['loadCms','saveSection','saveAll','historySection','renderDashboard','start'])if(!script.includes(`function ${marker}`)||!script.includes(`${marker}()`)&&marker==='start')failures.push(`Admin client flow missing: ${marker}`);
 if(!script.includes("document.body.replaceChildren()"))failures.push('Admin dashboard does not rebuild the page safely.');

@@ -21,3 +21,5 @@ jobs:
           node-version: 22
       - name: Run production QA checks
         run: node scripts/qa-check.mjs
+      - name: Run security smoke checks
+        run: node scripts/security-smoke.mjs
