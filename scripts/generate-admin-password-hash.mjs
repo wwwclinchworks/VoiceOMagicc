@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import readline from 'node:readline';
 
-const N = 32768;
+const N = 16384;
 const r = 8;
 const p = 1;
 const KEY_LENGTH = 32;
