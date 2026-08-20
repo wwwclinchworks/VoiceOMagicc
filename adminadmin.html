@@ -38,7 +38,7 @@
       let source=await response.text();
       source=source.replace(
         "const sectionKeys={Page_Copy:'settings',Featured_Video:'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit',Books:'books'};",
-        "const sectionKeys={Page_Copy:'settings',Featured_Video:'featuredVideo',Resources:'resources','Speaker Toolkit':'toolkit',Books:'books'};"
+        "const sectionKeys={Page_Copy:'settings','Page Copy':'settings',Featured_Video:'featuredVideo','Featured Video':'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit','Speaker Toolkit':'toolkit',Books:'books'};"
       );
       const script=document.createElement('script');
       script.textContent=source;
