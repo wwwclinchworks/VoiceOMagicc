@@ -1,1 +1,0 @@
-Admin save labels now map Page Copy, Featured Video, Resources, Speaker Toolkit, and Books to the corresponding CMS keys.
