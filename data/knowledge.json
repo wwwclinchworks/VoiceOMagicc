@@ -160,6 +160,19 @@
         "categoryLabel": "Copyrighted Resource",
         "coverImageUrl": "",
         "destinationUrl": "https://www.voiceomagic.com/contact.html"
+      },
+      {
+        "id": "fa8e88d7-7d4b-4891-a131-ebf5265718c7",
+        "title": "Test",
+        "description": "",
+        "buttonText": "Learn More",
+        "order": 2,
+        "published": true,
+        "bookHeading": "x",
+        "authors": "x",
+        "categoryLabel": "x",
+        "coverImageUrl": "",
+        "destinationUrl": ""
       }
     ],
     "weeklyHighlights": {
