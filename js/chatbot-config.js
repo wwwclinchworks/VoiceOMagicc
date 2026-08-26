@@ -14,12 +14,17 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   new MutationObserver(emit).observe(root,{attributes:true,attributeFilter:['class']});
 })();
 
-/* Public CMS content is read through the Cloudflare Worker so Admin changes are live without a redeploy. */
+/* Read live CMS content through the Cloudflare Worker so Admin changes do not require a redeploy. */
 (function(){
-  const script=document.createElement('script');
-  script.src='js/cms-live-bridge.js';
-  script.defer=false;
-  document.head.appendChild(script);
+  const LIVE_CMS_ENDPOINT='/api/chat?mode=public-cms';
+  const originalFetch=window.fetch.bind(window);
+  window.fetch=function(input,init){
+    const url=typeof input==='string'?input:input?.url||'';
+    if(url.startsWith('/data/knowledge.json?')){
+      return originalFetch(LIVE_CMS_ENDPOINT,{...(init||{}),cache:'no-store'});
+    }
+    return originalFetch(input,init);
+  };
 })();
 
 /* Weekly Highlights is loaded only on the Resources page. */
