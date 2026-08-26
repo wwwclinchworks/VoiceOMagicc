@@ -104,20 +104,6 @@
       "description": "Demo yt",
       "published": false
     },
-    "weeklyHighlights": {
-      "highlight1": {
-        "imageUrl": "https://drive.google.com/thumbnail?id=1e3dTQF3wsSGHK4kY3HgW7B__bUHv2WzV&sz=w2000",
-        "title": "",
-        "description": "",
-        "published": true
-      },
-      "highlight2": {
-        "imageUrl": "",
-        "title": "",
-        "description": "",
-        "published": false
-      }
-    },
     "resources": [
       {
         "id": "resource-vocal-warmup",
@@ -175,6 +161,20 @@
         "coverImageUrl": "",
         "destinationUrl": "https://www.voiceomagic.com/contact.html"
       }
-    ]
+    ],
+    "weeklyHighlights": {
+      "highlight1": {
+        "imageUrl": "https://drive.google.com/thumbnail?id=1e3dTQF3wsSGHK4kY3HgW7B__bUHv2WzV&sz=w2000",
+        "title": "",
+        "description": "",
+        "published": true
+      },
+      "highlight2": {
+        "imageUrl": "",
+        "title": "",
+        "description": "",
+        "published": false
+      }
+    }
   }
 }
