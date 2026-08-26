@@ -2,15 +2,15 @@
   'use strict';
 
   const ENDPOINT = '/api/weekly-highlights';
+  const CMS_ENDPOINT = '/api/chat?mode=admin-data';
   const DEFAULTS = {
-    highlight1: { imageUrl: '', title: '', description: '', published: true },
-    highlight2: { imageUrl: '', title: '', description: '', published: true }
+    highlight1: { imageUrl: '', title: '', description: '', published: false },
+    highlight2: { imageUrl: '', title: '', description: '', published: false }
   };
   let injected = false;
   let current = null;
 
   const clone = (value) => JSON.parse(JSON.stringify(value));
-  const text = (value) => String(value ?? '').trim();
   const validHttps = (value) => {
     try { return new URL(value).protocol === 'https:'; } catch { return false; }
   };
@@ -56,18 +56,17 @@
 
   function card(slot, item) {
     const wrapper = node('article', 'rounded-2xl border border-theme p-5 bg-theme/60');
-    const title = slot === 'highlight1' ? 'Highlight 1' : 'Highlight 2';
-    wrapper.append(node('h3', 'font-bold text-lg text-heading', title));
+    wrapper.append(node('h3', 'font-bold text-lg text-heading', slot === 'highlight1' ? 'Highlight 1' : 'Highlight 2'));
     wrapper.append(inputField('Image HTTPS URL', item, 'imageUrl', 'url', (value) => { item.imageUrl = value; rerender(); }));
     wrapper.append(preview(item));
-    wrapper.append(node('div', 'mt-4 space-y-4'));
-    const fields = wrapper.lastChild;
+    const fields = node('div', 'mt-4 space-y-4');
     fields.append(inputField('Title (optional)', item, 'title', 'text', (value) => { item.title = value; }));
     fields.append(inputField('Description (optional)', item, 'description', 'textarea', (value) => { item.description = value; }));
+    wrapper.append(fields);
     const publish = node('label', 'inline-flex items-center gap-2 text-sm font-semibold text-sec cursor-pointer mt-4');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = item.published !== false;
+    checkbox.checked = item.published === true;
     checkbox.addEventListener('change', () => { item.published = checkbox.checked; });
     publish.append(checkbox, node('span', '', 'Published'));
     wrapper.append(publish);
@@ -89,18 +88,6 @@
     grid.replaceChildren(card('highlight1', current.highlight1), card('highlight2', current.highlight2));
   }
 
-  async function request(method) {
-    const response = await fetch(ENDPOINT, {
-      method,
-      cache: 'no-store',
-      headers: method === 'PUT' ? { 'Content-Type': 'application/json' } : undefined,
-      body: method === 'PUT' ? JSON.stringify({ weeklyHighlights: current }) : undefined
-    });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.error || 'Weekly Highlights request failed.');
-    return body;
-  }
-
   async function save() {
     const button = document.querySelector('[data-weekly-save]');
     if (button) { button.disabled = true; button.textContent = 'Saving…'; }
@@ -109,7 +96,14 @@
         if (item.published && !validHttps(item.imageUrl)) throw new Error('Every published highlight needs a valid HTTPS image URL.');
         if (item.imageUrl && !validHttps(item.imageUrl)) throw new Error('Image URLs must use HTTPS.');
       }
-      const result = await request('PUT');
+      const response = await fetch(ENDPOINT, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weeklyHighlights: current }),
+        cache: 'no-store'
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Unable to save Weekly Highlights.');
       current = clone(result.weeklyHighlights);
       rerender();
       showToast('Weekly Highlights saved successfully.');
@@ -122,10 +116,11 @@
 
   async function load() {
     try {
-      const result = await request('GET');
-      current = clone(result.weeklyHighlights || DEFAULTS);
-    } catch (error) {
-      if (error.message === 'Unauthorized') return;
+      const response = await fetch(CMS_ENDPOINT, { cache: 'no-store' });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) return;
+      current = clone(result.cms?.weeklyHighlights || DEFAULTS);
+    } catch {
       current = clone(DEFAULTS);
     }
     render();
