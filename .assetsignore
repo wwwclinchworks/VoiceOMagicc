@@ -1,0 +1,9 @@
+worker.js
+wrangler.jsonc
+api/
+.github/
+.git/
+.gitignore
+README.md
+SECURITY.md
+vercel.json
