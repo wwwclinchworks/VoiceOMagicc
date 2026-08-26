@@ -367,7 +367,7 @@
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), CMS_TIMEOUT_MS);
     try {
-      const response = await fetch(`/data/knowledge.json?cms=${Date.now()}`, { cache: 'no-store', signal: controller.signal });
+      const response = await fetch('/api/chat?mode=public-cms', { cache: 'no-store', signal: controller.signal });
       if (!response.ok) return;
       const data = await response.json();
       if (!data || typeof data.cms !== 'object' || !data.cms) return;

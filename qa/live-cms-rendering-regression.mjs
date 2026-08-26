@@ -28,10 +28,10 @@ expect(mainJs.includes('state.cms.resources'), 'Resources renderer must consume 
 expect(mainJs.includes('state.cms.toolkit'), 'Resources renderer must consume toolkit from CMS.');
 expect(mainJs.includes('state.cms.books'), 'Books renderer must consume books from CMS.');
 expect(mainJs.includes('item.coverImageUrl'), 'Books renderer must consume coverImageUrl from CMS.');
-expect(mainJs.includes('fetch(`/data/knowledge.json?cms=${Date.now()}`'), 'Existing CMS fetch contract must remain covered by the live bridge.');
+expect(mainJs.includes("fetch('/api/chat?mode=public-cms'"), 'Main CMS renderer must read from the live Worker public-cms endpoint.');
 
 // Weekly Highlights must read the same live CMS source and be admin-wired.
-expect(weeklyJs.includes("/data/knowledge.json?weekly-highlights="), 'Weekly Highlights client must use the shared CMS data contract.');
+expect(weeklyJs.includes("/api/chat?mode=public-cms"), 'Weekly Highlights client must read from the live Worker public-cms endpoint.');
 expect(weeklyJs.includes('item.published === true'), 'Unpublished Weekly Highlights must stay hidden.');
 expect(weeklyJs.includes("url.protocol === 'https:'"), 'Weekly Highlights must require HTTPS image URLs.');
 expect(adminHtml.includes('js/weekly-highlights-admin.js'), 'Admin page must load Weekly Highlights controls.');
