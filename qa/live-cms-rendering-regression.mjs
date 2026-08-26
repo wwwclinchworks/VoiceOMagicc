@@ -22,6 +22,11 @@ expect(booksHtml.includes('js/chatbot-config.js'), 'books.html must load chatbot
 expect(chatbotConfig.includes("LIVE_CMS_ENDPOINT='/api/chat?mode=public-cms'"), 'chatbot-config.js must bridge CMS reads to the Worker public-cms endpoint.');
 expect(chatbotConfig.includes("url.startsWith('/data/knowledge.json?')"), 'live CMS bridge must intercept the static knowledge.json fetch used by page rendering.');
 
+// Weekly Highlights must be loaded deterministically after the live CMS renderer has replaced the static Resources page.
+expect(chatbotConfig.includes("script.src='/js/weekly-highlights.js'"), 'Resources page must load Weekly Highlights client code.');
+expect(chatbotConfig.includes("!document.getElementById('videoCover')"), 'Weekly Highlights loader must wait for the live CMS render.');
+expect(chatbotConfig.includes("data-vom-weekly-highlights"), 'Weekly Highlights loader must avoid duplicate script injection.');
+
 // Resource and book rendering must consume CMS-controlled fields.
 expect(mainJs.includes('state.cms.featuredVideo'), 'Resources renderer must consume featuredVideo from CMS.');
 expect(mainJs.includes('state.cms.resources'), 'Resources renderer must consume resources from CMS.');
