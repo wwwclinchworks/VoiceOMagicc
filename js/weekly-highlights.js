@@ -26,7 +26,7 @@
     if (!main || main.querySelector('[data-weekly-highlights]')) return;
 
     const items = [highlights?.highlight1, highlights?.highlight2]
-      .filter((item) => item && item.published !== false && safeImageUrl(item.imageUrl));
+      .filter((item) => item && item.published === true && safeImageUrl(item.imageUrl));
     if (!items.length) return;
 
     const section = create('section', 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 sm:mt-24');
@@ -82,10 +82,11 @@
     const timer = window.setInterval(() => {
       attempts += 1;
       const main = document.querySelector('main');
-      if (main?.children.length) {
+      const staticVideoCover = document.getElementById('videoCover');
+      if (main?.children.length && !staticVideoCover) {
         window.clearInterval(timer);
         load();
-      } else if (attempts >= 40) {
+      } else if (attempts >= 80) {
         window.clearInterval(timer);
       }
     }, 100);
