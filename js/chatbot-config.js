@@ -27,11 +27,32 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   };
 })();
 
-/* Weekly Highlights is loaded only on the Resources page. */
+/* Weekly Highlights is loaded only on Resources, after the CMS renderer has replaced the static page. */
 (function(){
   if(!location.pathname.endsWith('/resources.html'))return;
-  const script=document.createElement('script');
-  script.src='js/weekly-highlights.js';
-  script.defer=true;
-  document.head.appendChild(script);
+
+  const loadWeeklyHighlights=()=>{
+    if(document.querySelector('script[data-vom-weekly-highlights]'))return;
+    const script=document.createElement('script');
+    script.src='/js/weekly-highlights.js';
+    script.dataset.vomWeeklyHighlights='true';
+    script.onload=()=>window.dispatchEvent(new Event('vom-weekly-highlights-ready'));
+    script.onerror=()=>{};
+    document.head.appendChild(script);
+  };
+
+  const waitForLiveRender=()=>{
+    const main=document.querySelector('main');
+    if(main && !document.getElementById('videoCover')){
+      loadWeeklyHighlights();
+      return;
+    }
+    window.setTimeout(waitForLiveRender,100);
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',waitForLiveRender,{once:true});
+  }else{
+    waitForLiveRender();
+  }
 })();
