@@ -2,7 +2,7 @@ name: VoiceOMagic QA
 
 on:
   push:
-    branches: [main, 'agent/**']
+    branches: [main, 'agent/**', 'fix/**']
   pull_request:
     branches: [main]
 
@@ -23,6 +23,8 @@ jobs:
         run: node scripts/qa-check.mjs
       - name: Run security smoke checks
         run: node scripts/security-smoke.mjs
+      - name: Run live CMS rendering regression checks
+        run: node qa/live-cms-rendering-regression.mjs
       - name: Validate Cloudflare Worker syntax
         run: node --check worker.js
       - name: Validate Cloudflare Worker configuration
