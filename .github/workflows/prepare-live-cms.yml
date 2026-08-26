@@ -43,3 +43,4 @@ jobs:
           git add js/main.js
           git commit -m 'fix: render live CMS content and weekly highlights' || exit 0
           git push
+      # trigger a second workflow run so the patch commit is created
