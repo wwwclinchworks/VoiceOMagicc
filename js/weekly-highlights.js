@@ -3,7 +3,7 @@
 
   if (!location.pathname.endsWith('/resources.html')) return;
 
-  const CMS_URL = '/data/knowledge.json?weekly-highlights=' + Date.now();
+  const CMS_URL = '/api/chat?mode=public-cms';
 
   function create(tag, classes, text) {
     const node = document.createElement(tag);
