@@ -25,6 +25,8 @@ jobs:
         run: node scripts/security-smoke.mjs
       - name: Run live CMS rendering regression checks
         run: node qa/live-cms-rendering-regression.mjs
+      - name: Run Weekly Highlights API contract checks
+        run: node qa/weekly-highlights-api-contract.mjs
       - name: Validate Cloudflare Worker syntax
         run: node --check worker.js
       - name: Validate Cloudflare Worker configuration
