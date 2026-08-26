@@ -117,17 +117,12 @@ async function writeFile(data, sha) {
 export default async function handler(req, res) {
   securityHeaders(res);
   try {
+    if (req.method !== 'PUT') return json(res, 405, { error: 'Method not allowed.' });
     const length = Number.parseInt(String(req.headers['content-length'] || ''), 10);
     if (Number.isFinite(length) && length > MAX_BODY_BYTES) return json(res, 413, { error: 'Request body is too large.' });
     if (!originOk(req)) return json(res, 403, { error: 'Invalid request origin.' });
     if (!validCookie(req)) return json(res, 401, { error: 'Unauthorized' });
     if (!allowWindow(attempts, clientIp(req), WRITE_WINDOW, WRITE_LIMIT)) return json(res, 429, { error: 'Too many highlight updates. Try again shortly.' });
-
-    if (req.method === 'GET') {
-      const file = await readFile();
-      return json(res, 200, { weeklyHighlights: normalizeHighlights(file.data?.cms?.weeklyHighlights) });
-    }
-    if (req.method !== 'PUT') return json(res, 405, { error: 'Method not allowed.' });
 
     const weeklyHighlights = normalizeHighlights(req.body?.weeklyHighlights);
     const file = await readFile();
