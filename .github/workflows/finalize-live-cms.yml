@@ -1,0 +1,53 @@
+name: Finalize CMS live rendering fix
+on:
+  push:
+    branches: [fix/live-cms-rendering-complete-v2]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove duplicate highlight renderer and align regression checks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('js/main.js'); s=p.read_text()
+          helper="""  function highlightCard(item) {\n    const card = create('article', 'material-card overflow-hidden');\n    const imageUrl = safeUrl(item.imageUrl || '');\n    if (imageUrl) {\n      const image = document.createElement('img');\n      image.src = imageUrl;\n      image.alt = item.title || 'Weekly Highlight';\n      image.loading = 'lazy';\n      image.decoding = 'async';\n      image.referrerPolicy = 'no-referrer';\n      image.style.cssText = 'display:block;width:100%;aspect-ratio:4/3;object-fit:cover';\n      card.append(image);\n    }\n    const body = create('div', 'p-6');\n    body.append(create('h3', 'font-bold text-heading text-lg', item.title || 'Weekly Highlight'));\n    if (item.description) body.append(create('p', 'text-sm text-sec leading-relaxed mt-2', item.description));\n    card.append(body);\n    return card;\n  }\n\n"""
+          if helper not in s: raise SystemExit('highlight helper not found')
+          s=s.replace(helper,'',1)
+          block="""    const highlights = state.cms.weeklyHighlights || {};\n    const publishedHighlights = [highlights.highlight1, highlights.highlight2]\n      .filter((item) => item && item.published && safeUrl(item.imageUrl || ''));\n    if (publishedHighlights.length) {\n      const section = create('section', 'mt-16');\n      section.append(create('h2', 'font-display text-3xl font-bold text-heading', 'Weekly Highlights'));\n      const grid = create('div', 'grid grid-cols-1 md:grid-cols-2 gap-6 mt-7');\n      publishedHighlights.forEach((item) => grid.append(highlightCard(item)));\n      section.append(grid);\n      main.append(section);\n    }\n\n"""
+          if block not in s: raise SystemExit('highlight render block not found')
+          s=s.replace(block,'',1); p.write_text(s)
+
+          p=Path('js/weekly-highlights.js'); s=p.read_text()
+          old="const CMS_URL = '/data/knowledge.json?weekly-highlights=' + Date.now();"
+          new="const CMS_URL = '/api/chat?mode=public-cms';"
+          if old not in s: raise SystemExit('weekly CMS URL not found')
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('qa/live-cms-rendering-regression.mjs'); s=p.read_text()
+          old="expect(mainJs.includes('fetch(`/data/knowledge.json?cms=${Date.now()}`'), 'Existing CMS fetch contract must remain covered by the live bridge.');"
+          new="expect(mainJs.includes(\"fetch('/api/chat?mode=public-cms'\"), 'Main CMS renderer must read from the live Worker public-cms endpoint.');"
+          if old not in s: raise SystemExit('QA fetch assertion not found')
+          s=s.replace(old,new,1)
+          old2="expect(weeklyJs.includes(\"/data/knowledge.json?weekly-highlights=\"), 'Weekly Highlights client must use the shared CMS data contract.');"
+          new2="expect(weeklyJs.includes(\"/api/chat?mode=public-cms\"), 'Weekly Highlights client must read from the live Worker public-cms endpoint.');"
+          if old2 not in s: raise SystemExit('QA weekly assertion not found')
+          p.write_text(s.replace(old2,new2,1))
+          PY
+      - name: Verify syntax
+        run: |
+          node --check js/main.js
+          node --check js/weekly-highlights.js
+          node --check qa/live-cms-rendering-regression.mjs
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add js/main.js js/weekly-highlights.js qa/live-cms-rendering-regression.mjs
+          git commit -m 'fix: use live CMS endpoint for all public content' || exit 0
+          git push
