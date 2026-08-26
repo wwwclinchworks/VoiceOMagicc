@@ -13,3 +13,12 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   const emit=()=>document.dispatchEvent(new CustomEvent('vom-theme-changed',{detail:{dark:root.classList.contains('dark')}}));
   new MutationObserver(emit).observe(root,{attributes:true,attributeFilter:['class']});
 })();
+
+/* Weekly Highlights is loaded only on the Resources page. */
+(function(){
+  if(!location.pathname.endsWith('/resources.html'))return;
+  const script=document.createElement('script');
+  script.src='js/weekly-highlights.js';
+  script.defer=true;
+  document.head.appendChild(script);
+})();

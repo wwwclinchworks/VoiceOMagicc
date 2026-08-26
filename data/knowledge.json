@@ -104,6 +104,20 @@
       "description": "Demo yt",
       "published": false
     },
+    "weeklyHighlights": {
+      "highlight1": {
+        "imageUrl": "",
+        "title": "",
+        "description": "",
+        "published": false
+      },
+      "highlight2": {
+        "imageUrl": "",
+        "title": "",
+        "description": "",
+        "published": false
+      }
+    },
     "resources": [
       {
         "id": "resource-vocal-warmup",
