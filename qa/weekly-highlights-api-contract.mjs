@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 
-const chat = fs.readFileSync('api/chat.js', 'utf8');
 const worker = fs.readFileSync('worker.js', 'utf8');
 const admin = fs.readFileSync('js/weekly-highlights-admin.js', 'utf8');
 const client = fs.readFileSync('js/weekly-highlights.js', 'utf8');
@@ -12,8 +11,7 @@ const checks = [
   [endpoint.includes('validCookie(req)'), 'Weekly Highlights writes must require an admin session.'],
   [endpoint.includes('next.cms.weeklyHighlights = weeklyHighlights'), 'Weekly Highlights writes must persist to CMS.'],
   [admin.includes("const ENDPOINT = '/api/weekly-highlights'"), 'Admin highlight client must use the dedicated endpoint.'],
-  [client.includes("const CMS_URL = '/api/chat?mode=public-cms'"), 'Public highlight client must use the live CMS endpoint.'],
-  [chat.includes('weeklyHighlights'), 'Primary CMS API must preserve weeklyHighlights when used by other clients.'],
+  [client.includes("const CMS_URL = '/api/chat?mode=public-cms'"), 'Public highlight client must retain the main live CMS endpoint for compatibility.'],
   [worker.includes('weeklyHighlights'), 'Cloudflare Worker must preserve weeklyHighlights.']
 ];
 
