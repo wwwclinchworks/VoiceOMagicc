@@ -270,6 +270,26 @@
     return card;
   }
 
+  function highlightCard(item) {
+    const card = create('article', 'material-card overflow-hidden');
+    const imageUrl = safeUrl(item.imageUrl || '');
+    if (imageUrl) {
+      const image = document.createElement('img');
+      image.src = imageUrl;
+      image.alt = item.title || 'Weekly Highlight';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      image.referrerPolicy = 'no-referrer';
+      image.style.cssText = 'display:block;width:100%;aspect-ratio:4/3;object-fit:cover';
+      card.append(image);
+    }
+    const body = create('div', 'p-6');
+    body.append(create('h3', 'font-bold text-heading text-lg', item.title || 'Weekly Highlight'));
+    if (item.description) body.append(create('p', 'text-sm text-sec leading-relaxed mt-2', item.description));
+    card.append(body);
+    return card;
+  }
+
   function renderResources() {
     const main = document.querySelector('main');
     if (!main || !state.cms) return;
@@ -302,6 +322,18 @@
     }
     videoBox.append(videoArea, create('h3', 'font-bold text-heading text-xl mt-5', video.title || 'Featured Video'), create('p', 'text-sec text-sm mt-2 leading-relaxed', video.description || ''));
     main.append(videoBox);
+
+    const highlights = state.cms.weeklyHighlights || {};
+    const publishedHighlights = [highlights.highlight1, highlights.highlight2]
+      .filter((item) => item && item.published && safeUrl(item.imageUrl || ''));
+    if (publishedHighlights.length) {
+      const section = create('section', 'mt-16');
+      section.append(create('h2', 'font-display text-3xl font-bold text-heading', 'Weekly Highlights'));
+      const grid = create('div', 'grid grid-cols-1 md:grid-cols-2 gap-6 mt-7');
+      publishedHighlights.forEach((item) => grid.append(highlightCard(item)));
+      section.append(grid);
+      main.append(section);
+    }
 
     const resources = Array.isArray(state.cms.resources) ? state.cms.resources : [];
     const grid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-12');
@@ -367,7 +399,7 @@
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), CMS_TIMEOUT_MS);
     try {
-      const response = await fetch(`/data/knowledge.json?cms=${Date.now()}`, { cache: 'no-store', signal: controller.signal });
+      const response = await fetch('/api/chat?mode=public-cms', { cache: 'no-store', signal: controller.signal });
       if (!response.ok) return;
       const data = await response.json();
       if (!data || typeof data.cms !== 'object' || !data.cms) return;
