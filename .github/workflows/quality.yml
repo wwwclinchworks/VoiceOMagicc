@@ -23,3 +23,7 @@ jobs:
         run: node scripts/qa-check.mjs
       - name: Run security smoke checks
         run: node scripts/security-smoke.mjs
+      - name: Validate Cloudflare Worker syntax
+        run: node --check worker.js
+      - name: Validate Cloudflare Worker configuration
+        run: npx --yes wrangler@latest deploy --dry-run
