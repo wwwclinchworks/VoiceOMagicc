@@ -12,13 +12,13 @@ const PATH = process.env.CMS_GITHUB_PATH || 'data/knowledge.json';
 
 function json(res, status, body) { res.status(status).json(body); }
 function clean(value, max) { return String(value ?? '').replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, max); }
-function securityHeaders(res) {
-  res.setHeader('Cache-Control', 'no-store, max-age=0');
+function securityHeaders(res, publicResponse = false) {
+  res.setHeader('Cache-Control', publicResponse ? 'public, s-maxage=60, stale-while-revalidate=300' : 'no-store, max-age=0');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'no-referrer');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
-  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  res.setHeader('X-Robots-Tag', publicResponse ? 'index, follow' : 'noindex, nofollow');
 }
 function originOk(req) {
   const origin = req.headers.origin;
@@ -65,33 +65,19 @@ function normalizeHighlight(value) {
   const imageUrl = clean(value.imageUrl, 2000);
   const title = clean(value.title, 160);
   const description = clean(value.description, 1000);
-  const published = value.published !== false;
+  const published = value.published === true;
   if (imageUrl && !https(imageUrl)) throw Object.assign(new Error('Highlight image URL must use HTTPS.'), { status: 400 });
-  if (!imageUrl && published) throw Object.assign(new Error('A published highlight needs an image URL.'), { status: 400 });
+  if (published && !imageUrl) throw Object.assign(new Error('A published highlight needs an image URL.'), { status: 400 });
   return { imageUrl, title, description, published };
 }
 function normalizeHighlights(value) {
   const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
-  return {
-    highlight1: normalizeHighlight(source.highlight1 || {}),
-    highlight2: normalizeHighlight(source.highlight2 || {})
-  };
+  return { highlight1: normalizeHighlight(source.highlight1 || {}), highlight2: normalizeHighlight(source.highlight2 || {}) };
 }
 async function github(method, path, body) {
   const token = process.env.CMS_GITHUB_TOKEN;
   if (!token) throw Object.assign(new Error('CMS service unavailable.'), { status: 503 });
-  const response = await fetch(`https://api.github.com${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-      'User-Agent': 'Voice-O-Magic-CMS/1.0',
-      'Content-Type': 'application/json'
-    },
-    body: body ? JSON.stringify(body) : undefined,
-    signal: AbortSignal.timeout(10000)
-  });
+  const response = await fetch(`https://api.github.com${path}`, { method, headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'Voice-O-Magic-CMS/1.0', 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(10000) });
   const text = await response.text();
   let data;
   try { data = text ? JSON.parse(text) : null; } catch { data = null; }
@@ -101,30 +87,28 @@ async function github(method, path, body) {
 async function readFile() {
   const data = await github('GET', `/repos/${REPO}/contents/${PATH}?ref=${encodeURIComponent(BRANCH)}`);
   if (!data?.content || !data?.sha) throw Object.assign(new Error('CMS content is unavailable.'), { status: 503 });
-  try {
-    return { sha: data.sha, data: JSON.parse(Buffer.from(data.content.replace(/\n/g, ''), 'base64').toString('utf8')) };
-  } catch { throw Object.assign(new Error('CMS content is invalid.'), { status: 503 }); }
+  try { return { sha: data.sha, data: JSON.parse(Buffer.from(data.content.replace(/\n/g, ''), 'base64').toString('utf8')) }; }
+  catch { throw Object.assign(new Error('CMS content is invalid.'), { status: 503 }); }
 }
 async function writeFile(data, sha) {
   const content = Buffer.from(JSON.stringify(data, null, 2) + '\n').toString('base64');
-  return github('PUT', `/repos/${REPO}/contents/${PATH}`, {
-    message: 'cms: update weekly highlights',
-    content,
-    sha,
-    branch: BRANCH
-  });
+  return github('PUT', `/repos/${REPO}/contents/${PATH}`, { message: 'cms: update weekly highlights', content, sha, branch: BRANCH });
 }
 
 export default async function handler(req, res) {
-  securityHeaders(res);
+  securityHeaders(res, req.method === 'GET');
   try {
+    if (req.method === 'GET') {
+      const file = await readFile();
+      const highlights = normalizeHighlights(file.data?.cms?.weeklyHighlights);
+      return json(res, 200, { weeklyHighlights: highlights });
+    }
     if (req.method !== 'PUT') return json(res, 405, { error: 'Method not allowed.' });
     const length = Number.parseInt(String(req.headers['content-length'] || ''), 10);
     if (Number.isFinite(length) && length > MAX_BODY_BYTES) return json(res, 413, { error: 'Request body is too large.' });
     if (!originOk(req)) return json(res, 403, { error: 'Invalid request origin.' });
     if (!validCookie(req)) return json(res, 401, { error: 'Unauthorized' });
     if (!allowWindow(attempts, clientIp(req), WRITE_WINDOW, WRITE_LIMIT)) return json(res, 429, { error: 'Too many highlight updates. Try again shortly.' });
-
     const weeklyHighlights = normalizeHighlights(req.body?.weeklyHighlights);
     const file = await readFile();
     const next = file.data && typeof file.data === 'object' ? file.data : {};
@@ -134,6 +118,6 @@ export default async function handler(req, res) {
     return json(res, 200, { ok: true, weeklyHighlights });
   } catch (error) {
     const status = Number.isInteger(error?.status) ? error.status : 500;
-    return json(res, status, { error: status >= 500 ? 'Unable to update weekly highlights.' : (error.message || 'Request failed.') });
+    return json(res, status, { error: status >= 500 ? 'Unable to process Weekly Highlights.' : (error.message || 'Request failed.') });
   }
 }
