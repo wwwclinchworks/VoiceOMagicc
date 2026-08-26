@@ -4,13 +4,17 @@ const chat = fs.readFileSync('api/chat.js', 'utf8');
 const worker = fs.readFileSync('worker.js', 'utf8');
 const admin = fs.readFileSync('js/weekly-highlights-admin.js', 'utf8');
 const client = fs.readFileSync('js/weekly-highlights.js', 'utf8');
+const endpoint = fs.readFileSync('api/weekly-highlights.js', 'utf8');
 
 const checks = [
-  [chat.includes('weeklyHighlights'), 'Vercel/API CMS must preserve weeklyHighlights.'],
-  [chat.includes('function normalizeHighlight'), 'Vercel/API CMS must validate weekly highlight records.'],
-  [worker.includes('weeklyHighlights'), 'Cloudflare Worker must preserve weeklyHighlights.'],
-  [admin.includes("'/api/weekly-highlights'"), 'Admin highlight client must use the highlight write endpoint.'],
-  [client.includes("'/api/chat?mode=public-cms'"), 'Public highlight client must use the live CMS endpoint.']
+  [endpoint.includes("if (req.method === 'GET')"), 'Weekly Highlights endpoint must support public GET.'],
+  [endpoint.includes("if (req.method !== 'PUT')"), 'Weekly Highlights endpoint must keep PUT for admin writes.'],
+  [endpoint.includes('validCookie(req)'), 'Weekly Highlights writes must require an admin session.'],
+  [endpoint.includes('next.cms.weeklyHighlights = weeklyHighlights'), 'Weekly Highlights writes must persist to CMS.'],
+  [admin.includes("const ENDPOINT = '/api/weekly-highlights'"), 'Admin highlight client must use the dedicated endpoint.'],
+  [client.includes("const CMS_URL = '/api/chat?mode=public-cms'"), 'Public highlight client must use the live CMS endpoint.'],
+  [chat.includes('weeklyHighlights'), 'Primary CMS API must preserve weeklyHighlights when used by other clients.'],
+  [worker.includes('weeklyHighlights'), 'Cloudflare Worker must preserve weeklyHighlights.']
 ];
 
 for (const [ok, message] of checks) if (!ok) throw new Error(message);
