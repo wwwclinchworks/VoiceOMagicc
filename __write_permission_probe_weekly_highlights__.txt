@@ -1,1 +1,0 @@
-This temporary file is only a write-permission probe and should not exist in the repository.
