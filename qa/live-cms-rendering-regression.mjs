@@ -44,8 +44,9 @@ expect(mainJs.includes('bg-red-light'), 'Resource cards must include the request
 expect(mainJs.includes('videoContainer'), 'Featured video must keep a dedicated video container.');
 
 expect(resourcesLayout.includes("const RESOURCES_PATH = '/resources.html'"), 'Resources layout must target the canonical Resources page.');
-expect(resourcesLayout.includes('The Resources intro copy is intentionally removed'), 'Resources layout must document the intentional public intro removal.');
 expect(resourcesLayout.includes('intro.remove()'), 'Resources layout must remove the public Resources intro block.');
+expect(resourcesLayout.includes("'Event Organizer Speaker Toolkit'"), 'Resources layout must remove the legacy public Speaker Toolkit block.');
+expect(resourcesLayout.includes("'Speaker Toolkit'"), 'Resources layout must remove the generic public Speaker Toolkit block.');
 expect(resourcesLayout.includes("[highlights, video, resourcesGrid].forEach"), 'Resources layout must enforce Weekly Highlights → video → resources order.');
 expect(!resourcesLayout.includes('setInterval'), 'Resources layout must not use polling loops.');
 
