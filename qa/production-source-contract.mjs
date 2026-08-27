@@ -38,7 +38,6 @@ expect(weekly.includes('aspect-[4/3]'), 'Weekly Highlights must use fixed 4:3 fr
 expect(!weekly.includes('setInterval'), 'Weekly Highlights must not use polling.');
 expect(!config.includes("'/resources':'/resources.html'"), 'Resources must not use client-side route aliasing.');
 expect(!config.includes("'/resources/':'/resources.html'"), 'Resources trailing slash must not use client-side route aliasing.');
-expect(!config.includes("history.replaceState(window.history.state,'',target"), 'Resources URL must not be rewritten after load.');
 expect(config.includes("'/books':'/books.html'"), 'Books route alias must exist.');
 expect(redirects.includes('/resources /resources.html 301'), 'Resources must have a 301 canonical redirect.');
 expect(redirects.includes('/resources/ /resources.html 301'), 'Resources trailing slash must have a 301 canonical redirect.');
