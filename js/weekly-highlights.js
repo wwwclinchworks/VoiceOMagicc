@@ -24,8 +24,11 @@
     if (document.querySelector('[data-weekly-highlights]')) return;
 
     const items = [highlights?.highlight1, highlights?.highlight2]
-      .filter((item) => item && item.published === true && safeImageUrl(item.imageUrl));
+      .filter(item => item && item.published === true && safeImageUrl(item.imageUrl));
     if (!items.length) return;
+
+    const main = document.querySelector('main');
+    if (!main) return;
 
     const section = create('section', 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 sm:mt-24');
     section.dataset.weeklyHighlights = 'true';
@@ -40,7 +43,7 @@
     section.append(heading);
 
     const grid = create('div', 'grid grid-cols-1 md:grid-cols-2 gap-6');
-    items.forEach((item) => {
+    items.forEach(item => {
       const card = create('article', 'material-card overflow-hidden group');
       const image = document.createElement('img');
       image.src = safeImageUrl(item.imageUrl);
@@ -61,19 +64,18 @@
     });
     section.append(grid);
 
-    const footer = document.querySelector('footer');
-    if (footer?.parentElement) footer.parentElement.insertBefore(section, footer);
-    else document.body.appendChild(section);
+    // Append to end of main so it appears after all other content
+    main.appendChild(section);
   }
 
   async function load() {
     try {
-      const response = await fetch(CMS_URL, { cache: 'no-store', headers: { Accept: 'application/json' } });
+      const response = await fetch(CMS_URL, { cache: 'no-store' });
       if (!response.ok) return;
       const data = await response.json();
       render(data?.weeklyHighlights);
     } catch {
-      // Optional content; keep the Resources page usable if the endpoint is unavailable.
+      // Optional content; keep the Resources page usable.
     }
   }
 
