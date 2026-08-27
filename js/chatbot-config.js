@@ -7,6 +7,20 @@
  */
 window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SITE_NAME:"Voice-O-Magic"};
 
+/* Normalize extensionless public routes before main.js evaluates its page-specific CMS renderer. */
+(function(){
+  const aliases={
+    '/resources':'/resources.html',
+    '/resources/':'/resources.html',
+    '/books':'/books.html',
+    '/books/':'/books.html'
+  };
+  const target=aliases[window.location.pathname];
+  if(target && window.history && window.history.replaceState){
+    window.history.replaceState(window.history.state,'',target+window.location.search+window.location.hash);
+  }
+})();
+
 /* Keep the AI assistant synchronized with the shared light/dark theme. */
 (function(){
   const root=document.documentElement;
@@ -27,32 +41,17 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   };
 })();
 
-/* Weekly Highlights is loaded only on Resources, after the CMS renderer has replaced the static page. */
+/* Load Weekly Highlights independently of main-content replacement. */
 (function(){
-  if(!location.pathname.endsWith('/resources.html'))return;
-
+  if(!location.pathname.endsWith('/resources.html')) return;
   const loadWeeklyHighlights=()=>{
-    if(document.querySelector('script[data-vom-weekly-highlights]'))return;
+    if(document.querySelector('script[data-vom-weekly-highlights]')) return;
     const script=document.createElement('script');
     script.src='/js/weekly-highlights.js';
     script.dataset.vomWeeklyHighlights='true';
-    script.onload=()=>window.dispatchEvent(new Event('vom-weekly-highlights-ready'));
     script.onerror=()=>{};
     document.head.appendChild(script);
   };
-
-  const waitForLiveRender=()=>{
-    const main=document.querySelector('main');
-    if(main && !document.getElementById('videoCover')){
-      loadWeeklyHighlights();
-      return;
-    }
-    window.setTimeout(waitForLiveRender,100);
-  };
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',waitForLiveRender,{once:true});
-  }else{
-    waitForLiveRender();
-  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadWeeklyHighlights,{once:true});
+  else loadWeeklyHighlights();
 })();
