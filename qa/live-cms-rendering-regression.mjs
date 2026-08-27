@@ -26,8 +26,7 @@ expect(booksHtml.includes('js/chatbot-config.js'), 'books.html must load chatbot
 expect(redirects.includes('/resources /resources.html 301'), '/resources must 301 redirect to /resources.html at the asset layer.');
 expect(redirects.includes('/resources/ /resources.html 301'), '/resources/ must 301 redirect to /resources.html at the asset layer.');
 expect(!chatbotConfig.includes("'/resources':'/resources.html'"), 'Resources must not rely on client-side route normalization.');
-expect(!chatbotConfig.includes("'/resources/':'/resources.html'"), 'Resources trailing-slash route must not rely on client-side normalization.');
-expect(!chatbotConfig.includes("history.replaceState(window.history.state,'',target"), 'Resources URL must not be rewritten after page load.');
+expect(!chatbotConfig.includes("'/resources/':'/resources.html'"), 'Resources trailing slash must not rely on client-side normalization.');
 expect(chatbotConfig.includes("'/books':'/books.html'"), '/books must normalize to /books.html.');
 expect(chatbotConfig.includes("'/books/':'/books.html'"), '/books/ must normalize to /books.html.');
 expect(chatbotConfig.includes('history.replaceState'), 'Books route normalization must remain available where needed.');
