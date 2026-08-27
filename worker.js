@@ -16,53 +16,503 @@ const writeAttempts = new Map();
 
 const DEFAULT_CMS = {
   settings: {
-    resourcesLabel: 'Free Masterclass Vault', resourcesHeading: 'Resource of the Week', resourcesParagraph: "Watch this week's featured video and download instant guides, articulation checklists, and vocal warm-up frameworks.", resourcesExtraParagraph: '', toolkitHeading: 'Event Organizer Speaker Toolkit', toolkitDescription: "Download Shalini Mukund's Speaker One-Sheet, AV Technical Rider, and Press Kit.", booksLabel: 'Intellectual Property', booksHeading: 'Published Works', booksParagraph: 'Books authored by Shalini Mukund exploring human resilience, personal leadership, and practical parenting strategies.', maintenanceMode: false
+    resourcesLabel: 'Free Masterclass Vault',
+    resourcesHeading: 'Resource of the Week',
+    resourcesParagraph: "Watch this week's featured video and download instant guides, articulation checklists, and vocal warm-up frameworks.",
+    resourcesExtraParagraph: '',
+    toolkitHeading: 'Event Organizer Speaker Toolkit',
+    toolkitDescription: "Download Shalini Mukund's Speaker One-Sheet, AV Technical Rider, and Press Kit.",
+    booksLabel: 'Intellectual Property',
+    booksHeading: 'Published Works',
+    booksParagraph: 'Books authored by Shalini Mukund exploring human resilience, personal leadership, and practical parenting strategies.',
+    maintenanceMode: false
   },
-  featuredVideo: { url: 'https://www.youtube-nocookie.com/embed/KKNCiRWd_j0', title: 'What Is an AI Anyway?', description: 'A deep dive into communication, perception, and the evolving landscape of intelligence. Watch to glean insights on structured thought and presentation clarity.', published: true },
-  resources: [], toolkit: [], books: [],
-  weeklyHighlights: { highlight1: { imageUrl: '', title: '', description: '', published: false }, highlight2: { imageUrl: '', title: '', description: '', published: false } }
+  featuredVideo: {
+    url: 'https://www.youtube-nocookie.com/embed/KKNCiRWd_j0',
+    title: 'What Is an AI Anyway?',
+    description: 'A deep dive into communication, perception, and the evolving landscape of intelligence.',
+    published: true
+  },
+  resources: [],
+  toolkit: [],
+  books: [],
+  weeklyHighlights: {
+    highlight1: { imageUrl: '', title: '', description: '', published: false },
+    highlight2: { imageUrl: '', title: '', description: '', published: false }
+  }
 };
 
-function clean(value, max = 5000) { return String(value ?? '').replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, max); }
-function json(status, body, headers = {}) { return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...headers } }); }
+function clean(value, max = 5000) {
+  return String(value ?? '').replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, max);
+}
+
+function json(status, body, headers = {}) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...headers }
+  });
+}
+
 function security(response, api = false, admin = false) {
   const headers = new Headers(response.headers);
-  headers.set('X-Content-Type-Options', 'nosniff'); headers.set('X-Frame-Options', 'DENY'); headers.set('Referrer-Policy', api ? 'no-referrer' : 'strict-origin-when-cross-origin');
-  headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()'); headers.set('X-DNS-Prefetch-Control', 'off'); headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  headers.set('Content-Security-Policy', "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.github.com https://openrouter.ai; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com");
-  if (api) headers.set('Cache-Control', 'no-store, max-age=0'); if (admin) headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('X-Frame-Options', 'DENY');
+  headers.set('Referrer-Policy', api ? 'no-referrer' : 'strict-origin-when-cross-origin');
+  headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  headers.set('X-DNS-Prefetch-Control', 'off');
+  headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  headers.set('Content-Security-Policy',
+    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests; " +
+    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
+    "font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; " +
+    "connect-src 'self' https://api.github.com https://openrouter.ai; " +
+    "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com"
+  );
+  if (api) headers.set('Cache-Control', 'no-store, max-age=0');
+  if (admin) headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
-function originOk(request) { const origin = request.headers.get('Origin'); return Boolean(origin) && origin === new URL(request.url).origin; }
-function clientIp(request) { return (request.headers.get('CF-Connecting-IP') || request.headers.get('X-Real-IP') || request.headers.get('X-Forwarded-For')?.split(',')[0].trim() || 'unknown').slice(0, 128); }
-function bodyTooLarge(request) { const length = Number.parseInt(request.headers.get('Content-Length') || '', 10); return Number.isFinite(length) && length > MAX_BODY_BYTES; }
-function allowWindow(map, key, windowMs, limit) { const now = Date.now(); const current = map.get(key) || { count: 0, at: now }; if (now - current.at >= windowMs) { current.count = 0; current.at = now; } current.count += 1; map.set(key, current); return current.count <= limit; }
-function sign(payload, env) { if (!env.CMS_SESSION_SECRET || env.CMS_SESSION_SECRET.length < 32) throw new Error('CMS session secret is not configured.'); return crypto.createHmac('sha256', env.CMS_SESSION_SECRET).update(payload).digest('base64url'); }
-function makeCookie(env) { const payload = Buffer.from(JSON.stringify({ iat: Date.now(), n: crypto.randomUUID() })).toString('base64url'); return `${payload}.${sign(payload, env)}`; }
-function validCookie(request, env) { const header = request.headers.get('Cookie') || ''; const match = header.split(';').map((v) => v.trim()).find((v) => v.startsWith(`${SESSION_COOKIE}=`)); if (!match || !env.CMS_SESSION_SECRET) return false; const raw = match.slice(SESSION_COOKIE.length + 1); const [payload, signature] = raw.split('.'); if (!payload || !signature) return false; try { const expected = sign(payload, env); if (signature.length !== expected.length) return false; if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return false; const data = JSON.parse(Buffer.from(payload, 'base64url').toString()); return Number.isFinite(data.iat) && Date.now() - data.iat < SESSION_TTL_MS; } catch { return false; } }
-function cookieHeader(value) { return `${SESSION_COOKIE}=${value}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`; }
-function clearCookieHeader() { return `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`; }
-function httpsUrl(value) { try { return new URL(value).protocol === 'https:'; } catch { return false; } }
-function driveUrl(value) { try { const u = new URL(value); return u.protocol === 'https:' && ['drive.google.com', 'docs.google.com'].includes(u.hostname.toLowerCase()); } catch { return false; } }
-function youtubeEmbed(value) { try { const u = new URL(value); const host = u.hostname.toLowerCase(); let id = ''; if (host === 'youtu.be') id = u.pathname.slice(1).split('/')[0]; else if (host === 'youtube.com' || host === 'www.youtube.com') id = u.searchParams.get('v') || u.pathname.split('/')[2] || ''; else if (host === 'youtube-nocookie.com' || host === 'www.youtube-nocookie.com') id = u.pathname.split('/')[2] || ''; return /^[A-Za-z0-9_-]{11}$/.test(id) ? `https://www.youtube-nocookie.com/embed/${id}` : null; } catch { return null; } }
-function uid(value) { return /^[A-Za-z0-9_-]{8,80}$/.test(String(value || '')) ? String(value) : crypto.randomUUID(); }
-function normalizeItem(value, isBook = false) { if (!value || typeof value !== 'object' || Array.isArray(value)) throw Object.assign(new Error('Invalid CMS item.'), { status: 400 }); const out = { id: uid(value.id), title: clean(value.title, 200), description: clean(value.description, 1500), buttonText: clean(value.buttonText || (isBook ? 'Learn More' : 'Download PDF'), 60), order: Number.isInteger(value.order) ? value.order : 0, published: value.published !== false }; if (!out.title) throw Object.assign(new Error('Every item needs a title.'), { status: 400 }); if (isBook) { out.bookHeading = clean(value.bookHeading, 200); out.authors = clean(value.authors, 240); out.categoryLabel = clean(value.categoryLabel, 160); out.coverImageUrl = clean(value.coverImageUrl, 1000); out.destinationUrl = clean(value.destinationUrl, 2000); if (!out.authors) throw Object.assign(new Error('Every book needs author names.'), { status: 400 }); if (out.coverImageUrl && !httpsUrl(out.coverImageUrl)) throw Object.assign(new Error('Cover URL must use HTTPS.'), { status: 400 }); if (out.destinationUrl && !httpsUrl(out.destinationUrl)) throw Object.assign(new Error('Book destination must use HTTPS.'), { status: 400 }); } else { out.driveUrl = clean(value.driveUrl, 2000); if (out.driveUrl && !driveUrl(out.driveUrl)) throw Object.assign(new Error('Drive URL must be a Google Drive/Docs HTTPS URL.'), { status: 400 }); } return out; }
-function normalizeHighlight(value) { const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {}; const imageUrl = clean(source.imageUrl, 2000); const published = source.published === true; if (imageUrl && !httpsUrl(imageUrl)) throw Object.assign(new Error('Highlight image URL must use HTTPS.'), { status: 400 }); if (published && !imageUrl) throw Object.assign(new Error('A published highlight needs an image URL.'), { status: 400 }); return { imageUrl, title: clean(source.title, 160), description: clean(source.description, 1000), published }; }
-function normalizeHighlights(value) { const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {}; return { highlight1: normalizeHighlight(source.highlight1), highlight2: normalizeHighlight(source.highlight2) }; }
-function normalizeCms(input) { const source = input && typeof input === 'object' ? input : {}; const cms = { ...DEFAULT_CMS, ...source }; cms.settings = { ...DEFAULT_CMS.settings, ...(source.settings || {}) }; for (const [key, max] of Object.entries({ resourcesLabel: 120, resourcesHeading: 200, resourcesParagraph: 1500, resourcesExtraParagraph: 1500, toolkitHeading: 200, toolkitDescription: 1500, booksLabel: 120, booksHeading: 200, booksParagraph: 1500 })) cms.settings[key] = clean(cms.settings[key], max); cms.settings.maintenanceMode = Boolean(cms.settings.maintenanceMode); cms.featuredVideo = { url: youtubeEmbed(cms.featuredVideo?.url || DEFAULT_CMS.featuredVideo.url) || DEFAULT_CMS.featuredVideo.url, title: clean(cms.featuredVideo?.title, 160) || DEFAULT_CMS.featuredVideo.title, description: clean(cms.featuredVideo?.description, 1000), published: cms.featuredVideo?.published !== false }; cms.resources = (Array.isArray(cms.resources) ? cms.resources : []).map((x) => normalizeItem(x)); cms.toolkit = (Array.isArray(cms.toolkit) ? cms.toolkit : []).map((x) => normalizeItem(x)); cms.books = (Array.isArray(cms.books) ? cms.books : []).map((x) => normalizeItem(x, true)); cms.weeklyHighlights = normalizeHighlights(source.weeklyHighlights || DEFAULT_CMS.weeklyHighlights); return cms; }
-function publicSnapshot(cms) { const c = normalizeCms(cms); c.resources = c.resources.filter((x) => x.published); c.toolkit = c.toolkit.filter((x) => x.published); c.books = c.books.filter((x) => x.published); if (!c.featuredVideo.published) c.featuredVideo = null; return c; }
-function parsePasswordHash(value) { const parts = String(value || '').split('$'); if (parts.length !== 6 || parts[0] !== 'scrypt') return null; const n = Number(parts[1]); const r = Number(parts[2]); const p = Number(parts[3]); if (![n, r, p].every(Number.isInteger) || n < 16384 || n > 32768 || (n & (n - 1)) !== 0 || r < 8 || r > 16 || p < 1 || p > 2) return null; try { const salt = Buffer.from(parts[4], 'base64url'); const hash = Buffer.from(parts[5], 'base64url'); if (salt.length < 16 || salt.length > 64 || hash.length !== 32) return null; return { n, r, p, salt, hash }; } catch { return null; } }
-function verifyAdminPassword(password, env) { const parsed = parsePasswordHash(env.CMS_ADMIN_PASSWORD_HASH); if (!parsed) return false; const derived = crypto.scryptSync(password, parsed.salt, 32, { N: parsed.n, r: parsed.r, p: parsed.p, maxmem: PASSWORD_HASH_MAX_MEM }); return crypto.timingSafeEqual(derived, parsed.hash); }
-async function github(env, method, path, body) { if (!env.CMS_GITHUB_TOKEN) throw Object.assign(new Error('CMS service unavailable.'), { status: 503 }); const response = await fetch(`https://api.github.com${path}`, { method, headers: { Authorization: `Bearer ${env.CMS_GITHUB_TOKEN}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json', 'User-Agent': 'Voice-O-Magic-CMS/1.0' }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(10000) }); const text = await response.text(); let data = null; try { data = text ? JSON.parse(text) : null; } catch {} if (!response.ok) { const error = new Error('CMS storage request failed.'); error.status = response.status === 404 ? 404 : response.status >= 500 ? 503 : 502; throw error; } return data; }
-function repo(env) { return { repo: env.CMS_GITHUB_REPO || 'wwwclinchworks/VoiceOMagicc', branch: env.CMS_GITHUB_BRANCH || 'main', path: env.CMS_GITHUB_PATH || 'data/knowledge.json' }; }
-async function readFile(env, ref) { const { repo: r, branch, path } = repo(env); const d = await github(env, 'GET', `/repos/${r}/contents/${path}?ref=${encodeURIComponent(ref || branch)}`); if (!d?.content || !d?.sha) throw Object.assign(new Error('CMS content is unavailable.'), { status: 503 }); try { return { sha: d.sha, data: JSON.parse(Buffer.from(d.content.replace(/\n/g, ''), 'base64').toString('utf8')) }; } catch { throw Object.assign(new Error('CMS content is invalid.'), { status: 503 }); } }
-function writeFile(env, data, sha, message) { const { repo: r, branch, path } = repo(env); const content = Buffer.from(JSON.stringify(data, null, 2) + '\n').toString('base64'); return github(env, 'PUT', `/repos/${r}/contents/${path}`, { message, content, sha, branch }); }
-async function versions(env) { const { repo: r, branch, path } = repo(env); const commits = await github(env, 'GET', `/repos/${r}/commits?path=${encodeURIComponent(path)}&sha=${encodeURIComponent(branch)}&per_page=30`); if (!Array.isArray(commits)) return []; return commits.map((c) => ({ id: c.sha, at: c.commit?.author?.date || c.commit?.committer?.date || null, message: clean(c.commit?.message || 'CMS update', 160) })); }
-async function chat(request, env) { if (request.method !== 'POST') return security(json(405, { error: 'Method not allowed' }, { Allow: 'POST' }), true); if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true); if (!originOk(request)) return security(json(403, { error: 'Invalid request origin.' }), true); if (!allowWindow(chatAttempts, clientIp(request), CHAT_WINDOW_MS, CHAT_LIMIT)) return security(json(429, { error: 'Too many AI requests. Please try again shortly.' }), true); if (!env.OPENROUTER_API_KEY) return security(json(503, { error: 'AI service is temporarily unavailable.' }), true); const body = await request.json().catch(() => null); if (!body || typeof body !== 'object' || !Array.isArray(body.messages) || !body.messages.length) return security(json(400, { error: 'A messages array is required.' }), true); const messages = body.messages.filter((m) => m && ['user','assistant','system'].includes(m.role)).slice(-12).map((m) => ({ role: m.role, content: clean(m.content, 12000) })).filter((m) => m.content); if (!messages.length) return security(json(400, { error: 'No valid messages supplied.' }), true); const model = typeof body.model === 'string' && /^[A-Za-z0-9_./:-]{1,100}$/.test(body.model) ? body.model : 'openrouter/free'; const response = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { Authorization: `Bearer ${env.OPENROUTER_API_KEY}`, 'Content-Type': 'application/json', 'HTTP-Referer': new URL(request.url).origin, 'X-Title': 'Voice-O-Magic AI Study Coach' }, body: JSON.stringify({ model, messages }), signal: AbortSignal.timeout(20000) }); const text = await response.text(); if (!response.ok) return security(json(response.status >= 500 ? 502 : response.status, { error: 'AI provider request failed.' }), true); try { return security(json(200, JSON.parse(text)), true); } catch { return security(json(502, { error: 'AI provider returned invalid JSON.' }), true); } }
-async function api(request, env) { const url = new URL(request.url); if (url.pathname === '/api/chat') { const mode = url.searchParams.get('mode') || ''; try { if (mode === 'public-cms') { if (request.method !== 'GET') return security(json(405, { error: 'Method not allowed' }), true); const file = await readFile(env); return security(json(200, { cms: publicSnapshot(file.data?.cms) }), true); } if (mode === 'admin-login') { if (request.method !== 'POST' || !originOk(request)) return security(json(405, { error: 'Method not allowed' }), true, true); if (!env.CMS_ADMIN_PASSWORD_HASH || !env.CMS_SESSION_SECRET || env.CMS_SESSION_SECRET.length < 32) return security(json(503, { error: 'Admin authentication is temporarily unavailable.' }), true, true); if (!allowWindow(attempts, clientIp(request), LOGIN_WINDOW_MS, LOGIN_LIMIT)) return security(json(429, { error: 'Too many login attempts. Try again later.' }), true, true); if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true, true); const body = await request.json().catch(() => null); const password = clean(body?.password, 500); if (!password) return security(json(400, { error: 'Password is required.' }), true, true); if (!verifyAdminPassword(password, env)) return security(json(401, { error: 'Invalid password.' }), true, true); return security(json(200, { ok: true }, { 'Set-Cookie': cookieHeader(makeCookie(env)) }), true, true); } if (mode === 'admin-logout') { if (request.method !== 'POST' || !originOk(request)) return security(json(405, { error: 'Method not allowed' }), true, true); return security(json(200, { ok: true }, { 'Set-Cookie': clearCookieHeader() }), true, true); } if (mode === 'admin-data') { if (request.method !== 'GET' || !validCookie(request, env)) return security(json(401, { error: 'Unauthorized' }), true, true); const file = await readFile(env); return security(json(200, { cms: normalizeCms(file.data?.cms), versions: await versions(env) }), true, true); } if (mode === 'admin-save') { if (request.method !== 'POST' || !validCookie(request, env)) return security(json(401, { error: 'Unauthorized' }), true, true); if (!originOk(request)) return security(json(403, { error: 'Invalid request origin.' }), true, true); if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true, true); const body = await request.json().catch(() => null); if (!body?.cms || typeof body.cms !== 'object') return security(json(400, { error: 'CMS payload is required.' }), true, true); const file = await readFile(env); file.data.cms = normalizeCms(body.cms); await writeFile(env, file.data, file.sha, 'cms: update Voice-O-Magic content'); return security(json(200, { ok: true, cms: file.data.cms }), true, true); } if (mode === 'admin-restore') { if (request.method !== 'POST' || !validCookie(request, env)) return security(json(401, { error: 'Unauthorized' }), true, true); if (!originOk(request)) return security(json(403, { error: 'Invalid request origin.' }), true, true); const body = await request.json().catch(() => null); const versionId = String(body?.versionId || ''); if (!/^[a-f0-9]{40}$/i.test(versionId)) return security(json(400, { error: 'Invalid version.' }), true, true); const [current, version] = await Promise.all([readFile(env), readFile(env, versionId)]); current.data.cms = normalizeCms(version.data?.cms); await writeFile(env, current.data, current.sha, 'cms: restore Voice-O-Magic content version'); return security(json(200, { ok: true, cms: current.data.cms }), true, true); } if (mode) return security(json(404, { error: 'Unknown mode' }), true); } catch (error) { const status = Number.isInteger(error?.status) ? error.status : 500; return security(json(status, { error: status >= 500 ? 'Unable to complete the CMS request.' : (error.message || 'Request failed.') }), true, status < 500); }
-  return chat(request, env); }
-  if (url.pathname === '/api/weekly-highlights') { try { if (!validCookie(request, env)) return security(json(401, { error: 'Unauthorized' }), true, true); if (request.method === 'PUT' && !originOk(request)) return security(json(403, { error: 'Invalid request origin.' }), true, true); if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true, true); if (!allowWindow(writeAttempts, clientIp(request), WRITE_WINDOW_MS, WRITE_LIMIT)) return security(json(429, { error: 'Too many highlight updates. Try again shortly.' }), true, true); const file = await readFile(env); if (request.method === 'GET') return security(json(200, { weeklyHighlights: normalizeHighlights(file.data?.cms?.weeklyHighlights) }), true, true); if (request.method !== 'PUT') return security(json(405, { error: 'Method not allowed.' }, { Allow: 'GET, PUT' }), true, true); const body = await request.json().catch(() => null); file.data.cms = file.data.cms && typeof file.data.cms === 'object' ? file.data.cms : {}; file.data.cms.weeklyHighlights = normalizeHighlights(body?.weeklyHighlights); await writeFile(env, file.data, file.sha, 'cms: update weekly highlights'); return security(json(200, { ok: true, weeklyHighlights: file.data.cms.weeklyHighlights }), true, true); } catch (error) { const status = Number.isInteger(error?.status) ? error.status : 500; return security(json(status, { error: status >= 500 ? 'Unable to update weekly highlights.' : (error.message || 'Request failed.') }), true, true); } }
+
+function originOk(request) {
+  const origin = request.headers.get('Origin');
+  return Boolean(origin) && origin === new URL(request.url).origin;
+}
+
+function clientIp(request) {
+  return (request.headers.get('CF-Connecting-IP') ||
+    request.headers.get('X-Real-IP') ||
+    request.headers.get('X-Forwarded-For')?.split(',')[0].trim() ||
+    'unknown').slice(0, 128);
+}
+
+function bodyTooLarge(request) {
+  const length = Number.parseInt(request.headers.get('Content-Length') || '', 10);
+  return Number.isFinite(length) && length > MAX_BODY_BYTES;
+}
+
+function allowWindow(map, key, windowMs, limit) {
+  const now = Date.now();
+  const current = map.get(key) || { count: 0, at: now };
+  if (now - current.at >= windowMs) { current.count = 0; current.at = now; }
+  current.count += 1;
+  map.set(key, current);
+  return current.count <= limit;
+}
+
+function sign(payload, env) {
+  if (!env.CMS_SESSION_SECRET || env.CMS_SESSION_SECRET.length < 32)
+    throw new Error('CMS session secret is not configured.');
+  return crypto.createHmac('sha256', env.CMS_SESSION_SECRET).update(payload).digest('base64url');
+}
+
+function makeCookie(env) {
+  const payload = Buffer.from(JSON.stringify({ iat: Date.now(), n: crypto.randomUUID() })).toString('base64url');
+  return `${payload}.${sign(payload, env)}`;
+}
+
+function validCookie(request, env) {
+  const header = request.headers.get('Cookie') || '';
+  const match = header.split(';').map(v => v.trim()).find(v => v.startsWith(`${SESSION_COOKIE}=`));
+  if (!match || !env.CMS_SESSION_SECRET) return false;
+  const raw = match.slice(SESSION_COOKIE.length + 1);
+  const [payload, signature] = raw.split('.');
+  if (!payload || !signature) return false;
+  try {
+    const expected = sign(payload, env);
+    if (signature.length !== expected.length) return false;
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return false;
+    const data = JSON.parse(Buffer.from(payload, 'base64url').toString());
+    return Number.isFinite(data.iat) && Date.now() - data.iat < SESSION_TTL_MS;
+  } catch { return false; }
+}
+
+function cookieHeader(value) {
+  return `${SESSION_COOKIE}=${value}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`;
+}
+
+function clearCookieHeader() {
+  return `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
+}
+
+function httpsUrl(value) {
+  try { return new URL(value).protocol === 'https:'; } catch { return false; }
+}
+
+function driveUrl(value) {
+  try {
+    const u = new URL(value);
+    return u.protocol === 'https:' && ['drive.google.com', 'docs.google.com'].includes(u.hostname.toLowerCase());
+  } catch { return false; }
+}
+
+function youtubeEmbed(value) {
+  try {
+    const u = new URL(value);
+    const host = u.hostname.toLowerCase();
+    let id = '';
+    if (host === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
+    else if (host === 'youtube.com' || host === 'www.youtube.com')
+      id = u.searchParams.get('v') || u.pathname.split('/')[2] || '';
+    else if (host === 'youtube-nocookie.com' || host === 'www.youtube-nocookie.com')
+      id = u.pathname.split('/')[2] || '';
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+  } catch { return null; }
+}
+
+function uid(value) {
+  return /^[A-Za-z0-9_-]{8,80}$/.test(String(value || '')) ? String(value) : crypto.randomUUID();
+}
+
+function normalizeItem(value, isBook = false) {
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw Object.assign(new Error('Invalid CMS item.'), { status: 400 });
+  const out = {
+    id: uid(value.id),
+    title: clean(value.title, 200),
+    description: clean(value.description, 1500),
+    buttonText: clean(value.buttonText || (isBook ? 'Learn More' : 'Download PDF'), 60),
+    order: Number.isInteger(value.order) ? value.order : 0,
+    published: value.published !== false
+  };
+  if (!out.title) throw Object.assign(new Error('Every item needs a title.'), { status: 400 });
+  if (isBook) {
+    out.bookHeading = clean(value.bookHeading, 200);
+    out.authors = clean(value.authors, 240);
+    out.categoryLabel = clean(value.categoryLabel, 160);
+    out.coverImageUrl = clean(value.coverImageUrl, 1000);
+    out.destinationUrl = clean(value.destinationUrl, 2000);
+    if (!out.authors) throw Object.assign(new Error('Every book needs author names.'), { status: 400 });
+    if (out.coverImageUrl && !httpsUrl(out.coverImageUrl))
+      throw Object.assign(new Error('Cover URL must use HTTPS.'), { status: 400 });
+    if (out.destinationUrl && !httpsUrl(out.destinationUrl))
+      throw Object.assign(new Error('Book destination must use HTTPS.'), { status: 400 });
+  } else {
+    out.driveUrl = clean(value.driveUrl, 2000);
+    if (out.driveUrl && !driveUrl(out.driveUrl))
+      throw Object.assign(new Error('Drive URL must be a Google Drive/Docs HTTPS URL.'), { status: 400 });
+  }
+  return out;
+}
+
+function normalizeHighlight(value) {
+  const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  const imageUrl = clean(source.imageUrl, 2000);
+  const published = source.published === true;
+  if (imageUrl && !httpsUrl(imageUrl))
+    throw Object.assign(new Error('Highlight image URL must use HTTPS.'), { status: 400 });
+  if (published && !imageUrl)
+    throw Object.assign(new Error('A published highlight needs an image URL.'), { status: 400 });
+  return { imageUrl, title: clean(source.title, 160), description: clean(source.description, 1000), published };
+}
+
+function normalizeHighlights(value) {
+  const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  return { highlight1: normalizeHighlight(source.highlight1), highlight2: normalizeHighlight(source.highlight2) };
+}
+
+function normalizeCms(input) {
+  const source = input && typeof input === 'object' ? input : {};
+  const cms = { ...DEFAULT_CMS, ...source };
+  cms.settings = { ...DEFAULT_CMS.settings, ...(source.settings || {}) };
+  for (const [key, max] of Object.entries({
+    resourcesLabel: 120, resourcesHeading: 200, resourcesParagraph: 1500,
+    resourcesExtraParagraph: 1500, toolkitHeading: 200, toolkitDescription: 1500,
+    booksLabel: 120, booksHeading: 200, booksParagraph: 1500
+  })) cms.settings[key] = clean(cms.settings[key], max);
+  cms.settings.maintenanceMode = Boolean(cms.settings.maintenanceMode);
+  cms.featuredVideo = {
+    url: youtubeEmbed(cms.featuredVideo?.url || DEFAULT_CMS.featuredVideo.url) || DEFAULT_CMS.featuredVideo.url,
+    title: clean(cms.featuredVideo?.title, 160) || DEFAULT_CMS.featuredVideo.title,
+    description: clean(cms.featuredVideo?.description, 1000),
+    published: cms.featuredVideo?.published !== false
+  };
+  cms.resources = (Array.isArray(cms.resources) ? cms.resources : []).map(x => normalizeItem(x));
+  cms.toolkit = (Array.isArray(cms.toolkit) ? cms.toolkit : []).map(x => normalizeItem(x));
+  cms.books = (Array.isArray(cms.books) ? cms.books : []).map(x => normalizeItem(x, true));
+  cms.weeklyHighlights = normalizeHighlights(source.weeklyHighlights || DEFAULT_CMS.weeklyHighlights);
+  return cms;
+}
+
+function publicSnapshot(cms) {
+  const c = normalizeCms(cms);
+  c.resources = c.resources.filter(x => x.published);
+  c.toolkit = c.toolkit.filter(x => x.published);
+  c.books = c.books.filter(x => x.published);
+  if (!c.featuredVideo.published) c.featuredVideo = null;
+  return c;
+}
+
+function parsePasswordHash(value) {
+  const parts = String(value || '').split('$');
+  if (parts.length !== 6 || parts[0] !== 'scrypt') return null;
+  const n = Number(parts[1]), r = Number(parts[2]), p = Number(parts[3]);
+  if (![n, r, p].every(Number.isInteger) || n < 16384 || n > 32768 || (n & (n - 1)) !== 0 || r < 8 || r > 16 || p < 1 || p > 2)
+    return null;
+  try {
+    const salt = Buffer.from(parts[4], 'base64url');
+    const hash = Buffer.from(parts[5], 'base64url');
+    if (salt.length < 16 || salt.length > 64 || hash.length !== 32) return null;
+    return { n, r, p, salt, hash };
+  } catch { return null; }
+}
+
+function verifyAdminPassword(password, env) {
+  const parsed = parsePasswordHash(env.CMS_ADMIN_PASSWORD_HASH);
+  if (!parsed) return false;
+  const derived = crypto.scryptSync(password, parsed.salt, 32, {
+    N: parsed.n, r: parsed.r, p: parsed.p, maxmem: PASSWORD_HASH_MAX_MEM
+  });
+  return crypto.timingSafeEqual(derived, parsed.hash);
+}
+
+async function github(env, method, path, body) {
+  if (!env.CMS_GITHUB_TOKEN)
+    throw Object.assign(new Error('CMS service unavailable.'), { status: 503 });
+  const response = await fetch(`https://api.github.com${path}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${env.CMS_GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+      'User-Agent': 'Voice-O-Magic-CMS/1.0'
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(10000)
+  });
+  const text = await response.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch {}
+  if (!response.ok) {
+    const error = new Error('CMS storage request failed.');
+    error.status = response.status === 404 ? 404 : response.status >= 500 ? 503 : 502;
+    throw error;
+  }
+  return data;
+}
+
+function repo(env) {
+  return {
+    repo: env.CMS_GITHUB_REPO || 'wwwclinchworks/VoiceOMagicc',
+    branch: env.CMS_GITHUB_BRANCH || 'main',
+    path: env.CMS_GITHUB_PATH || 'data/knowledge.json'
+  };
+}
+
+async function readFile(env, ref) {
+  const { repo: r, branch, path } = repo(env);
+  const d = await github(env, 'GET', `/repos/${r}/contents/${path}?ref=${encodeURIComponent(ref || branch)}`);
+  if (!d?.content || !d?.sha)
+    throw Object.assign(new Error('CMS content is unavailable.'), { status: 503 });
+  try {
+    return { sha: d.sha, data: JSON.parse(Buffer.from(d.content.replace(/\n/g, ''), 'base64').toString('utf8')) };
+  } catch {
+    throw Object.assign(new Error('CMS content is invalid.'), { status: 503 });
+  }
+}
+
+function writeFile(env, data, sha, message) {
+  const { repo: r, branch, path } = repo(env);
+  const content = Buffer.from(JSON.stringify(data, null, 2) + '\n').toString('base64');
+  return github(env, 'PUT', `/repos/${r}/contents/${path}`, { message, content, sha, branch });
+}
+
+async function versions(env) {
+  const { repo: r, branch, path } = repo(env);
+  const commits = await github(env, 'GET',
+    `/repos/${r}/commits?path=${encodeURIComponent(path)}&sha=${encodeURIComponent(branch)}&per_page=30`);
+  if (!Array.isArray(commits)) return [];
+  return commits.map(c => ({
+    id: c.sha,
+    at: c.commit?.author?.date || c.commit?.committer?.date || null,
+    message: clean(c.commit?.message || 'CMS update', 160)
+  }));
+}
+
+async function chat(request, env) {
+  if (request.method !== 'POST')
+    return security(json(405, { error: 'Method not allowed' }, { Allow: 'POST' }), true);
+  if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true);
+  if (!originOk(request)) return security(json(403, { error: 'Invalid request origin.' }), true);
+  if (!allowWindow(chatAttempts, clientIp(request), CHAT_WINDOW_MS, CHAT_LIMIT))
+    return security(json(429, { error: 'Too many AI requests. Please try again shortly.' }), true);
+  if (!env.OPENROUTER_API_KEY)
+    return security(json(503, { error: 'AI service is temporarily unavailable.' }), true);
+
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body !== 'object' || !Array.isArray(body.messages) || !body.messages.length)
+    return security(json(400, { error: 'A messages array is required.' }), true);
+
+  const messages = body.messages
+    .filter(m => m && ['user', 'assistant', 'system'].includes(m.role))
+    .slice(-12)
+    .map(m => ({ role: m.role, content: clean(m.content, 12000) }))
+    .filter(m => m.content);
+  if (!messages.length) return security(json(400, { error: 'No valid messages supplied.' }), true);
+
+  const model = typeof body.model === 'string' && /^[A-Za-z0-9_./:-]{1,100}$/.test(body.model)
+    ? body.model : 'openrouter/free';
+
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': new URL(request.url).origin,
+      'X-Title': 'Voice-O-Magic AI Study Coach'
+    },
+    body: JSON.stringify({ model, messages }),
+    signal: AbortSignal.timeout(20000)
+  });
+  const text = await response.text();
+  if (!response.ok)
+    return security(json(response.status >= 500 ? 502 : response.status, { error: 'AI provider request failed.' }), true);
+  try { return security(json(200, JSON.parse(text)), true); }
+  catch { return security(json(502, { error: 'AI provider returned invalid JSON.' }), true); }
+}
+
+async function api(request, env) {
+  const url = new URL(request.url);
+  if (url.pathname === '/api/chat') {
+    const mode = url.searchParams.get('mode') || '';
+    try {
+      if (mode === 'public-cms') {
+        if (request.method !== 'GET') return security(json(405, { error: 'Method not allowed' }), true);
+        const file = await readFile(env);
+        return security(json(200, { cms: publicSnapshot(file.data?.cms) }), true);
+      }
+      if (mode === 'admin-login') {
+        if (request.method !== 'POST' || !originOk(request))
+          return security(json(405, { error: 'Method not allowed' }), true, true);
+        if (!env.CMS_ADMIN_PASSWORD_HASH || !env.CMS_SESSION_SECRET || env.CMS_SESSION_SECRET.length < 32)
+          return security(json(503, { error: 'Admin authentication is temporarily unavailable.' }), true, true);
+        if (!allowWindow(attempts, clientIp(request), LOGIN_WINDOW_MS, LOGIN_LIMIT))
+          return security(json(429, { error: 'Too many login attempts. Try again later.' }), true, true);
+        if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true, true);
+
+        const body = await request.json().catch(() => null);
+        const password = clean(body?.password, 500);
+        if (!password) return security(json(400, { error: 'Password is required.' }), true, true);
+        if (!verifyAdminPassword(password, env))
+          return security(json(401, { error: 'Invalid password.' }), true, true);
+        return security(json(200, { ok: true }, { 'Set-Cookie': cookieHeader(makeCookie(env)) }), true, true);
+      }
+      if (mode === 'admin-logout') {
+        if (request.method !== 'POST' || !originOk(request))
+          return security(json(405, { error: 'Method not allowed' }), true, true);
+        return security(json(200, { ok: true }, { 'Set-Cookie': clearCookieHeader() }), true, true);
+      }
+      if (mode === 'admin-data') {
+        if (request.method !== 'GET' || !validCookie(request, env))
+          return security(json(401, { error: 'Unauthorized' }), true, true);
+        const file = await readFile(env);
+        return security(json(200, { cms: normalizeCms(file.data?.cms), versions: await versions(env) }), true, true);
+      }
+      if (mode === 'admin-save') {
+        if (request.method !== 'POST' || !originOk(request) || !validCookie(request, env))
+          return security(json(401, { error: 'Unauthorized' }), true, true);
+        if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true, true);
+        if (!allowWindow(writeAttempts, clientIp(request), WRITE_WINDOW_MS, WRITE_LIMIT))
+          return security(json(429, { error: 'Too many save requests. Try again shortly.' }), true, true);
+
+        const body = await request.json().catch(() => null);
+        const incoming = body?.cms;
+        if (!incoming || typeof incoming !== 'object')
+          return security(json(400, { error: 'Invalid CMS payload.' }), true, true);
+
+        const file = await readFile(env);
+        const merged = normalizeCms(file.data?.cms);
+
+        if (incoming.settings && typeof incoming.settings === 'object')
+          merged.settings = { ...merged.settings, ...incoming.settings };
+        if (incoming.featuredVideo && typeof incoming.featuredVideo === 'object')
+          merged.featuredVideo = { ...merged.featuredVideo, ...incoming.featuredVideo };
+        if (Array.isArray(incoming.resources)) merged.resources = incoming.resources.map(x => normalizeItem(x));
+        if (Array.isArray(incoming.toolkit)) merged.toolkit = incoming.toolkit.map(x => normalizeItem(x));
+        if (Array.isArray(incoming.books)) merged.books = incoming.books.map(x => normalizeItem(x, true));
+        if (incoming.weeklyHighlights && typeof incoming.weeklyHighlights === 'object')
+          merged.weeklyHighlights = normalizeHighlights(incoming.weeklyHighlights);
+
+        const normalized = normalizeCms(merged);
+        file.data.cms = normalized;
+        await writeFile(env, file.data, file.sha, 'cms: update content');
+        return security(json(200, { cms: normalized, versions: await versions(env) }), true, true);
+      }
+      if (mode === 'admin-restore') {
+        if (request.method !== 'POST' || !originOk(request) || !validCookie(request, env))
+          return security(json(401, { error: 'Unauthorized' }), true, true);
+        if (bodyTooLarge(request)) return security(json(413, { error: 'Request body is too large.' }), true, true);
+
+        const body = await request.json().catch(() => null);
+        const versionId = clean(body?.versionId, 100);
+        if (!versionId) return security(json(400, { error: 'Version ID is required.' }), true, true);
+
+        const file = await readFile(env, versionId);
+        const cms = normalizeCms(file.data?.cms);
+        const current = await readFile(env);
+        current.data.cms = cms;
+        await writeFile(env, current.data, current.sha, `cms: restore version ${versionId.slice(0, 7)}`);
+        return security(json(200, { cms, versions: await versions(env) }), true, true);
+      }
+    } catch (error) {
+      const status = Number.isInteger(error?.status) ? error.status : 500;
+      return security(json(status, {
+        error: status >= 500 ? 'CMS operation failed.' : (error.message || 'Request failed.')
+      }), true, true);
+    }
+    return chat(request, env);
+  }
+  if (url.pathname === '/api/weekly-highlights') {
+    try {
+      if (!validCookie(request, env))
+        return security(json(401, { error: 'Unauthorized' }), true, true);
+      if (request.method === 'PUT' && !originOk(request))
+        return security(json(403, { error: 'Invalid request origin.' }), true, true);
+      if (bodyTooLarge(request))
+        return security(json(413, { error: 'Request body is too large.' }), true, true);
+      if (!allowWindow(writeAttempts, clientIp(request), WRITE_WINDOW_MS, WRITE_LIMIT))
+        return security(json(429, { error: 'Too many highlight updates. Try again shortly.' }), true, true);
+
+      const file = await readFile(env);
+      if (request.method === 'GET')
+        return security(json(200, { weeklyHighlights: normalizeHighlights(file.data?.cms?.weeklyHighlights) }), true, true);
+      if (request.method !== 'PUT')
+        return security(json(405, { error: 'Method not allowed.' }, { Allow: 'GET, PUT' }), true, true);
+
+      const body = await request.json().catch(() => null);
+      file.data.cms = file.data.cms && typeof file.data.cms === 'object' ? file.data.cms : {};
+      file.data.cms.weeklyHighlights = normalizeHighlights(body?.weeklyHighlights);
+      await writeFile(env, file.data, file.sha, 'cms: update weekly highlights');
+      return security(json(200, { ok: true, weeklyHighlights: file.data.cms.weeklyHighlights }), true, true);
+    } catch (error) {
+      const status = Number.isInteger(error?.status) ? error.status : 500;
+      return security(json(status, {
+        error: status >= 500 ? 'Unable to update weekly highlights.' : (error.message || 'Request failed.')
+      }), true, true);
+    }
+  }
   return security(json(404, { error: 'Not found' }), true);
 }
 
-export default { async fetch(request, env) { const url = new URL(request.url); if (url.pathname.startsWith('/api/')) return api(request, env); const response = await env.ASSETS.fetch(request); return security(response, false, url.pathname === '/adminadmin' || url.pathname === '/adminadmin.html'); } };
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname.startsWith('/api/')) return api(request, env);
+
+    const response = await env.ASSETS.fetch(request);
+
+    // Add cache-busting headers for HTML pages so CMS changes appear faster
+    const isHtml = (response.headers.get('content-type') || '').includes('text/html');
+    const finalHeaders = new Headers(response.headers);
+    if (isHtml) {
+      finalHeaders.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    }
+
+    return security(new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: finalHeaders
+    }), false, url.pathname === '/adminadmin' || url.pathname === '/adminadmin.html');
+  }
+};
