@@ -41,7 +41,7 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   };
 })();
 
-/* Load Weekly Highlights independently of main-content replacement. */
+/* Load Weekly Highlights on Resources. */
 (function(){
   if(!location.pathname.endsWith('/resources.html')) return;
   const loadWeeklyHighlights=()=>{
@@ -54,4 +54,19 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadWeeklyHighlights,{once:true});
   else loadWeeklyHighlights();
+})();
+
+/* Keep the Resources page layout deterministic after CMS rendering and Weekly Highlights load. */
+(function(){
+  if(!location.pathname.endsWith('/resources.html')) return;
+  const loadLayout=()=>{
+    if(document.querySelector('script[data-vom-resources-layout]')) return;
+    const script=document.createElement('script');
+    script.src='/js/resources-layout.js';
+    script.dataset.vomResourcesLayout='true';
+    script.onerror=()=>{};
+    document.head.appendChild(script);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadLayout,{once:true});
+  else loadLayout();
 })();
