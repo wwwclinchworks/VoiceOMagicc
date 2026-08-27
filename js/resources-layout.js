@@ -29,12 +29,22 @@
     });
     const highlights = main.querySelector('[data-weekly-highlights]');
 
-    // The Resources intro copy is intentionally removed from the public page.
-    // The corresponding Admin Page Copy fields remain available for compatibility,
-    // but these three public lines are not rendered here.
+    // Remove the public Resources intro copy requested by the client.
+    // The corresponding Admin Page Copy fields remain available for compatibility.
     if (intro && intro !== video && intro !== resourcesGrid && intro !== highlights) {
       intro.remove();
     }
+
+    // The Speaker Toolkit is intentionally not shown on the public Resources page.
+    const refreshedChildren = Array.from(container.children);
+    refreshedChildren.forEach((child) => {
+      if (
+        child.querySelector?.('h2')?.textContent?.trim() === 'Event Organizer Speaker Toolkit'
+        || child.querySelector?.('h2')?.textContent?.trim() === 'Speaker Toolkit'
+      ) {
+        child.remove();
+      }
+    });
 
     if (!video || !resourcesGrid || !highlights) return false;
 
