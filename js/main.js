@@ -251,21 +251,28 @@
   }
 
   function resourceCard(item) {
-    const card = create('article', 'material-card p-7 flex flex-col justify-between h-full');
-    card.append(create('h3', 'font-bold text-heading', item.title));
-    card.append(create('p', 'text-sm text-sec leading-relaxed mt-2 mb-6', item.description || ''));
+    const card = create('article', 'material-card p-7 flex flex-col justify-between h-full group');
+    const top = create('div', '');
+
+    const iconBox = create('div', 'w-12 h-12 rounded-xl bg-red-light flex items-center justify-center mb-5');
+    iconBox.innerHTML = '<i class="fa-solid fa-file-pdf text-xl text-red"></i>';
+    top.append(iconBox);
+
+    top.append(create('h3', 'font-bold text-heading mb-2', item.title));
+    top.append(create('p', 'text-sm text-sec leading-relaxed mb-6', item.description || ''));
+
     const drive = safeUrl(item.driveUrl || '', ['drive.google.com', 'docs.google.com']);
     if (drive) {
-      const link = create('a', 'btn-secondary text-sm text-center', item.buttonText || 'Download');
+      const link = create('a', 'btn-secondary w-full text-sm text-center', item.buttonText || 'Download PDF');
       link.href = drive;
       link.rel = 'noopener noreferrer';
-      link.target = '_self';
-      card.append(link);
+      link.target = '_blank';
+      card.append(top, link);
     } else {
-      const button = create('button', 'btn-secondary text-sm text-center', item.buttonText || 'Download');
+      const button = create('button', 'btn-secondary w-full text-sm text-center', item.buttonText || 'Download PDF');
       button.type = 'button';
       button.addEventListener('click', () => window.openResourceModal(item.title));
-      card.append(button);
+      card.append(top, button);
     }
     return card;
   }
@@ -273,93 +280,136 @@
   function renderResources() {
     const main = document.querySelector('main');
     if (!main || !state.cms) return;
-    main.replaceChildren();
+
     const settings = state.cms.settings || {};
-    const intro = create('section', 'py-20 sm:py-28');
-    intro.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', settings.resourcesLabel || 'Free Resources'));
-    intro.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', settings.resourcesHeading || 'Resources'));
-    intro.append(create('p', 'text-sec text-base mt-5 leading-relaxed', settings.resourcesParagraph || ''));
+    const container = create('div', 'py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20');
+
+    const intro = create('div', 'text-center max-w-3xl mx-auto');
+    intro.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', settings.resourcesLabel || 'Free Masterclass Vault'));
+    intro.append(create('div', 'gold-divider mx-auto mt-3 mb-5'));
+    intro.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading', settings.resourcesHeading || 'Resource of the Week'));
+    intro.append(create('p', 'text-sec text-base mt-6 leading-relaxed', settings.resourcesParagraph || ''));
     if (settings.resourcesExtraParagraph) intro.append(create('p', 'text-sec text-base mt-3 leading-relaxed', settings.resourcesExtraParagraph));
-    main.append(intro);
+    container.append(intro);
 
     const video = state.cms.featuredVideo || {};
-    const videoBox = create('section', 'material-card max-w-4xl mx-auto p-4');
-    const videoArea = create('div', 'aspect-video bg-black rounded-xl overflow-hidden');
-    if (video.published) {
+    const videoWrap = create('div', 'material-card max-w-4xl mx-auto p-1 sm:p-5 bg-surface-warm');
+    const videoBox = create('div', 'relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-card group border border-theme');
+
+    if (video.published && video.url) {
       try {
         const parsed = new URL(video.url);
         const id = parsed.pathname.split('/').pop();
         if (/^[A-Za-z0-9_-]{11}$/.test(id)) {
-          const iframe = create('iframe', 'w-full h-full');
-          iframe.src = `https://www.youtube-nocookie.com/embed/${id}`;
-          iframe.title = clean(video.title) || 'Voice-O-Magic featured video';
-          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-          iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-          iframe.allowFullscreen = true;
-          videoArea.append(iframe);
+          const cover = create('div', 'absolute inset-0 z-20 cursor-pointer bg-cover bg-center');
+          cover.style.backgroundImage = `url('https://img.youtube.com/vi/${id}/maxresdefault.jpg')`;
+          cover.onclick = () => {
+            cover.classList.add('hidden');
+            const iframe = document.createElement('iframe');
+            iframe.className = 'w-full h-full';
+            iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;
+            iframe.title = clean(video.title) || 'Voice-O-Magic featured video';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+            iframe.allowFullscreen = true;
+            const container = videoBox.querySelector('#videoContainer') || videoBox;
+            container.innerHTML = '';
+            container.appendChild(iframe);
+          };
+          cover.innerHTML = '<div class="absolute inset-0 bg-black/25 hover:bg-black/15 transition flex items-center justify-center"><div class="w-16 h-16 bg-gold text-white rounded-full flex items-center justify-center shadow-gold-hover transform group-hover:scale-110 transition duration-300"><i class="fa-solid fa-play text-2xl ml-1"></i></div></div>';
+          videoBox.append(cover);
         }
       } catch {}
     }
-    videoBox.append(videoArea, create('h3', 'font-bold text-heading text-xl mt-5', video.title || 'Featured Video'), create('p', 'text-sec text-sm mt-2 leading-relaxed', video.description || ''));
-    main.append(videoBox);
+    const videoContainer = create('div', 'absolute inset-0 z-10 w-full h-full');
+    videoContainer.id = 'videoContainer';
+    videoBox.append(videoContainer);
+    videoWrap.append(videoBox);
+
+    const videoMeta = create('div', 'mt-6 px-4 pb-2');
+    videoMeta.append(create('h4', 'font-bold text-heading text-lg', video.title || 'Featured Video'));
+    videoMeta.append(create('p', 'text-sm text-sec mt-2 leading-relaxed', video.description || ''));
+    videoWrap.append(videoMeta);
+    container.append(videoWrap);
 
     const resources = Array.isArray(state.cms.resources) ? state.cms.resources : [];
-    const grid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-12');
-    resources.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => grid.append(resourceCard(x)));
-    main.append(grid);
+    const grid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 pt-4');
+    resources.filter(x => x && x.published).sort((a, b) => a.order - b.order).forEach(x => grid.append(resourceCard(x)));
+    container.append(grid);
 
-    const toolkit = create('section', 'mt-16');
-    toolkit.append(create('h2', 'font-display text-3xl font-bold text-heading', settings.toolkitHeading || 'Speaker Toolkit'));
-    toolkit.append(create('p', 'text-sec text-base mt-3', settings.toolkitDescription || ''));
-    const toolkitGrid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-7');
     const toolkitItems = Array.isArray(state.cms.toolkit) ? state.cms.toolkit : [];
-    toolkitItems.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => toolkitGrid.append(resourceCard(x)));
-    toolkit.append(toolkitGrid);
-    main.append(toolkit);
+    if (toolkitItems.filter(x => x && x.published).length > 0 || settings.toolkitHeading) {
+      const toolkit = create('div', 'pt-4');
+      toolkit.append(create('h2', 'font-display text-3xl font-bold text-heading', settings.toolkitHeading || 'Speaker Toolkit'));
+      toolkit.append(create('p', 'text-sec text-base mt-3', settings.toolkitDescription || ''));
+      const toolkitGrid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-7');
+      toolkitItems.filter(x => x && x.published).sort((a, b) => a.order - b.order).forEach(x => toolkitGrid.append(resourceCard(x)));
+      toolkit.append(toolkitGrid);
+      container.append(toolkit);
+    }
+
+    main.replaceChildren(container);
     showMaintenance();
   }
 
   function bookCard(item) {
-    const card = create('article', 'material-card p-8 flex flex-col gap-4');
+    const card = create('article', 'material-card p-8 flex flex-col sm:flex-row gap-8 items-center sm:items-start bg-theme group');
+
     const imageUrl = safeUrl(item.coverImageUrl || '');
+    const cover = create('div', 'w-32 h-48 bg-surface-warm border border-theme rounded-xl flex items-center justify-center p-5 text-center flex-shrink-0 shadow-card');
     if (imageUrl) {
-      const image = document.createElement('img');
-      image.src = imageUrl;
-      image.alt = item.title || 'Book cover';
-      image.loading = 'lazy';
-      image.decoding = 'async';
-      image.style.cssText = 'width:140px;height:190px;object-fit:cover;border-radius:12px';
-      card.append(image);
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = item.title || 'Book cover';
+      img.className = 'w-full h-full object-cover rounded-lg';
+      img.loading = 'lazy';
+      cover.innerHTML = '';
+      cover.appendChild(img);
+    } else {
+      const titleLines = (item.bookHeading || item.title || 'Book').split(' ').slice(0, 4).join(' ');
+      cover.innerHTML = `<div><h4 class="font-display font-bold text-heading text-sm leading-tight">${titleLines.replace(/ /g, '<br>')}</h4>${item.authors ? `<p class="text-[9px] text-muted mt-4 font-semibold uppercase tracking-wide">By ${item.authors}</p>` : ''}</div>`;
     }
-    if (item.categoryLabel) card.append(create('div', 'text-[10px] text-muted font-bold uppercase tracking-widest', item.categoryLabel));
-    card.append(create('h3', 'font-bold text-xl text-heading', item.bookHeading || item.title));
-    card.append(create('div', 'text-sm font-semibold text-gold', item.authors));
-    card.append(create('p', 'text-sm text-sec leading-relaxed', item.description));
+    card.append(cover);
+
+    const meta = create('div', 'text-center sm:text-left');
+    if (item.categoryLabel) meta.append(create('span', 'text-[10px] text-muted font-bold uppercase tracking-widest', item.categoryLabel));
+    meta.append(create('h3', 'font-bold text-xl text-heading mt-1.5 mb-3 group-hover:text-gold transition', item.bookHeading || item.title));
+    meta.append(create('p', 'text-sm text-sec leading-relaxed mb-5', item.description));
+
     const destination = safeUrl(item.destinationUrl || '');
     if (destination) {
-      const link = create('a', 'text-gold font-bold text-sm', item.buttonText || 'Learn More');
+      const link = create('a', 'text-gold font-bold text-sm hover:text-gold-hover transition inline-flex items-center gap-1.5', item.buttonText || 'Learn More');
       link.href = destination;
       link.rel = 'noopener noreferrer';
-      link.target = '_self';
-      card.append(link);
+      link.target = '_blank';
+      link.innerHTML += ' <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>';
+      meta.append(link);
     }
+    card.append(meta);
     return card;
   }
 
   function renderBooks() {
     const main = document.querySelector('main');
     if (!main || !state.cms) return;
-    main.replaceChildren();
+
     const settings = state.cms.settings || {};
-    const section = create('section', 'py-20 sm:py-28');
-    section.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', settings.booksLabel || 'Published Works'));
-    section.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', settings.booksHeading || 'Published Works'));
-    section.append(create('p', 'text-sec text-base mt-5 leading-relaxed', settings.booksParagraph || ''));
-    const grid = create('div', 'grid grid-cols-1 md:grid-cols-2 gap-8 mt-12');
+    const container = create('div', 'py-20 sm:py-28 bg-surface min-h-screen');
+    const inner = create('div', 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20');
+    const intro = create('div', 'text-center max-w-3xl mx-auto');
+    intro.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', settings.booksLabel || 'Intellectual Property'));
+    intro.append(create('div', 'gold-divider mx-auto mt-3 mb-5'));
+    intro.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading', settings.booksHeading || 'Published Works'));
+    intro.append(create('p', 'text-sec text-base mt-6 leading-relaxed', settings.booksParagraph || ''));
+    inner.append(intro);
+
+    const grid = create('div', 'grid grid-cols-1 md:grid-cols-2 gap-8');
     const books = Array.isArray(state.cms.books) ? state.cms.books : [];
-    books.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => grid.append(bookCard(x)));
-    section.append(grid);
-    main.append(section);
+    books.filter(x => x && x.published).sort((a, b) => a.order - b.order).forEach(x => grid.append(bookCard(x)));
+    inner.append(grid);
+    container.append(inner);
+
+    main.replaceChildren(container);
     showMaintenance();
   }
 
