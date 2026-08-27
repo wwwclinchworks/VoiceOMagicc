@@ -1,11 +1,11 @@
 {
   "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
-"name": "voiceomagicc",
+  "name": "voiceomagicc",
   "main": "./worker.js",
   "compatibility_date": "2026-08-26",
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/adminadmin", "/adminadmin.html"]
   }
 }

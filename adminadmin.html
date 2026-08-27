@@ -35,11 +35,7 @@
     try{
       const response=await fetch('js/admin.js',{cache:'no-store'});
       if(!response.ok)throw new Error('Unable to load admin client.');
-      let source=await response.text();
-      source=source.replace(
-        "const sectionKeys={Page_Copy:'settings',Featured_Video:'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit',Books:'books'};",
-        "const sectionKeys={Page_Copy:'settings','Page Copy':'settings',Featured_Video:'featuredVideo','Featured Video':'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit','Speaker Toolkit':'toolkit',Books:'books'};"
-      );
+      const source=await response.text();
       const script=document.createElement('script');
       script.textContent=source;
       document.body.append(script);
