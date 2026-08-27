@@ -27,7 +27,7 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   };
 })();
 
-/* Weekly Highlights is loaded only on Resources, after the CMS renderer has replaced the static page. */
+/* Weekly Highlights is loaded after the live Resources renderer has replaced the static fallback. */
 (function(){
   if(!location.pathname.endsWith('/resources.html'))return;
 
@@ -41,18 +41,31 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     document.head.appendChild(script);
   };
 
-  const waitForLiveRender=()=>{
+  const isLiveCmsRender=()=>{
     const main=document.querySelector('main');
-    if(main && !document.getElementById('videoCover')){
+    const first=main?.firstElementChild;
+    // resources.html starts with a static <div>; renderResources() replaces it with a <section>.
+    return Boolean(main && first && first.tagName === 'SECTION');
+  };
+
+  const start=()=>{
+    if(isLiveCmsRender()){
       loadWeeklyHighlights();
-      return;
+      return true;
     }
-    window.setTimeout(waitForLiveRender,100);
+    return false;
   };
 
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',waitForLiveRender,{once:true});
-  }else{
-    waitForLiveRender();
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else if(!start()){
+    const main=document.querySelector('main');
+    if(main){
+      const observer=new MutationObserver(()=>{
+        if(start())observer.disconnect();
+      });
+      observer.observe(main,{childList:true,subtree:false});
+      window.setTimeout(()=>observer.disconnect(),15000);
+    }
   }
 })();
