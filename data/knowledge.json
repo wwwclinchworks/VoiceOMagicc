@@ -165,14 +165,14 @@
     "weeklyHighlights": {
       "highlight1": {
         "imageUrl": "https://drive.google.com/thumbnail?id=1htMh-TH6IgHWargvL3IqBANkIBbXJCJ-&sz=w2000",
-        "title": "Dummy Weekly Highlight 1",
-        "description": "Temporary QA image — replace this from the Admin panel.",
+        "title": "Happy Akshaya Tritiya",
+        "description": "Wishing you unending prosperity, joy, and success on this auspicious day",
         "published": true
       },
       "highlight2": {
-        "imageUrl": "https://placehold.co/1200x900/png?text=Weekly+Highlight+2",
-        "title": "Dummy Weekly Highlight 2",
-        "description": "Temporary QA image — replace this from the Admin panel.",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1e3dTQF3wsSGHK4kY3HgW7B__bUHv2WzV&sz=w2000",
+        "title": "Eid Mubarak",
+        "description": "Wishing you and your loved ones a blessed Eid filled with peace, happiness, and prosperity.",
         "published": true
       }
     }
