@@ -8,6 +8,7 @@ const resourcesHtml = read('resources.html');
 const booksHtml = read('books.html');
 const mainJs = read('js/main.js');
 const chatbotConfig = read('js/chatbot-config.js');
+const resourcesLayout = read('js/resources-layout.js');
 const weeklyJs = read('js/weekly-highlights.js');
 const weeklyAdminJs = read('js/weekly-highlights-admin.js');
 const adminHtml = read('adminadmin.html');
@@ -29,23 +30,29 @@ expect(chatbotConfig.includes("'/books':'/books.html'"), '/books must normalize 
 expect(chatbotConfig.includes("'/books/':'/books.html'"), '/books/ must normalize to /books.html.');
 expect(chatbotConfig.includes('history.replaceState'), 'Route normalization must use history.replaceState.');
 expect(chatbotConfig.includes("script.src='/js/weekly-highlights.js'"), 'Resources page must load Weekly Highlights.');
-expect(chatbotConfig.includes('data-vom-weekly-highlights'), 'Weekly Highlights loader must avoid duplicate script injection.');
+expect(chatbotConfig.includes("script.src='/js/resources-layout.js'"), 'Resources page must load the layout controller.');
 expect(!chatbotConfig.includes('videoCover'), 'Weekly Highlights loader must not depend on videoCover.');
 
 expect(mainJs.includes('state.cms.settings'), 'Resources/Books renderers must consume CMS settings.');
 expect(mainJs.includes('state.cms.featuredVideo'), 'Resources renderer must consume featuredVideo.');
 expect(mainJs.includes('state.cms.resources'), 'Resources renderer must consume resources.');
-expect(mainJs.includes('state.cms.toolkit'), 'Resources renderer must consume toolkit.');
+expect(mainJs.includes('state.cms.toolkit'), 'CMS renderer must still support toolkit data for admin/backward compatibility.');
 expect(mainJs.includes('state.cms.books'), 'Books renderer must consume books.');
 expect(mainJs.includes('item.coverImageUrl'), 'Books renderer must consume coverImageUrl.');
 expect(mainJs.includes("fetch('/api/chat?mode=public-cms'"), 'Main CMS renderer must use public-cms.');
 expect(mainJs.includes('bg-red-light'), 'Resource cards must include the requested PDF icon treatment.');
 expect(mainJs.includes('videoContainer'), 'Featured video must keep a dedicated video container.');
 
+expect(resourcesLayout.includes("const RESOURCES_PATH = '/resources.html'"), 'Resources layout must target the canonical Resources page.');
+expect(resourcesLayout.includes("child.remove()"), 'Resources layout must remove the public Toolkit block.');
+expect(resourcesLayout.includes("[intro, highlights, video, resourcesGrid].forEach"), 'Resources layout must enforce the requested section order.');
+expect(!resourcesLayout.includes('setInterval'), 'Resources layout must not use polling loops.');
+
 expect(weeklyJs.includes("const CMS_URL = '/api/weekly-highlights'"), 'Weekly Highlights must use the dedicated live endpoint.');
 expect(weeklyJs.includes('main.appendChild(section)'), 'Weekly Highlights must insert into the Resources main element.');
 expect(weeklyJs.includes('item.published === true'), 'Unpublished highlights must stay hidden.');
 expect(weeklyJs.includes("url.protocol === 'https:'"), 'Highlight images must require HTTPS.');
+expect(weeklyJs.includes('aspect-[4/3]'), 'Weekly Highlights must use fixed 4:3 image frames.');
 expect(!weeklyJs.includes('setInterval'), 'Weekly Highlights must not poll the DOM.');
 expect(adminHtml.includes('js/weekly-highlights-admin.js'), 'Admin page must load Weekly Highlights controls.');
 expect(weeklyAdminJs.includes("/api/weekly-highlights"), 'Admin Weekly Highlights must use the protected endpoint.');
