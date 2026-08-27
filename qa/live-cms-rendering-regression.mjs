@@ -15,6 +15,7 @@ const adminHtml = read('adminadmin.html');
 const adminJs = read('js/admin.js');
 const worker = read('worker.js');
 const wrangler = read('wrangler.jsonc');
+const redirects = read('_redirects');
 const knowledge = JSON.parse(read('data/knowledge.json'));
 
 expect(resourcesHtml.includes('js/main.js'), 'resources.html must load main.js.');
@@ -22,13 +23,14 @@ expect(booksHtml.includes('js/main.js'), 'books.html must load main.js.');
 expect(resourcesHtml.includes('js/chatbot-config.js'), 'resources.html must load chatbot-config.js.');
 expect(booksHtml.includes('js/chatbot-config.js'), 'books.html must load chatbot-config.js.');
 
-expect(chatbotConfig.includes("LIVE_CMS_ENDPOINT='/api/chat?mode=public-cms'"), 'chatbot-config.js must bridge live CMS reads.');
-expect(chatbotConfig.includes("url.startsWith('/data/knowledge.json?')"), 'live CMS bridge must intercept static knowledge.json fetches.');
-expect(chatbotConfig.includes("'/resources':'/resources.html'"), '/resources must normalize to /resources.html.');
-expect(chatbotConfig.includes("'/resources/':'/resources.html'"), '/resources/ must normalize to /resources.html.');
+expect(redirects.includes('/resources /resources.html 301'), '/resources must 301 redirect to /resources.html at the asset layer.');
+expect(redirects.includes('/resources/ /resources.html 301'), '/resources/ must 301 redirect to /resources.html at the asset layer.');
+expect(!chatbotConfig.includes("'/resources':'/resources.html'"), 'Resources must not rely on client-side route normalization.');
+expect(!chatbotConfig.includes("'/resources/':'/resources.html'"), 'Resources trailing-slash route must not rely on client-side normalization.');
+expect(!chatbotConfig.includes("history.replaceState(window.history.state,'',target"), 'Resources URL must not be rewritten after page load.');
 expect(chatbotConfig.includes("'/books':'/books.html'"), '/books must normalize to /books.html.');
 expect(chatbotConfig.includes("'/books/':'/books.html'"), '/books/ must normalize to /books.html.');
-expect(chatbotConfig.includes('history.replaceState'), 'Route normalization must use history.replaceState.');
+expect(chatbotConfig.includes('history.replaceState'), 'Books route normalization must remain available where needed.');
 expect(chatbotConfig.includes("script.src='/js/weekly-highlights.js'"), 'Resources page must load Weekly Highlights.');
 expect(chatbotConfig.includes("script.src='/js/resources-layout.js'"), 'Resources page must load the layout controller.');
 expect(!chatbotConfig.includes('videoCover'), 'Weekly Highlights loader must not depend on videoCover.');
