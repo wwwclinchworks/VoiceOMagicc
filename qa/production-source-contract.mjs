@@ -9,6 +9,7 @@ const admin = read('js/admin.js');
 const adminHtml = read('adminadmin.html');
 const weekly = read('js/weekly-highlights.js');
 const config = read('js/chatbot-config.js');
+const redirects = read('_redirects');
 const wrangler = read('wrangler.jsonc');
 const knowledge = JSON.parse(read('data/knowledge.json'));
 
@@ -35,8 +36,11 @@ expect(weekly.includes("const CMS_URL = '/api/weekly-highlights'"), 'Weekly High
 expect(weekly.includes('main.appendChild(section)'), 'Weekly Highlights must insert inside main.');
 expect(weekly.includes('aspect-[4/3]'), 'Weekly Highlights must use fixed 4:3 frames.');
 expect(!weekly.includes('setInterval'), 'Weekly Highlights must not use polling.');
-expect(config.includes("'/resources':'/resources.html'"), 'Resources route alias must exist.');
+expect(!config.includes("'/resources':'/resources.html'"), 'Resources must not use client-side route aliasing.');
+expect(!config.includes("'/resources/':'/resources.html'"), 'Resources trailing slash must not use client-side route aliasing.');
 expect(config.includes("'/books':'/books.html'"), 'Books route alias must exist.');
+expect(redirects.includes('/resources /resources.html 301'), 'Resources must have a 301 canonical redirect.');
+expect(redirects.includes('/resources/ /resources.html 301'), 'Resources trailing slash must have a 301 canonical redirect.');
 
 expect(wrangler.includes('"/adminadmin"'), 'Wrangler must route /adminadmin through the Worker.');
 expect(wrangler.includes('"/adminadmin.html"'), 'Wrangler must route /adminadmin.html through the Worker.');
