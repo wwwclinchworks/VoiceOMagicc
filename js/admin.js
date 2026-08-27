@@ -8,7 +8,16 @@ const $=(selector,root=document)=>root.querySelector(selector);
 const api=async(mode,options={})=>{const response=await fetch('/api/chat?mode='+encodeURIComponent(mode),{cache:'no-store',...options,headers:{...(options.headers||{})}});const body=await response.json().catch(()=>({}));if(!response.ok)throw new Error(body.error||'Request failed.');return body};
 const uid=()=>globalThis.crypto?.randomUUID?globalThis.crypto.randomUUID():'item-'+Date.now()+'-'+Math.random().toString(36).slice(2);
 const meta={resources:{icon:'📄',title:'Resources',singular:'Resource',page:'resources.html',where:'resources.html → resource cards'},toolkit:{icon:'🎤',title:'Speaker Toolkit',singular:'Toolkit Item',page:'resources.html',where:'resources.html → Speaker Toolkit cards'},books:{icon:'📚',title:'Books',singular:'Book',page:'books.html',where:'books.html → Published Works cards'}};
-const sectionKeys={Page_Copy:'settings',Featured_Video:'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit',Books:'books'};
+const sectionKeys={
+  'Page_Copy':'settings',
+  'Page Copy':'settings',
+  'Featured_Video':'featuredVideo',
+  'Featured Video':'featuredVideo',
+  'Resources':'resources',
+  'Speaker_Toolkit':'toolkit',
+  'Speaker Toolkit':'toolkit',
+  'Books':'books'
+};
 
 function toast(message,bad=false){const node=el('div','fixed right-5 bottom-5 z-[120] max-w-sm rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-xl',message);node.style.background=bad?'#b42318':'#111827';document.body.append(node);window.setTimeout(()=>node.remove(),3200)}
 function markDirty(section){state.dirty.add(section);updateDirtyUI()}
