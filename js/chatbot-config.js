@@ -7,20 +7,6 @@
  */
 window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SITE_NAME:"Voice-O-Magic"};
 
-/* Normalize extensionless public routes before main.js evaluates its page-specific CMS renderer. */
-(function(){
-  const aliases={
-    '/resources':'/resources.html',
-    '/resources/':'/resources.html',
-    '/books':'/books.html',
-    '/books/':'/books.html'
-  };
-  const target=aliases[window.location.pathname];
-  if(target && window.history && window.history.replaceState){
-    window.history.replaceState(window.history.state,'',target+window.location.search+window.location.hash);
-  }
-})();
-
 /* Keep the AI assistant synchronized with the shared light/dark theme. */
 (function(){
   const root=document.documentElement;
@@ -41,9 +27,9 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   };
 })();
 
-/* Load Weekly Highlights on Resources. */
+/* Load Weekly Highlights on the canonical Resources page only. */
 (function(){
-  if(!location.pathname.endsWith('/resources.html')) return;
+  if(location.pathname !== '/resources.html') return;
   const loadWeeklyHighlights=()=>{
     if(document.querySelector('script[data-vom-weekly-highlights]')) return;
     const script=document.createElement('script');
@@ -58,7 +44,7 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
 
 /* Keep the Resources page layout deterministic after CMS rendering and Weekly Highlights load. */
 (function(){
-  if(!location.pathname.endsWith('/resources.html')) return;
+  if(location.pathname !== '/resources.html') return;
   const loadLayout=()=>{
     if(document.querySelector('script[data-vom-resources-layout]')) return;
     const script=document.createElement('script');
@@ -70,3 +56,5 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadLayout,{once:true});
   else loadLayout();
 })();
+
+/* Books also uses the canonical .html URL; /books is redirected server-side by _redirects. */
