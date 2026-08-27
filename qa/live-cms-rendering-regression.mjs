@@ -14,7 +14,7 @@ const adminHtml = read('adminadmin.html');
 const worker = read('worker.js');
 const knowledge = JSON.parse(read('data/knowledge.json'));
 
-// Public pages must use the shared CMS renderer and the live-CMS bridge.
+// Public pages must use the shared CMS renderer and live-CMS bridge.
 expect(resourcesHtml.includes('js/main.js'), 'resources.html must load main.js.');
 expect(booksHtml.includes('js/main.js'), 'books.html must load main.js.');
 expect(resourcesHtml.includes('js/chatbot-config.js'), 'resources.html must load chatbot-config.js.');
@@ -22,10 +22,12 @@ expect(booksHtml.includes('js/chatbot-config.js'), 'books.html must load chatbot
 expect(chatbotConfig.includes("LIVE_CMS_ENDPOINT='/api/chat?mode=public-cms'"), 'chatbot-config.js must bridge CMS reads to the Worker public-cms endpoint.');
 expect(chatbotConfig.includes("url.startsWith('/data/knowledge.json?')"), 'live CMS bridge must intercept the static knowledge.json fetch used by page rendering.');
 
-// Weekly Highlights must be loaded deterministically after the live CMS renderer has replaced the static Resources page.
+// Weekly Highlights must load only after the CMS renderer replaces static Resources markup.
 expect(chatbotConfig.includes("script.src='/js/weekly-highlights.js'"), 'Resources page must load Weekly Highlights client code.');
-expect(chatbotConfig.includes("!document.getElementById('videoCover')"), 'Weekly Highlights loader must wait for the live CMS render.');
+expect(chatbotConfig.includes("first.tagName === 'SECTION'"), 'Weekly Highlights loader must wait for the CMS renderer rather than videoCover state.');
+expect(!chatbotConfig.includes("!document.getElementById('videoCover')"), 'Weekly Highlights loader must not depend on the fragile videoCover condition.');
 expect(chatbotConfig.includes("data-vom-weekly-highlights"), 'Weekly Highlights loader must avoid duplicate script injection.');
+expect(chatbotConfig.includes('MutationObserver'), 'Weekly Highlights loader must observe CMS render completion.');
 
 // Resource and book rendering must consume CMS-controlled fields.
 expect(mainJs.includes('state.cms.featuredVideo'), 'Resources renderer must consume featuredVideo from CMS.');
@@ -35,10 +37,11 @@ expect(mainJs.includes('state.cms.books'), 'Books renderer must consume books fr
 expect(mainJs.includes('item.coverImageUrl'), 'Books renderer must consume coverImageUrl from CMS.');
 expect(mainJs.includes("fetch('/api/chat?mode=public-cms'"), 'Main CMS renderer must read from the live Worker public-cms endpoint.');
 
-// Weekly Highlights must read the same live CMS source and be admin-wired.
-expect(weeklyJs.includes("/api/chat?mode=public-cms"), 'Weekly Highlights client must read from the live Worker public-cms endpoint.');
+// Weekly Highlights must use its dedicated live endpoint and only render published HTTPS images.
+expect(weeklyJs.includes("const CMS_URL = '/api/weekly-highlights'"), 'Weekly Highlights client must use the live Weekly Highlights endpoint.');
 expect(weeklyJs.includes('item.published === true'), 'Unpublished Weekly Highlights must stay hidden.');
 expect(weeklyJs.includes("url.protocol === 'https:'"), 'Weekly Highlights must require HTTPS image URLs.');
+expect(weeklyJs.includes('[data-weekly-highlights]'), 'Weekly Highlights client must prevent duplicate rendering.');
 expect(adminHtml.includes('js/weekly-highlights-admin.js'), 'Admin page must load Weekly Highlights controls.');
 expect(weeklyAdminJs.includes("/api/weekly-highlights"), 'Admin Weekly Highlights must use the protected Worker endpoint.');
 
@@ -48,6 +51,7 @@ expect(worker.includes('publicSnapshot(file.data?.cms)'), 'Public CMS responses 
 expect(worker.includes("'User-Agent': 'Voice-O-Magic-CMS/1.0'"), 'GitHub API calls must include a User-Agent.');
 expect(worker.includes('cms.weeklyHighlights = normalizeHighlights'), 'Worker CMS normalization must preserve Weekly Highlights.');
 
+// CMS fixture must contain both highlight slots for the exact-two-slot contract.
 expect(knowledge.cms && knowledge.cms.featuredVideo, 'CMS data must contain featuredVideo.');
 expect(Array.isArray(knowledge.cms?.resources), 'CMS data must contain resources.');
 expect(Array.isArray(knowledge.cms?.toolkit), 'CMS data must contain toolkit.');
