@@ -14,6 +14,18 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   new MutationObserver(emit).observe(root,{attributes:true,attributeFilter:['class']});
 })();
 
+/* Normalize only the Books extensionless aliases on the client. Resources has a server-side 301 redirect. */
+(function(){
+  const aliases={
+    '/books':'/books.html',
+    '/books/':'/books.html'
+  };
+  const target=aliases[window.location.pathname];
+  if(target && window.history && window.history.replaceState){
+    window.history.replaceState(window.history.state,'',target+window.location.search+window.location.hash);
+  }
+})();
+
 /* Read live CMS content through the Cloudflare Worker so Admin changes do not require a redeploy. */
 (function(){
   const LIVE_CMS_ENDPOINT='/api/chat?mode=public-cms';
@@ -56,5 +68,3 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadLayout,{once:true});
   else loadLayout();
 })();
-
-/* Books also uses the canonical .html URL; /books is redirected server-side by _redirects. */
