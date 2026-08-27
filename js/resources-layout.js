@@ -15,7 +15,7 @@
     if (!main) return false;
 
     const container = Array.from(main.children).find((child) =>
-      child.querySelector?.('h1') && child.classList.contains('max-w-7xl')
+      child.classList.contains('max-w-7xl') && child.querySelector?.('#videoContainer')
     );
     if (!container) return false;
 
@@ -29,17 +29,27 @@
     });
     const highlights = main.querySelector('[data-weekly-highlights]');
 
-    // The Speaker Toolkit is no longer part of the public Resources page.
-    // Keep only the known Resources-page content blocks: intro, highlights, video, resources.
-    children.forEach((child) => {
-      const isKnown = child === intro || child === video || child === resourcesGrid || child === highlights;
-      if (!isKnown) child.remove();
+    // Remove the public Resources intro copy requested by the client.
+    // The corresponding Admin Page Copy fields remain available for compatibility.
+    if (intro && intro !== video && intro !== resourcesGrid && intro !== highlights) {
+      intro.remove();
+    }
+
+    // The Speaker Toolkit is intentionally not shown on the public Resources page.
+    const refreshedChildren = Array.from(container.children);
+    refreshedChildren.forEach((child) => {
+      if (
+        child.querySelector?.('h2')?.textContent?.trim() === 'Event Organizer Speaker Toolkit'
+        || child.querySelector?.('h2')?.textContent?.trim() === 'Speaker Toolkit'
+      ) {
+        child.remove();
+      }
     });
 
-    if (!intro || !video || !resourcesGrid || !highlights) return false;
+    if (!video || !resourcesGrid || !highlights) return false;
 
     // Required public order: Weekly Highlights → YouTube video → Resources.
-    [intro, highlights, video, resourcesGrid].forEach((node) => container.appendChild(node));
+    [highlights, video, resourcesGrid].forEach((node) => container.appendChild(node));
 
     return true;
   }
