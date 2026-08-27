@@ -21,17 +21,13 @@
   }
 
   function render(highlights) {
-    const main = document.querySelector('main');
-    if (!main || main.querySelector('[data-weekly-highlights]')) return;
-
+    if (document.querySelector('[data-weekly-highlights]')) return;
     const items = [highlights?.highlight1, highlights?.highlight2]
       .filter((item) => item && item.published === true && safeImageUrl(item.imageUrl));
-
     if (!items.length) return;
 
     const section = create('section', 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 sm:mt-24');
     section.dataset.weeklyHighlights = 'true';
-
     const heading = create('div', 'text-center max-w-3xl mx-auto mb-10');
     heading.append(
       create('span', 'text-sm font-bold text-gold tracking-widest uppercase', 'Weekly Highlights'),
@@ -50,8 +46,8 @@
       image.loading = 'lazy';
       image.decoding = 'async';
       image.className = 'w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.01]';
+      image.addEventListener('error', () => card.remove(), { once: true });
       card.append(image);
-
       if (item.title || item.description) {
         const content = create('div', 'p-6');
         if (item.title) content.append(create('h3', 'font-bold text-xl text-heading', item.title));
@@ -60,16 +56,17 @@
       }
       grid.append(card);
     });
-
     section.append(grid);
-    const videoBox = main.querySelector('.material-card.max-w-4xl');
-    if (videoBox?.parentElement) videoBox.parentElement.insertBefore(section, videoBox);
-    else main.appendChild(section);
+
+    // Keep the highlights outside <main>; main.js replaces <main> during CMS hydration.
+    const footer = document.querySelector('footer');
+    if (footer?.parentElement) footer.parentElement.insertBefore(section, footer);
+    else document.body.appendChild(section);
   }
 
   async function load() {
     try {
-      const response = await fetch(CMS_URL, { cache: 'no-store' });
+      const response = await fetch(CMS_URL, { cache: 'no-store', headers: { Accept: 'application/json' } });
       if (!response.ok) return;
       const data = await response.json();
       render(data?.weeklyHighlights);
@@ -78,9 +75,6 @@
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', load, { once: true });
-  } else {
-    load();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load, { once: true });
+  else load();
 })();
