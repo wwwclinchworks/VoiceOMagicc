@@ -6,43 +6,82 @@
     {
       "id": "public-speaking-basics",
       "title": "Public Speaking Basics",
-      "keywords": ["public speaking", "speech", "speaking"],
+      "keywords": [
+        "public speaking",
+        "speech",
+        "speaking"
+      ],
       "content": "Public speaking is the process of delivering a structured message to an audience. A strong speech normally has a clear purpose, an engaging opening, organized main points, supporting examples, and a memorable conclusion."
     },
     {
       "id": "speech-structure",
       "title": "Speech Structure",
-      "keywords": ["structure", "introduction", "body", "conclusion", "opening"],
+      "keywords": [
+        "structure",
+        "introduction",
+        "body",
+        "conclusion",
+        "opening"
+      ],
       "content": "A practical speech structure is: 1) opening or hook, 2) purpose and context, 3) two or three main points with examples, 4) transitions between ideas, and 5) a concise conclusion that reinforces the main message or gives the audience an action."
     },
     {
       "id": "body-language",
       "title": "Body Language",
-      "keywords": ["body language", "posture", "eye contact", "gesture", "facial expression"],
+      "keywords": [
+        "body language",
+        "posture",
+        "eye contact",
+        "gesture",
+        "facial expression"
+      ],
       "content": "Body language includes posture, eye contact, facial expression, gestures, and movement. Good delivery usually uses an upright but relaxed posture, purposeful gestures, natural eye contact, and facial expressions that match the message."
     },
     {
       "id": "voice-modulation",
       "title": "Voice Modulation",
-      "keywords": ["voice", "modulation", "pitch", "pace", "volume", "tone", "pause"],
+      "keywords": [
+        "voice",
+        "modulation",
+        "pitch",
+        "pace",
+        "volume",
+        "tone",
+        "pause"
+      ],
       "content": "Voice modulation means intentionally varying vocal features such as pitch, pace, volume, tone, and pauses. Variation prevents a speech from sounding monotonous and helps the speaker emphasize important ideas."
     },
     {
       "id": "confidence",
       "title": "Speaking Confidence",
-      "keywords": ["confidence", "nervous", "stage fear", "anxiety"],
+      "keywords": [
+        "confidence",
+        "nervous",
+        "stage fear",
+        "anxiety"
+      ],
       "content": "Speaking confidence improves through preparation, repeated practice, controlled breathing, familiarity with the opening lines, and gradual exposure to speaking situations. The goal is not to eliminate all nervousness but to manage it so it does not control delivery."
     },
     {
       "id": "audience-engagement",
       "title": "Audience Engagement",
-      "keywords": ["audience", "engagement", "questions", "storytelling"],
+      "keywords": [
+        "audience",
+        "engagement",
+        "questions",
+        "storytelling"
+      ],
       "content": "Audience engagement can be improved with relevant stories, questions, examples, variation in delivery, eye contact, and clear links to the audience's interests or problems."
     },
     {
       "id": "practice-method",
       "title": "Practice Method",
-      "keywords": ["practice", "improve", "training", "exercise"],
+      "keywords": [
+        "practice",
+        "improve",
+        "training",
+        "exercise"
+      ],
       "content": "A useful practice cycle is: choose a topic, outline the message, deliver it aloud, record or observe the delivery, identify two strengths and two weaknesses, revise, and repeat. Short frequent practice sessions are more useful than one large session done rarely."
     }
   ],
@@ -60,7 +99,7 @@
       "maintenanceMode": false
     },
     "featuredVideo": {
-      "url": "https://www.youtube-nocookie.com/embed/xMki4WOdX1Y",
+      "url": "https://www.youtube-nocookie.com/embed/a3RI4DjFBzw",
       "title": "Demo",
       "description": "Demo yt",
       "published": true
