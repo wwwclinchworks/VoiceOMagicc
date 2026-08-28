@@ -21,6 +21,10 @@ jobs:
           node-version: 22
       - name: Run production QA checks
         run: node scripts/qa-check.mjs
+      - name: Run Admin console regression checks
+        run: node qa/admin-console-regression.mjs
+      - name: Run Admin Weekly Highlights regression checks
+        run: node qa/admin-weekly-sync-regression.mjs
       - name: Run security smoke checks
         run: node scripts/security-smoke.mjs
       - name: Run live CMS rendering regression checks
