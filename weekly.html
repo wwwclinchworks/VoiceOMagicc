@@ -25,13 +25,17 @@
         .weekly-gallery { width:100%; max-width:1100px; margin-inline:auto; }
         .weekly-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
         .weekly-card { overflow:hidden; border-radius:18px; border:1px solid var(--light); background:var(--surface-warm); box-shadow:0 8px 30px rgba(25,22,16,.08); }
-        .weekly-frame { width:100%; aspect-ratio:16/9; overflow:hidden; background:var(--surface-warm); }
-        .weekly-frame img { display:block; width:100%; height:100%; object-fit:cover; object-position:center; }
+        .weekly-frame { width:100%; aspect-ratio:16/9; overflow:hidden; background:var(--surface-warm); position:relative; }
+        .weekly-frame img { display:block; width:100%; height:100%; object-fit:cover; object-position:center; opacity:0; transition:opacity .2s ease; }
+        .weekly-frame.is-loaded img { opacity:1; }
+        .weekly-loader { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--surface-warm); z-index:2; transition:opacity .2s ease; }
+        .weekly-loader img { width:110px; height:110px; max-width:32%; max-height:32%; object-fit:contain; opacity:1; }
+        .weekly-frame.is-loaded .weekly-loader { opacity:0; pointer-events:none; }
         .weekly-content { padding:18px 20px 20px; }
         .weekly-content h2 { margin:0; font-size:18px; font-weight:700; color:var(--heading); }
         .weekly-content p { margin:8px 0 0; font-size:14px; line-height:1.6; color:var(--sec); }
         .weekly-status { text-align:center; margin-top:26px; font-size:13px; color:var(--muted); }
-        @media(max-width:767px){ .weekly-grid{grid-template-columns:1fr;gap:16px;} }
+        @media(max-width:767px){ .weekly-grid{grid-template-columns:1fr;gap:16px;} .weekly-loader img{width:90px;height:90px;} }
     </style>
 </head>
 
@@ -108,14 +112,7 @@
             </div>
 
             <div id="weeklyGallery" class="weekly-gallery">
-                <div class="weekly-grid">
-                    <article class="weekly-card" data-fallback-slot="1">
-                        <div class="weekly-frame"><img src="./h2.jpg" alt="Voice-O-Magic Weekly Highlight 1" width="1200" height="675" loading="eager" decoding="async"></div>
-                    </article>
-                    <article class="weekly-card" data-fallback-slot="2">
-                        <div class="weekly-frame"><img src="./h1.jpg" alt="Voice-O-Magic Weekly Highlight 2" width="1200" height="675" loading="eager" decoding="async"></div>
-                    </article>
-                </div>
+                <div class="weekly-grid"></div>
                 <p id="weeklyStatus" class="weekly-status" aria-live="polite"></p>
             </div>
         </section>
@@ -164,52 +161,77 @@
     <script src="js/chatbot-config.js"></script>
     <script src="js/chatbot.js"></script>
 
-    <!-- Load public CMS data after the shared scripts. This replaces only the two image slots. -->
     <script>
     (function () {
         'use strict';
 
-        const fallback = [
-            { imageUrl: './h2.jpg', title: '', description: '', published: true },
-            { imageUrl: './h1.jpg', title: '', description: '', published: true }
+        const REICON_LOADER = 'https://cdn.reicon.dev/backup-action.svg';
+        const FALLBACKS = [
+            { imageUrl: './h2.jpg', title: '', description: '' },
+            { imageUrl: './h1.jpg', title: '', description: '' }
         ];
 
         function safeImageUrl(value) {
             try {
                 const url = new URL(String(value || ''), window.location.href);
-                if (url.protocol !== 'https:' && url.origin !== window.location.origin) return null;
-                return url.href;
-            } catch {
-                return null;
-            }
+                if (url.protocol === 'https:' || url.origin === window.location.origin) return url.href;
+            } catch {}
+            return null;
+        }
+
+        function makeImageFrame(imageUrl, alt, fallbackUrl) {
+            const frame = document.createElement('div');
+            frame.className = 'weekly-frame';
+
+            const loader = document.createElement('div');
+            loader.className = 'weekly-loader';
+            loader.setAttribute('aria-hidden', 'true');
+
+            const loaderImg = document.createElement('img');
+            loaderImg.src = REICON_LOADER;
+            loaderImg.alt = '';
+            loaderImg.width = 180;
+            loaderImg.height = 180;
+            loaderImg.loading = 'eager';
+            loaderImg.decoding = 'async';
+            loader.appendChild(loaderImg);
+
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = alt;
+            img.width = 1200;
+            img.height = 675;
+            img.loading = 'eager';
+            img.decoding = 'async';
+
+            let fallbackTried = false;
+            img.addEventListener('load', () => frame.classList.add('is-loaded'), { once: true });
+            img.addEventListener('error', () => {
+                if (!fallbackTried && fallbackUrl && img.src !== fallbackUrl) {
+                    fallbackTried = true;
+                    img.src = fallbackUrl;
+                    return;
+                }
+                frame.classList.add('is-loaded');
+                loader.replaceChildren();
+                const errorText = document.createElement('span');
+                errorText.className = 'text-xs text-red px-4 text-center';
+                errorText.textContent = 'Unable to load this image.';
+                loader.appendChild(errorText);
+            });
+
+            frame.append(loader, img);
+            return frame;
         }
 
         function slotCard(item, fallbackItem, number) {
-            const image = safeImageUrl(item?.imageUrl) || fallbackItem.imageUrl;
+            const imageUrl = safeImageUrl(item?.imageUrl) || fallbackItem.imageUrl;
             const title = String(item?.title || '').trim();
             const description = String(item?.description || '').trim();
 
             const card = document.createElement('article');
             card.className = 'weekly-card';
-
-            const frame = document.createElement('div');
-            frame.className = 'weekly-frame';
-
-            const img = document.createElement('img');
-            img.src = image;
-            img.alt = title || `Voice-O-Magic Weekly Highlight ${number}`;
-            img.width = 1200;
-            img.height = 675;
-            img.loading = 'eager';
-            img.decoding = 'async';
-            img.onerror = function () {
-                if (img.src !== fallbackItem.imageUrl) {
-                    img.src = fallbackItem.imageUrl;
-                }
-            };
-
-            frame.appendChild(img);
-            card.appendChild(frame);
+            card.appendChild(makeImageFrame(imageUrl, title || `Voice-O-Magic Weekly Highlight ${number}`, fallbackItem.imageUrl));
 
             if (title || description) {
                 const content = document.createElement('div');
@@ -225,6 +247,8 @@
         async function loadWeekly() {
             const gallery = document.getElementById('weeklyGallery');
             if (!gallery) return;
+
+            const grid = gallery.querySelector('.weekly-grid');
             const status = document.getElementById('weeklyStatus');
 
             try {
@@ -235,17 +259,16 @@
                 const weekly = body?.cms?.weeklyHighlights;
                 const items = [weekly?.highlight1, weekly?.highlight2];
                 const visible = items.map((item, index) => {
-                    if (item && item.published === true && item.imageUrl) return slotCard(item, fallback[index], index + 1);
-                    if (!weekly) return slotCard(fallback[index], fallback[index], index + 1);
+                    const fallback = FALLBACKS[index];
+                    if (item && item.published === true && item.imageUrl) return slotCard(item, fallback, index + 1);
+                    if (!weekly) return slotCard(fallback, fallback, index + 1);
                     return null;
                 }).filter(Boolean);
 
-                const grid = gallery.querySelector('.weekly-grid');
-                if (grid && visible.length) {
-                    grid.replaceChildren(...visible);
-                }
+                if (grid && visible.length) grid.replaceChildren(...visible);
                 if (status) status.textContent = '';
             } catch {
+                if (grid) grid.replaceChildren(...FALLBACKS.map((item, index) => slotCard(item, item, index + 1)));
                 if (status) status.textContent = '';
             }
         }
