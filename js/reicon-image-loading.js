@@ -9,13 +9,10 @@
   const EMPTY_ILLUSTRATION = 'https://cdn.reicon.dev/teacher.svg';
   const ERROR_ILLUSTRATION = 'https://cdn.reicon.dev/coach-whistle.svg';
 
-  const IMAGE_SELECTORS = [
-    '#weeklyGallery img'
-  ];
+  const IMAGE_SELECTORS = ['#weeklyGallery img'];
 
   function ensureIcon(container, src) {
     if (!container) return null;
-
     let icon = container.querySelector('img[data-reicon-illustration]');
     if (!icon) {
       icon = document.createElement('img');
@@ -35,7 +32,6 @@
       ].join(';');
       container.appendChild(icon);
     }
-
     icon.src = src;
     return icon;
   }
@@ -82,6 +78,7 @@
       frame.style.position = 'relative';
     }
 
+    // Reuse the loader that weekly.html may already have created.
     const loader = findLoader(frame) || createLoader(frame);
     ensureIcon(loader, LOADING_ILLUSTRATION);
 
@@ -104,15 +101,6 @@
   function styleExistingAdminLoaders(root) {
     root.querySelectorAll?.('[data-drive-loader]').forEach((loader) => {
       ensureIcon(loader, LOADING_ILLUSTRATION);
-    });
-  }
-
-  function addEmptyIllustration(root = document) {
-    root.querySelectorAll?.('#weeklyGallery .weekly-frame').forEach((frame) => {
-      if (frame.querySelector('img:not([data-reicon-illustration])')) return;
-      let loader = findLoader(frame);
-      if (!loader) loader = createLoader(frame);
-      ensureIcon(loader, EMPTY_ILLUSTRATION);
     });
   }
 
