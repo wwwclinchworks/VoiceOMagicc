@@ -22,9 +22,7 @@
       const response=await originalFetch(input,init);
       try{
         const url=typeof input==='string'?input:input?.url||'';
-        if(url.includes('mode=admin-data') && response.status===401){
-          window.__vomAdminUnauthorized=true;
-        }
+        if(url.includes('mode=admin-data') && response.status===401) window.__vomAdminUnauthorized=true;
       }catch{}
       return response;
     };
@@ -83,49 +81,27 @@
       label.className='block text-sm font-semibold text-sec';
       label.textContent='Administrator password';
       const input=document.createElement('input');
-      input.type='password';
-      input.autocomplete='current-password';
-      input.required=true;
-      input.className='md-input mt-1.5';
-      label.append(input);
-      const error=document.createElement('p');
-      error.className='text-sm text-red';
-      error.hidden=true;
-      const button=document.createElement('button');
-      button.className='btn-primary w-full';
-      button.type='submit';
-      button.textContent='Sign in';
+      input.type='password'; input.autocomplete='current-password'; input.required=true; input.className='md-input mt-1.5'; label.append(input);
+      const error=document.createElement('p'); error.className='text-sm text-red'; error.hidden=true;
+      const button=document.createElement('button'); button.className='btn-primary w-full'; button.type='submit'; button.textContent='Sign in';
       form.append(label,error,button);
       form.addEventListener('submit',async function(event){
-        event.preventDefault();
-        error.hidden=true;
-        button.disabled=true;
-        button.textContent='Signing in…';
+        event.preventDefault(); error.hidden=true; button.disabled=true; button.textContent='Signing in…';
         try{
           const response=await fetch('/api/chat?mode=admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:input.value})});
           const body=await response.json().catch(()=>({}));
           if(!response.ok)throw new Error(body.error||'Login failed.');
           location.reload();
         }catch(err){
-          error.textContent=err.message||'Login failed.';
-          error.hidden=false;
-          button.disabled=false;
-          button.textContent='Sign in';
+          error.textContent=err.message||'Login failed.'; error.hidden=false; button.disabled=false; button.textContent='Sign in';
         }
       });
-      card.append(eyebrow,title,copy,form);
-      shell.append(card);
-      document.body.replaceChildren(shell);
-      input.focus();
+      card.append(eyebrow,title,copy,form); shell.append(card); document.body.replaceChildren(shell); input.focus();
     }
-
-    function inspect(){
-      if(window.__vomAdminUnauthorized)showLogin();
-    }
-    inspect();
-    new MutationObserver(inspect).observe(document.body,{childList:true,subtree:true});
+    function inspect(){ if(window.__vomAdminUnauthorized) showLogin(); }
+    inspect(); new MutationObserver(inspect).observe(document.body,{childList:true,subtree:true});
   })();
   </script>
-  <script src="js/weekly-highlights-admin.js"></script>
+  <script src="js/admin-weekly-sync.js"></script>
 </body>
 </html>
