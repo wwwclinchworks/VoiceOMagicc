@@ -9,7 +9,7 @@ const booksHtml = read('books.html');
 const mainJs = read('js/main.js');
 const chatbotConfig = read('js/chatbot-config.js');
 const weeklyJs = read('js/weekly-highlights.js');
-const weeklyAdminJs = read('js/weekly-highlights-admin.js');
+const weeklyAdminJs = read('js/admin-weekly-sync.js');
 const adminHtml = read('adminadmin.html');
 const adminJs = read('js/admin.js');
 const worker = read('worker.js');
@@ -42,14 +42,17 @@ expect(weeklyJs.includes('removePublicIntroAndToolkit'), 'Weekly Highlights runt
 expect(weeklyJs.includes('aspect-[4/3]'), 'Weekly Highlights must use fixed 4:3 frames.');
 expect(!weeklyJs.includes('setInterval'), 'Weekly Highlights must not poll.');
 
-expect(adminHtml.includes('js/weekly-highlights-admin.js'), 'Admin page must load Weekly Highlights controls.');
-expect(weeklyAdminJs.includes("const ENDPOINT = '/api/weekly-highlights'"), 'Admin highlights must use protected endpoint.');
-expect(weeklyAdminJs.includes("method: 'PUT'"), 'Admin highlights must use PUT for writes.');
+expect(adminHtml.includes('js/admin-weekly-sync.js'), 'Admin page must load persistent Weekly Highlights controls.');
+expect(!adminHtml.includes('js/weekly-highlights-admin.js'), 'Admin page must not load the retired duplicate Weekly Highlights client.');
+expect(weeklyAdminJs.includes("const ENDPOINT = '/api/weekly-highlights'"), 'Admin Weekly Highlights must use protected endpoint.');
+expect(weeklyAdminJs.includes("method: 'PUT'"), 'Admin Weekly Highlights must use PUT for writes.');
+expect(weeklyAdminJs.includes("cache: 'no-store'"), 'Admin Weekly Highlights must bypass caching.');
+expect(weeklyAdminJs.includes('MutationObserver'), 'Admin Weekly Highlights must survive dashboard rerenders.');
 
-expect(adminJs.includes("'Page Copy':'settings'"), 'Admin must map Page Copy.');
-expect(adminJs.includes("'Featured Video':'featuredVideo'"), 'Admin must map Featured Video.');
-expect(adminJs.includes("'Speaker Toolkit':'toolkit'"), 'Admin must map Speaker Toolkit.');
-expect(adminJs.includes("'Books':'books'"), 'Admin must map Books.');
+for (const marker of ["'Page Copy':'settings'", "'Featured Video':'featuredVideo'", "'Speaker Toolkit':'toolkit'", "'Books':'books'"]) {
+  expect(adminJs.includes(marker), `Admin must map ${marker}.`);
+}
+expect(adminJs.includes("'Resources':'resources'"), 'Admin must map Resources.');
 
 expect(worker.includes("mode === 'public-cms'"), 'Worker must expose public-cms.');
 expect(worker.includes('publicSnapshot(file.data?.cms)'), 'Public CMS must use the published snapshot.');
