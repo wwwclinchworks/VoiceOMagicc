@@ -45,8 +45,11 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     document.documentElement.classList.toggle('dark',dark);
     try{localStorage.setItem('vom-theme',dark?'dark':'light');}catch{}
     document.querySelectorAll('#themeToggleBtn,#themeToggleBtnMobile').forEach((btn)=>{
-      const icon=document.createElement('i');
-      icon.className=dark?'fa-solid fa-sun':'fa-solid fa-moon';
+      const icon=btn.querySelector('[data-vom-theme-logo]') || makeLogo(REICON.lightbulb,'A lightbulb',180);
+      icon.dataset.vomThemeLogo='true';
+      icon.className='w-6 h-6 object-contain';
+      icon.alt=dark?'Switch to light mode':'Switch to dark mode';
+      icon.title=dark?'Switch to light mode':'Switch to dark mode';
       btn.replaceChildren(icon);
       btn.title=dark?'Switch to light mode':'Switch to dark mode';
       btn.setAttribute('aria-label',btn.title);
@@ -101,14 +104,24 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     }
   }
 
-  function replaceHeaderBrand(){
-    const headerLogo=document.querySelector('header a[href="index.html"] img');
-    if(headerLogo&&!headerLogo.dataset.vomBrandLogo){
-      const replacement=makeLogo(REICON.lightbulb,'A lightbulb',180);
-      replacement.dataset.vomBrandLogo='true';
-      replacement.className='w-full h-full object-contain';
-      headerLogo.replaceWith(replacement);
-    }
+  // The Lightbulb illustration is the THEME CONTROL icon only.
+  // It must never replace the Voice-O-Magic brand/logo image.
+  function replaceThemeControls(){
+    document.querySelectorAll('#themeToggleBtn,#themeToggleBtnMobile').forEach((btn)=>{
+      let icon=btn.querySelector('[data-vom-theme-logo]');
+      if(!icon){
+        btn.querySelectorAll('i.fa-moon,i.fa-sun,.fa-moon,.fa-sun').forEach((i)=>i.remove());
+        icon=makeLogo(REICON.lightbulb,'A lightbulb',180);
+        icon.dataset.vomThemeLogo='true';
+        icon.className='w-6 h-6 object-contain';
+        btn.replaceChildren(icon);
+      }
+      const dark=document.documentElement.classList.contains('dark');
+      icon.alt=dark?'Switch to light mode':'Switch to dark mode';
+      icon.title=icon.alt;
+      btn.title=icon.title;
+      btn.setAttribute('aria-label',btn.title);
+    });
 
     const menuButton=document.getElementById('mobileMenuBtn');
     if(menuButton&&!menuButton.querySelector('[data-vom-menu-logo]')){
@@ -293,7 +306,7 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
           <div class="space-y-4 md:col-span-2 lg:col-span-1">
             <div class="flex items-center space-x-2.5">
               <div class="w-10 h-10 rounded-full border border-theme bg-theme flex items-center justify-center p-1 shadow-card">
-                <img src="${REICON.lightbulb}" alt="A lightbulb" width="180" height="180" class="w-full h-full object-contain">
+                <img src="logo.png" alt="Voice-O-Magic logo" width="180" height="180" class="w-full h-full object-contain">
               </div>
               <span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span>
             </div>
@@ -318,7 +331,7 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     setTheme(saved?saved==='dark':prefersDark);
     setupNavigationAccessibility();
     addWeeklyLink();
-    replaceHeaderBrand();
+    replaceThemeControls();
     replaceSocialIcons();
     replaceContactIcons();
     replacePageIllustrations();
@@ -342,4 +355,4 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   }
 })();
 
-/* deployment marker: 2026-08-28 ui reicon pass */
+/* deployment marker: theme control uses lightbulb; brand logo stays unchanged */
