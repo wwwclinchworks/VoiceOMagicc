@@ -1,0 +1,1 @@
+Admin QA is enforced in GitHub Actions for authentication, section mappings, Weekly Highlights persistence, Save All, re-render persistence, and Worker routing.
