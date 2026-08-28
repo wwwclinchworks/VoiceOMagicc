@@ -74,9 +74,11 @@ for (const marker of [
   if (!entry.includes(marker)) fail(`Missing canonical routing/cache control: ${marker}`);
 }
 
-const resourcesLayout = fs.readFileSync(path.join(root, 'js/resources-layout.js'), 'utf8');
-if (resourcesLayout.includes('MutationObserver') || resourcesLayout.includes('setInterval')) {
-  fail('Retired resources-layout.js must remain an inert compatibility stub.');
+if (fs.existsSync(path.join(root, 'js/resources-layout.js'))) {
+  const resourcesLayout = fs.readFileSync(path.join(root, 'js/resources-layout.js'), 'utf8');
+  if (resourcesLayout.includes('MutationObserver') || resourcesLayout.includes('setInterval')) {
+    fail('If resources-layout.js exists, it must remain inert.');
+  }
 }
 
 for (const file of files.filter((f) => f.endsWith('.js'))) {
