@@ -4,7 +4,7 @@
   const ADMIN_DATA = '/api/chat?mode=admin-data';
   const ADMIN_SAVE = '/api/chat?mode=admin-save';
   const SECTION_ID = 'vomWeeklyHighlightsAdmin';
-  const REICON_LOADER = 'https://cdn.reicon.dev/backup-action.svg';
+  const REICON_LOADER = 'https://cdn.reicon.dev/consultant-presenting.svg';
 
   const defaults = () => ({
     highlight1: { driveUrl: '', imageUrl: '', title: '', description: '', published: false },
@@ -108,7 +108,17 @@
       preview.replaceChildren();
 
       if (!item.driveUrl) {
-        preview.append(node('p', 'p-5 text-sm text-muted text-center', 'Paste a Google Drive image link to preview the image.'));
+        const empty = node('div', 'w-full h-full min-h-[180px] flex flex-col items-center justify-center p-5 text-center');
+        const art = document.createElement('img');
+        art.src = 'https://cdn.reicon.dev/teacher.svg';
+        art.alt = '';
+        art.width = 180;
+        art.height = 180;
+        art.loading = 'eager';
+        art.decoding = 'async';
+        art.className = 'w-[90px] h-[90px] object-contain mb-2';
+        empty.append(art, node('p', 'text-sm text-muted', 'Paste a Google Drive image link to preview the image.'));
+        preview.append(empty);
         return;
       }
 
@@ -136,9 +146,17 @@
 
       image.addEventListener('error', () => {
         loader.remove();
-        preview.replaceChildren(
-          node('p', 'p-5 text-sm text-red text-center', 'The image could not be loaded. Set Drive sharing to Anyone with the link → Viewer.')
-        );
+        const errorState = node('div', 'w-full h-full min-h-[180px] flex flex-col items-center justify-center p-5 text-center');
+        const art = document.createElement('img');
+        art.src = 'https://cdn.reicon.dev/coach-whistle.svg';
+        art.alt = '';
+        art.width = 180;
+        art.height = 180;
+        art.loading = 'eager';
+        art.decoding = 'async';
+        art.className = 'w-[75px] h-[75px] object-contain mb-2';
+        errorState.append(art, node('p', 'text-sm text-red', 'The image could not be loaded. Set Drive sharing to Anyone with the link → Viewer.'));
+        preview.replaceChildren(errorState);
       }, { once: true });
 
       preview.append(image);
