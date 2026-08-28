@@ -1,23 +1,17 @@
 (function () {
   'use strict';
 
-  // ReIcon People → Profession illustrations selected for Voice-O-Magic.
-  // Loading: consultant-presenting (presentation / communication)
-  // Empty: teacher (friendly learning context)
-  // Error: coach-whistle (action / retry context)
-  const LOADING_ILLUSTRATION = 'https://cdn.reicon.dev/consultant-presenting.svg';
-  const EMPTY_ILLUSTRATION = 'https://cdn.reicon.dev/teacher.svg';
-  const ERROR_ILLUSTRATION = 'https://cdn.reicon.dev/coach-whistle.svg';
-
+  // Single ReIcon treatment for image loading/empty/error states.
+  const APERTURE_ILLUSTRATION = 'https://cdn.reicon.dev/aperture.svg';
   const IMAGE_SELECTORS = ['#weeklyGallery img'];
 
-  function ensureIcon(container, src) {
+  function ensureIcon(container, src = APERTURE_ILLUSTRATION) {
     if (!container) return null;
     let icon = container.querySelector('img[data-reicon-illustration]');
     if (!icon) {
       icon = document.createElement('img');
       icon.dataset.reiconIllustration = 'true';
-      icon.alt = '';
+      icon.alt = 'Aperture';
       icon.width = 180;
       icon.height = 180;
       icon.loading = 'eager';
@@ -33,6 +27,7 @@
       container.appendChild(icon);
     }
     icon.src = src;
+    icon.alt = 'Aperture';
     return icon;
   }
 
@@ -78,13 +73,12 @@
       frame.style.position = 'relative';
     }
 
-    // Reuse the loader that weekly.html may already have created.
     const loader = findLoader(frame) || createLoader(frame);
-    ensureIcon(loader, LOADING_ILLUSTRATION);
+    ensureIcon(loader);
 
     const onLoad = () => finish(loader);
     const onError = () => {
-      ensureIcon(loader, ERROR_ILLUSTRATION);
+      ensureIcon(loader);
       loader.style.opacity = '1';
       loader.style.pointerEvents = 'none';
     };
@@ -100,7 +94,7 @@
 
   function styleExistingAdminLoaders(root) {
     root.querySelectorAll?.('[data-drive-loader]').forEach((loader) => {
-      ensureIcon(loader, LOADING_ILLUSTRATION);
+      ensureIcon(loader);
     });
   }
 
