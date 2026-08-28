@@ -8,6 +8,7 @@ const main = read('js/main.js');
 const admin = read('js/admin.js');
 const adminHtml = read('adminadmin.html');
 const weekly = read('js/weekly-highlights.js');
+const weeklyAdmin = read('js/admin-weekly-sync.js');
 const config = read('js/chatbot-config.js');
 const assetsIgnore = read('.assetsignore');
 const wrangler = read('wrangler.jsonc');
@@ -26,19 +27,22 @@ expect(main.includes('item.coverImageUrl'), 'main.js must consume coverImageUrl.
 expect(main.includes("fetch('/api/chat?mode=public-cms'"), 'main.js must use live public-cms.');
 expect(main.includes('videoContainer'), 'main.js must use a dedicated video container.');
 
-expect(admin.includes("'Page Copy':'settings'"), 'admin.js must map Page Copy.');
-expect(admin.includes("'Featured Video':'featuredVideo'"), 'admin.js must map Featured Video.');
-expect(admin.includes("'Speaker Toolkit':'toolkit'"), 'admin.js must map Speaker Toolkit.');
-expect(admin.includes("'Books':'books'"), 'admin.js must map Books.');
-expect(adminHtml.includes("fetch('js/admin.js'"), 'Admin page must load admin.js directly.');
-expect(adminHtml.includes('js/weekly-highlights-admin.js'), 'Admin page must load Weekly Highlights admin client.');
-expect(!adminHtml.includes('source.replace('), 'Admin page must not patch admin.js source at runtime.');
+for (const marker of ["'Page Copy':'settings'", "'Featured Video':'featuredVideo'", "'Resources':'resources'", "'Speaker Toolkit':'toolkit'", "'Books':'books'"]) {
+  expect(admin.includes(marker), `Admin section mapping missing: ${marker}`);
+}
+expect(adminHtml.includes("fetch('js/admin.js'"), 'Admin page must load admin.js.');
+expect(adminHtml.includes('js/admin-weekly-sync.js'), 'Admin page must load stable Weekly Highlights sync.');
+expect(!adminHtml.includes('js/weekly-highlights-admin.js'), 'Admin page must not load obsolete Weekly Highlights client.');
+expect(!adminHtml.includes('source.replace('), 'Admin page must not patch JS source at runtime.');
+
+for (const marker of ["const ENDPOINT = '/api/weekly-highlights'", 'MutationObserver', 'data-weekly-highlights-admin-sync', 'data-weekly-sync-save', 'saveAll', "method: 'PUT'", "cache: 'no-store'"]) {
+  expect(weeklyAdmin.includes(marker), `Weekly Admin control missing: ${marker}`);
+}
+expect(weeklyAdmin.includes('Every published highlight needs a valid HTTPS image URL.'), 'Weekly Admin HTTPS validation is required.');
 
 expect(weekly.includes("const CMS_URL = '/api/chat?mode=public-cms'"), 'Public Weekly Highlights must use public-cms.');
 expect(weekly.includes('main.prepend(section)'), 'Weekly Highlights must mount before Resources.');
-expect(weekly.includes('removePublicIntroAndToolkit'), 'Weekly Highlights must remove legacy public intro and toolkit.');
 expect(weekly.includes('aspect-[4/3]'), 'Weekly Highlights must use fixed 4:3 frames.');
-expect(weekly.includes('new MutationObserver'), 'Weekly Highlights must react to CMS main replacement.');
 expect(!weekly.includes('setInterval'), 'Weekly Highlights must not poll.');
 
 expect(!config.includes("'/resources':'/resources.html'"), 'Resources must not use client-side route aliasing.');
@@ -60,11 +64,9 @@ expect(entry.includes("'Cache-Control': 'no-store, no-cache, max-age=0, must-rev
 expect(entry.includes("headers.set('Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate')"), 'HTML responses must not be cached.');
 expect(entry.includes('handler.fetch(request, env, ctx)'), 'Worker entry must delegate non-Resources requests.');
 
-expect(assetsIgnore.includes('worker.js'), '.assetsignore must exclude worker.js.');
-expect(assetsIgnore.includes('worker-entry.js'), '.assetsignore must exclude worker-entry.js.');
-expect(assetsIgnore.includes('api/'), '.assetsignore must exclude legacy api directory.');
-expect(assetsIgnore.includes('.wrangler/'), '.assetsignore must exclude local Wrangler output.');
-expect(assetsIgnore.includes('tmp/'), '.assetsignore must exclude temporary files.');
+for (const marker of ['worker.js', 'worker-entry.js', 'api/', '.wrangler/', 'tmp/']) {
+  expect(assetsIgnore.includes(marker), `.assetsignore must exclude ${marker}.`);
+}
 
 expect(!fs.existsSync('api/chat.js'), 'Legacy Vercel chat API must be removed.');
 expect(!fs.existsSync('api/weekly-highlights.js'), 'Legacy Vercel Weekly Highlights API must be removed.');
