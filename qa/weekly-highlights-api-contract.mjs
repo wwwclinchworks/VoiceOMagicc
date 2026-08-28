@@ -3,16 +3,18 @@ import fs from 'node:fs';
 const worker = fs.readFileSync('worker.js', 'utf8');
 const admin = fs.readFileSync('js/weekly-highlights-admin.js', 'utf8');
 const client = fs.readFileSync('js/weekly-highlights.js', 'utf8');
-const endpoint = fs.readFileSync('api/weekly-highlights.js', 'utf8');
-
 const checks = [
-  [endpoint.includes("if (req.method === 'GET')"), 'Weekly Highlights endpoint must support public GET.'],
-  [endpoint.includes("if (req.method !== 'PUT')"), 'Weekly Highlights endpoint must keep PUT for admin writes.'],
-  [endpoint.includes('validCookie(req)'), 'Weekly Highlights writes must require an admin session.'],
-  [endpoint.includes('next.cms.weeklyHighlights = weeklyHighlights'), 'Weekly Highlights writes must persist to CMS.'],
-  [admin.includes("const ENDPOINT = '/api/weekly-highlights'"), 'Admin highlight client must use the dedicated endpoint.'],
-  [client.includes("const CMS_URL = '/api/weekly-highlights'"), 'Public highlight client must use the dedicated live endpoint.'],
-  [worker.includes('weeklyHighlights'), 'Cloudflare Worker must preserve weeklyHighlights.']
+  [worker.includes("url.pathname === '/api/weekly-highlights'"), 'Cloudflare Worker must expose the Weekly Highlights endpoint.'],
+  [worker.includes("if (request.method === 'GET')"), 'Weekly Highlights Worker endpoint must support GET.'],
+  [worker.includes("if (request.method !== 'PUT')"), 'Weekly Highlights Worker endpoint must support PUT.'],
+  [worker.includes('validCookie(request, env)'), 'Weekly Highlights Worker endpoint must protect admin access with the session cookie.'],
+  [worker.includes('file.data.cms.weeklyHighlights = normalizeHighlights'), 'Weekly Highlights writes must persist to CMS.'],
+  [admin.includes("const ENDPOINT = '/api/weekly-highlights'"), 'Admin highlight client must use the protected endpoint.'],
+  [admin.includes("method: 'PUT'"), 'Admin highlight client must use PUT for writes.'],
+  [admin.includes("cache: 'no-store'"), 'Admin highlight client must bypass browser caching.'],
+  [client.includes("const CMS_URL = '/api/chat?mode=public-cms'"), 'Public highlight client must use public-cms rather than the protected admin endpoint.'],
+  [client.includes('item.published === true'), 'Public highlight client must hide unpublished slots.'],
+  [client.includes('aspect-[4/3]'), 'Public highlight client must keep fixed image frames.']
 ];
 
 for (const [ok, message] of checks) if (!ok) throw new Error(message);

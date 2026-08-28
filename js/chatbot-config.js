@@ -26,20 +26,44 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   }
 })();
 
-/* Read live CMS content through the Cloudflare Worker so Admin changes do not require a redeploy. */
+/* Keep the homepage featured video synchronized with the CMS without exposing secrets. */
 (function(){
-  const LIVE_CMS_ENDPOINT='/api/chat?mode=public-cms';
-  const originalFetch=window.fetch.bind(window);
-  window.fetch=function(input,init){
-    const url=typeof input==='string'?input:input?.url||'';
-    if(url.startsWith('/data/knowledge.json?')){
-      return originalFetch(LIVE_CMS_ENDPOINT,{...(init||{}),cache:'no-store'});
-    }
-    return originalFetch(input,init);
-  };
+  const isHome=location.pathname==='/' || location.pathname.endsWith('/index.html');
+  if(!isHome) return;
+
+  async function loadFeaturedVideo(){
+    try{
+      const response=await fetch('/api/chat?mode=public-cms',{cache:'no-store'});
+      if(!response.ok) return;
+      const data=await response.json();
+      const video=data?.cms?.featuredVideo;
+      if(!video?.published || typeof video.url!=='string') return;
+      window.__VOM_FEATURED_VIDEO={url:video.url,title:video.title||'Voice-O-Magic featured video'};
+
+      const previous=window.playNativeVideo;
+      window.playNativeVideo=()=>{
+        const cover=document.getElementById('videoCover');
+        const container=document.getElementById('videoContainer');
+        if(cover) cover.classList.add('hidden');
+        if(!container || container.firstChild) return;
+        const iframe=document.createElement('iframe');
+        iframe.className='w-full h-full';
+        iframe.src=video.url+(video.url.includes('?')?'&':'?')+'autoplay=1';
+        iframe.title=window.__VOM_FEATURED_VIDEO.title;
+        iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.referrerPolicy='strict-origin-when-cross-origin';
+        iframe.allowFullscreen=true;
+        container.appendChild(iframe);
+        if(typeof previous==='function') window.__VOM_DEFAULT_PLAY_NATIVE_VIDEO=previous;
+      };
+    }catch{}
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadFeaturedVideo,{once:true});
+  else loadFeaturedVideo();
 })();
 
-/* Load Weekly Highlights on the canonical Resources page only. */
+/* Load Weekly Highlights on the canonical Resources page only. The module also removes legacy public intro/toolkit blocks. */
 (function(){
   if(location.pathname !== '/resources.html') return;
   const loadWeeklyHighlights=()=>{
@@ -54,17 +78,25 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   else loadWeeklyHighlights();
 })();
 
-/* Keep the Resources page layout deterministic after CMS rendering and Weekly Highlights load. */
+/* Home profile card: keep the portrait compact and mobile-friendly. */
 (function(){
-  if(location.pathname !== '/resources.html') return;
-  const loadLayout=()=>{
-    if(document.querySelector('script[data-vom-resources-layout]')) return;
-    const script=document.createElement('script');
-    script.src='/js/resources-layout.js';
-    script.dataset.vomResourcesLayout='true';
-    script.onerror=()=>{};
-    document.head.appendChild(script);
-  };
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadLayout,{once:true});
-  else loadLayout();
+  const isHome=location.pathname==='/' || location.pathname.endsWith('/index.html');
+  if(!isHome) return;
+  const style=document.createElement('style');
+  style.dataset.vomHomeUi='true';
+  style.textContent=`
+    @media (max-width: 600px) {
+      .material-card:has(img[alt="Shalini Mukund"]) {
+        max-width: 19rem !important;
+      }
+      div:has(> img[alt="Shalini Mukund"]) {
+        aspect-ratio: 4 / 3 !important;
+        max-height: 360px;
+      }
+      img[alt="Shalini Mukund"] {
+        object-position: center top !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 })();
