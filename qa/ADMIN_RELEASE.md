@@ -1,0 +1,1 @@
+Admin console, Weekly Highlights, Save All, authentication, and Worker routing must pass CI before production deployment.
