@@ -1,1 +1,0 @@
-Generated production QA changes are validated through GitHub Actions.
