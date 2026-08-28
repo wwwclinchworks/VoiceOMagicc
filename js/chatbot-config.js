@@ -62,23 +62,27 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     return img;
   }
 
+  function hasReiconSocial(a, kind){
+    return Boolean(a.querySelector(`img[data-vom-social="${kind}"], img[src*="cdn.reicon.dev/logos/${kind}/original.svg"]`));
+  }
+
   function replaceSocialIcons(){
     document.querySelectorAll('a[href*="instagram.com/"]').forEach((a)=>{
-      if(a.querySelector('[data-vom-social="instagram"]')) return;
+      if(hasReiconSocial(a,'instagram')) return;
       a.querySelectorAll('i.fa-instagram,.fa-instagram').forEach((i)=>i.remove());
       const logo=makeLogo(REICON.instagram,'Instagram',24);
       logo.dataset.vomSocial='instagram';
       a.insertBefore(logo,a.firstChild);
     });
     document.querySelectorAll('a[href*="facebook.com/"]').forEach((a)=>{
-      if(a.querySelector('[data-vom-social="facebook"]')) return;
+      if(hasReiconSocial(a,'facebook')) return;
       a.querySelectorAll('i.fa-facebook,.fa-facebook').forEach((i)=>i.remove());
       const logo=makeLogo(REICON.facebook,'Facebook',24);
       logo.dataset.vomSocial='facebook';
       a.insertBefore(logo,a.firstChild);
     });
     document.querySelectorAll('a[href*="linkedin.com/"]').forEach((a)=>{
-      if(a.querySelector('[data-vom-social="linkedin"]')) return;
+      if(hasReiconSocial(a,'linkedin')) return;
       a.querySelectorAll('i.fa-linkedin,.fa-linkedin').forEach((i)=>i.remove());
       const logo=makeLogo(REICON.linkedin,'LinkedIn',24);
       logo.dataset.vomSocial='linkedin';
@@ -153,14 +157,14 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
             <div class="flex items-center space-x-2.5"><div class="w-9 h-9 rounded-full border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card"><img src="logo.png" alt="Voice-O-Magic logo" class="w-full h-full object-contain"></div><span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span></div>
             <p class="leading-relaxed text-sec">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p>
             <div class="flex flex-wrap gap-2.5 pt-1">
-              <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-theme border border-theme flex items-center justify-center hover:border-gold-muted transition" aria-label="Instagram"><img src="${REICON.instagram}" alt="Instagram" width="24" height="24" /></a>
-              <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-theme border border-theme flex items-center justify-center hover:border-gold-muted transition" aria-label="Facebook"><img src="${REICON.facebook}" alt="Facebook" width="24" height="24" /></a>
-              <a href="https://www.linkedin.com/in/shalini-mukund-3799661b9/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-theme border border-theme flex items-center justify-center hover:border-gold-muted transition" aria-label="LinkedIn"><img src="${REICON.linkedin}" alt="LinkedIn" width="24" height="24" /></a>
+              <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-theme border border-theme flex items-center justify-center hover:border-gold-muted transition" aria-label="Instagram"><img src="${REICON.instagram}" data-vom-social="instagram" alt="Instagram" width="24" height="24" /></a>
+              <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-theme border border-theme flex items-center justify-center hover:border-gold-muted transition" aria-label="Facebook"><img src="${REICON.facebook}" data-vom-social="facebook" alt="Facebook" width="24" height="24" /></a>
+              <a href="https://www.linkedin.com/in/shalini-mukund-3799661b9/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-theme border border-theme flex items-center justify-center hover:border-gold-muted transition" aria-label="LinkedIn"><img src="${REICON.linkedin}" data-vom-social="linkedin" alt="LinkedIn" width="24" height="24" /></a>
             </div>
           </div>
           <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4><ul class="space-y-3 text-sec"><li><a href="about.html" class="hover:text-gold transition">About Founder</a></li><li><a href="keynotes.html" class="hover:text-gold transition">Keynotes</a></li><li><a href="academy.html" class="hover:text-gold transition">Youth Academy</a></li><li><a href="corporate.html" class="hover:text-gold transition">Corporate</a></li></ul></div>
           <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Explore</h4><ul class="space-y-3 text-sec"><li><a href="books.html" class="hover:text-gold transition">Books</a></li><li><a href="resources.html" class="hover:text-gold transition">Resources</a></li><li><a href="weekly.html" class="hover:text-gold transition">Weekly Highlights</a></li><li><a href="testimonials.html" class="hover:text-gold transition">Testimonials</a></li></ul></div>
-          <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Profiles</h4><div class="space-y-3 text-sm text-sec"><a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-gold transition"><img src="${REICON.instagram}" alt="Instagram" width="24" height="24" /> @mukundshalini</a><a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-gold transition"><img src="${REICON.facebook}" alt="Facebook" width="24" height="24" /> Facebook</a><a href="https://www.linkedin.com/in/shalini-mukund-3799661b9/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-gold transition"><img src="${REICON.linkedin}" alt="LinkedIn" width="24" height="24" /> LinkedIn</a></div></div>
+          <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Profiles</h4><div class="space-y-3 text-sm text-sec"><a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-gold transition"><img src="${REICON.instagram}" data-vom-social="instagram" alt="Instagram" width="24" height="24" /> @mukundshalini</a><a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-gold transition"><img src="${REICON.facebook}" data-vom-social="facebook" alt="Facebook" width="24" height="24" /> Facebook</a><a href="https://www.linkedin.com/in/shalini-mukund-3799661b9/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-gold transition"><img src="${REICON.linkedin}" data-vom-social="linkedin" alt="LinkedIn" width="24" height="24" /> LinkedIn</a></div></div>
         </div>
         <div class="pt-8 border-t border-theme flex flex-col sm:flex-row justify-between items-center text-xs gap-4 text-muted"><div>&copy; 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div><div class="flex space-x-6"><a href="#" class="hover:text-heading transition">Privacy Policy</a><a href="#" class="hover:text-heading transition">Terms of Service</a></div></div>
       </div>`;
