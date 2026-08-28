@@ -1,0 +1,1 @@
+The complete Admin console must pass all automated QA gates before production deployment.
