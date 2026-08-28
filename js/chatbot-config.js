@@ -26,19 +26,6 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   }
 })();
 
-/* Read live CMS content through the Cloudflare Worker so Admin changes do not require a redeploy. */
-(function(){
-  const LIVE_CMS_ENDPOINT='/api/chat?mode=public-cms';
-  const originalFetch=window.fetch.bind(window);
-  window.fetch=function(input,init){
-    const url=typeof input==='string'?input:input?.url||'';
-    if(url.startsWith('/data/knowledge.json?')){
-      return originalFetch(LIVE_CMS_ENDPOINT,{...(init||{}),cache:'no-store'});
-    }
-    return originalFetch(input,init);
-  };
-})();
-
 /* Load Weekly Highlights on the canonical Resources page only. */
 (function(){
   if(location.pathname !== '/resources.html') return;
@@ -52,19 +39,4 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadWeeklyHighlights,{once:true});
   else loadWeeklyHighlights();
-})();
-
-/* Keep the Resources page layout deterministic after CMS rendering and Weekly Highlights load. */
-(function(){
-  if(location.pathname !== '/resources.html') return;
-  const loadLayout=()=>{
-    if(document.querySelector('script[data-vom-resources-layout]')) return;
-    const script=document.createElement('script');
-    script.src='/js/resources-layout.js';
-    script.dataset.vomResourcesLayout='true';
-    script.onerror=()=>{};
-    document.head.appendChild(script);
-  };
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',loadLayout,{once:true});
-  else loadLayout();
 })();
