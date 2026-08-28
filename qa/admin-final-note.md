@@ -1,0 +1,1 @@
+The production QA workflow must cover the complete Admin console, including authentication, all CMS sections, Weekly Highlights persistence, Save All behavior, dashboard re-render persistence, secure Worker endpoints, and canonical Resources routing.
