@@ -1,0 +1,1 @@
+Final production gate: admin authentication, CMS sections, Weekly Highlights, Save All, restore, and Worker routing must pass QA.
