@@ -5,275 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekly Highlights | Voice-O-Magic — Shalini Mukund</title>
     <meta name="description" content="Weekly Highlights from Voice-O-Magic — featured moments, updates, and highlights by Shalini Mukund.">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-
-    <script>
-        window.tailwind = window.tailwind || {};
-        window.tailwind.config = {
-            theme: { extend: { colors: { gold: 'var(--gold)' } } }
-        };
-    </script>
+    <script>window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{gold:'var(--gold)'}}}};</script>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-
     <style>
-        .weekly-gallery { width:100%; max-width:1100px; margin-inline:auto; }
-        .weekly-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
-        .weekly-card { overflow:hidden; border-radius:18px; border:1px solid var(--light); background:var(--surface-warm); box-shadow:0 8px 30px rgba(25,22,16,.08); }
-        .weekly-frame { width:100%; aspect-ratio:16/9; overflow:hidden; background:var(--surface-warm); position:relative; }
-        .weekly-frame img { display:block; width:100%; height:100%; object-fit:cover; object-position:center; opacity:0; transition:opacity .2s ease; }
-        .weekly-frame.is-loaded img { opacity:1; }
-        .weekly-loader { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--surface-warm); z-index:2; transition:opacity .2s ease; }
-        .weekly-loader img { width:110px; height:110px; max-width:32%; max-height:32%; object-fit:contain; opacity:1; }
-        .weekly-frame.is-loaded .weekly-loader { opacity:0; pointer-events:none; }
-        .weekly-content { padding:18px 20px 20px; }
-        .weekly-content h2 { margin:0; font-size:18px; font-weight:700; color:var(--heading); }
-        .weekly-content p { margin:8px 0 0; font-size:14px; line-height:1.6; color:var(--sec); }
-        .weekly-status { text-align:center; margin-top:26px; font-size:13px; color:var(--muted); }
-        @media(max-width:767px){ .weekly-grid{grid-template-columns:1fr;gap:16px;} .weekly-loader img{width:90px;height:90px;} }
+        .weekly-gallery{width:100%;max-width:1100px;margin-inline:auto}
+        .weekly-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+        .weekly-card{overflow:hidden;border-radius:18px;border:1px solid var(--light);background:var(--surface-warm);box-shadow:0 8px 30px rgba(25,22,16,.08)}
+        .weekly-frame{width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--surface-warm);position:relative}
+        .weekly-frame>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity .2s ease}
+        .weekly-frame.is-loaded>img{opacity:1}
+        .weekly-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--surface-warm);z-index:2;transition:opacity .2s ease}
+        .weekly-loader img{width:110px;height:110px;max-width:32%;max-height:32%;object-fit:contain;opacity:1}
+        .weekly-frame.is-loaded .weekly-loader{opacity:0;pointer-events:none}
+        .weekly-content{padding:18px 20px 20px}
+        .weekly-content h2{margin:0;font-size:18px;font-weight:700;color:var(--heading)}
+        .weekly-content p{margin:8px 0 0;font-size:14px;line-height:1.6;color:var(--sec)}
+        .weekly-status{text-align:center;margin-top:26px;font-size:13px;color:var(--muted)}
+        @media(max-width:767px){.weekly-grid{grid-template-columns:1fr;gap:16px}.weekly-loader img{width:90px;height:90px}}
     </style>
 </head>
-
 <body class="bg-theme text-main font-sans antialiased custom-scrollbar min-h-screen flex flex-col">
-
     <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
-        <div class="hidden md:flex items-center space-x-3">
-            <span class="bg-gold text-white text-[10px] uppercase font-bold px-2.5 py-0.5 rounded tracking-wider">Verified Winner</span>
-            <span class="text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span>
-        </div>
-        <div class="mx-auto md:mx-0 flex items-center gap-2">
-            <i class="fa-solid fa-circle-info text-gold"></i>
-            <span>Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings</span>
-        </div>
+        <div class="hidden md:flex items-center space-x-3"><span class="bg-gold text-white text-[10px] uppercase font-bold px-2.5 py-0.5 rounded tracking-wider">Verified Winner</span><span class="text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span></div>
+        <div class="mx-auto md:mx-0 flex items-center gap-2"><i class="fa-solid fa-circle-info text-gold"></i><span>Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings</span></div>
         <a href="contact.html" class="hidden lg:inline-flex items-center text-xs font-bold hover:underline transition">Inquire Now <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i></a>
     </div>
-
     <header class="sticky top-0 z-50 bg-theme/95 backdrop-blur-md border-b border-theme" id="mainHeader">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="index.html" class="flex items-center space-x-3 group" aria-label="Go to homepage">
-                <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
-                    <img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
-                </div>
-                <div class="flex flex-col">
-                    <span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span>
-                    <span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span>
-                </div>
-            </a>
-
+            <a href="index.html" class="flex items-center space-x-3 group" aria-label="Go to homepage"><div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card"><img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain"></div><div class="flex flex-col"><span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span><span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span></div></a>
             <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
-                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Home</a>
-                <a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">About</a>
-                <a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Keynotes</a>
-                <a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Academy</a>
-                <a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Corporate</a>
-                <a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Books</a>
-                <a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Resources</a>
-                <a href="weekly.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">Weekly</a>
-                <a href="testimonials.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Testimonials</a>
+                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Home</a><a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">About</a><a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Keynotes</a><a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Academy</a><a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Corporate</a><a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Books</a><a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Resources</a><a href="weekly.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">Weekly</a><a href="testimonials.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Testimonials</a>
             </nav>
-
-            <div class="hidden lg:flex items-center space-x-3">
-                <button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button>
-                <a href="contact.html" class="btn-primary text-sm">Contact Us</a>
-            </div>
-
-            <div class="lg:hidden flex items-center gap-2">
-                <button onclick="toggleTheme()" id="themeToggleBtnMobile" class="theme-toggle" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button>
-                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="text-sec p-2 rounded-full hover:bg-surface-warm focus:outline-none transition" aria-label="Toggle Navigation Menu"><i class="fa-solid fa-bars text-xl"></i></button>
-            </div>
+            <div class="hidden lg:flex items-center space-x-3"><button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button><a href="contact.html" class="btn-primary text-sm">Contact Us</a></div>
+            <div class="lg:hidden flex items-center gap-2"><button onclick="toggleTheme()" id="themeToggleBtnMobile" class="theme-toggle" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button><button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="text-sec p-2 rounded-full hover:bg-surface-warm focus:outline-none transition" aria-label="Toggle Navigation Menu"><i class="fa-solid fa-bars text-xl"></i></button></div>
         </div>
-
-        <div id="mobileMenu" class="hidden lg:hidden bg-theme border-b border-theme px-4 pt-2 pb-6 space-y-1 shadow-card">
-            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a>
-            <a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a>
-            <a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a>
-            <a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a>
-            <a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a>
-            <a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a>
-            <a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a>
-            <a href="weekly.html" class="block w-full text-left px-4 py-3 rounded-lg text-gold bg-gold-light font-medium transition">Weekly</a>
-            <a href="testimonials.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Testimonials</a>
-            <a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a>
-        </div>
+        <div id="mobileMenu" class="hidden lg:hidden bg-theme border-b border-theme px-4 pt-2 pb-6 space-y-1 shadow-card"><a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a><a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a><a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a><a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a><a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a><a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a><a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a><a href="weekly.html" class="block w-full text-left px-4 py-3 rounded-lg text-gold bg-gold-light font-medium transition">Weekly</a><a href="testimonials.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Testimonials</a><a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a></div>
     </header>
-
     <main class="flex-grow">
         <section class="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-12">
-                <span class="text-sm font-bold text-gold tracking-widest uppercase">Weekly Highlights</span>
-                <div class="gold-divider mx-auto mt-3 mb-5"></div>
-                <h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">This Week's Highlights</h1>
-                <p class="text-sec text-base mt-6 leading-relaxed">Featured moments, photographs, and updates from Voice-O-Magic.</p>
-            </div>
-
-            <div id="weeklyGallery" class="weekly-gallery">
-                <div class="weekly-grid"></div>
-                <p id="weeklyStatus" class="weekly-status" aria-live="polite"></p>
-            </div>
+            <div class="text-center max-w-3xl mx-auto mb-12"><span class="text-sm font-bold text-gold tracking-widest uppercase">Weekly Highlights</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">This Week's Highlights</h1><p class="text-sec text-base mt-6 leading-relaxed">Featured moments, photographs, and updates from Voice-O-Magic.</p></div>
+            <div id="weeklyGallery" class="weekly-gallery"><div class="weekly-grid"></div><p id="weeklyStatus" class="weekly-status" aria-live="polite"></p></div>
         </section>
     </main>
-
-    <footer class="pt-14 pb-10 text-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
-                <div class="space-y-4 md:col-span-2 lg:col-span-1">
-                    <div class="flex items-center space-x-2.5">
-                        <div class="w-9 h-9 rounded-full border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card"><img src="logo.png" alt="Logo" class="w-full h-full object-contain"></div>
-                        <span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span>
-                    </div>
-                    <p class="leading-relaxed text-sec">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p>
-                    <div class="flex space-x-4 pt-1">
-                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Instagram"><i class="fa-brands fa-instagram text-base"></i></a>
-                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Facebook"><i class="fa-brands fa-facebook text-base"></i></a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
-                    <ul class="space-y-3 text-sec">
-                        <li><a href="about.html" class="hover:text-gold transition">About Founder</a></li>
-                        <li><a href="keynotes.html" class="hover:text-gold transition">Keynotes</a></li>
-                        <li><a href="academy.html" class="hover:text-gold transition">Youth Academy</a></li>
-                        <li><a href="corporate.html" class="hover:text-gold transition">Corporate</a></li>
-                    </ul>
-                </div>
-                <div class="md:col-span-2 lg:col-span-2">
-                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Channels</h4>
-                    <p class="mb-5 text-sec leading-relaxed">Follow Shalini on Instagram and Facebook for public speaking tips, inspiration, and updates.</p>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs"><i class="fa-brands fa-instagram mr-2"></i>@mukundshalini</a>
-                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs"><i class="fa-brands fa-facebook mr-2"></i>Facebook</a>
-                    </div>
-                </div>
-            </div>
-            <div class="pt-8 border-t border-theme flex flex-col sm:flex-row justify-between items-center text-xs gap-4 text-muted">
-                <div>&copy; 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div>
-                <div class="flex space-x-6"><a href="#" class="hover:text-heading transition">Privacy Policy</a><a href="#" class="hover:text-heading transition">Terms of Service</a></div>
-            </div>
-        </div>
-    </footer>
-
+    <footer class="pt-14 pb-10 text-sm"></footer>
     <script src="js/main.js"></script>
     <script src="js/chatbot-config.js"></script>
     <script src="js/chatbot.js"></script>
-
     <script>
-    (function () {
-        'use strict';
+    (function(){
+      'use strict';
+      const LOADER='https://cdn.reicon.dev/consultant-presenting.svg';
+      const EMPTY='https://cdn.reicon.dev/teacher.svg';
+      const ERROR='https://cdn.reicon.dev/coach-whistle.svg';
+      const FALLBACKS=[{imageUrl:'./h2.jpg',title:'',description:''},{imageUrl:'./h1.jpg',title:'',description:''}];
 
-        const REICON_LOADER = 'https://cdn.reicon.dev/backup-action.svg';
-        const FALLBACKS = [
-            { imageUrl: './h2.jpg', title: '', description: '' },
-            { imageUrl: './h1.jpg', title: '', description: '' }
-        ];
+      function safeImageUrl(value){
+        try{
+          const url=new URL(String(value||''),window.location.href);
+          if(url.protocol!=='https:') return null;
+          const host=url.hostname.toLowerCase();
+          if(host!=='drive.google.com' && host!=='docs.google.com') return null;
+          return url.href;
+        }catch{return null;}
+      }
 
-        function safeImageUrl(value) {
-            try {
-                const url = new URL(String(value || ''), window.location.href);
-                if (url.protocol === 'https:' || url.origin === window.location.origin) return url.href;
-            } catch {}
-            return null;
+      function imageFrame(imageUrl,alt){
+        const frame=document.createElement('div'); frame.className='weekly-frame';
+        const loader=document.createElement('div'); loader.className='weekly-loader'; loader.setAttribute('aria-hidden','true');
+        const loaderImg=document.createElement('img'); loaderImg.src=LOADER; loaderImg.alt=''; loaderImg.width=180; loaderImg.height=180; loaderImg.loading='eager'; loaderImg.decoding='async'; loader.appendChild(loaderImg);
+        const img=document.createElement('img'); img.src=imageUrl; img.alt=alt; img.width=1200; img.height=675; img.loading='eager'; img.decoding='async';
+        img.addEventListener('load',()=>frame.classList.add('is-loaded'),{once:true});
+        img.addEventListener('error',()=>{
+          loader.replaceChildren();
+          const state=document.createElement('div'); state.className='absolute inset-0 flex flex-col items-center justify-center p-5 text-center';
+          const art=document.createElement('img'); art.src=ERROR; art.alt=''; art.width=180; art.height=180; art.className='w-[78px] h-[78px] object-contain mb-2';
+          const text=document.createElement('span'); text.className='text-xs text-red px-4'; text.textContent='Unable to load this image.';
+          state.append(art,text); frame.classList.add('is-loaded'); loader.replaceChildren(state);
+        },{once:true});
+        frame.append(loader,img); return frame;
+      }
+
+      function card(item,index){
+        const imageUrl=safeImageUrl(item?.imageUrl); if(!imageUrl) return null;
+        const article=document.createElement('article'); article.className='weekly-card';
+        article.appendChild(imageFrame(imageUrl,String(item?.title||`Voice-O-Magic Weekly Highlight ${index+1}`)));
+        const title=String(item?.title||'').trim(); const description=String(item?.description||'').trim();
+        if(title||description){
+          const content=document.createElement('div'); content.className='weekly-content';
+          if(title) content.appendChild(Object.assign(document.createElement('h2'),{textContent:title}));
+          if(description) content.appendChild(Object.assign(document.createElement('p'),{textContent:description}));
+          article.appendChild(content);
         }
+        return article;
+      }
 
-        function makeImageFrame(imageUrl, alt, fallbackUrl) {
-            const frame = document.createElement('div');
-            frame.className = 'weekly-frame';
+      function fallbackCard(item,index){
+        const safe=safeImageUrl(item.imageUrl)||item.imageUrl;
+        const article=document.createElement('article'); article.className='weekly-card';
+        article.appendChild(imageFrame(safe,`Voice-O-Magic Weekly Highlight ${index+1}`));
+        return article;
+      }
 
-            const loader = document.createElement('div');
-            loader.className = 'weekly-loader';
-            loader.setAttribute('aria-hidden', 'true');
-
-            const loaderImg = document.createElement('img');
-            loaderImg.src = REICON_LOADER;
-            loaderImg.alt = '';
-            loaderImg.width = 180;
-            loaderImg.height = 180;
-            loaderImg.loading = 'eager';
-            loaderImg.decoding = 'async';
-            loader.appendChild(loaderImg);
-
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.alt = alt;
-            img.width = 1200;
-            img.height = 675;
-            img.loading = 'eager';
-            img.decoding = 'async';
-
-            let fallbackTried = false;
-            img.addEventListener('load', () => frame.classList.add('is-loaded'), { once: true });
-            img.addEventListener('error', () => {
-                if (!fallbackTried && fallbackUrl && img.src !== fallbackUrl) {
-                    fallbackTried = true;
-                    img.src = fallbackUrl;
-                    return;
-                }
-                frame.classList.add('is-loaded');
-                loader.replaceChildren();
-                const errorText = document.createElement('span');
-                errorText.className = 'text-xs text-red px-4 text-center';
-                errorText.textContent = 'Unable to load this image.';
-                loader.appendChild(errorText);
-            });
-
-            frame.append(loader, img);
-            return frame;
+      async function loadWeekly(){
+        const gallery=document.getElementById('weeklyGallery'); if(!gallery) return;
+        const grid=gallery.querySelector('.weekly-grid'); const status=document.getElementById('weeklyStatus');
+        try{
+          const response=await fetch('/api/chat?mode=public-cms',{cache:'no-store'});
+          const body=await response.json().catch(()=>({})); if(!response.ok) throw new Error(body.error||'CMS unavailable');
+          const weekly=body?.cms?.weeklyHighlights;
+          const configured=Array.isArray(weekly?.items)?weekly.items: [weekly?.highlight1,weekly?.highlight2].filter(Boolean);
+          const visible=configured.filter(item=>item&&item.published===true&&safeImageUrl(item.imageUrl)).map(card).filter(Boolean);
+          if(visible.length){ grid.replaceChildren(...visible); if(status) status.textContent=''; return; }
+          if(!weekly){ grid.replaceChildren(...FALLBACKS.map(fallbackCard)); if(status) status.textContent=''; }
+          else { grid.replaceChildren(); if(status) status.textContent='No published highlights yet.'; }
+        }catch{
+          grid.replaceChildren(...FALLBACKS.map(fallbackCard)); if(status) status.textContent='';
         }
-
-        function slotCard(item, fallbackItem, number) {
-            const imageUrl = safeImageUrl(item?.imageUrl) || fallbackItem.imageUrl;
-            const title = String(item?.title || '').trim();
-            const description = String(item?.description || '').trim();
-
-            const card = document.createElement('article');
-            card.className = 'weekly-card';
-            card.appendChild(makeImageFrame(imageUrl, title || `Voice-O-Magic Weekly Highlight ${number}`, fallbackItem.imageUrl));
-
-            if (title || description) {
-                const content = document.createElement('div');
-                content.className = 'weekly-content';
-                if (title) content.appendChild(Object.assign(document.createElement('h2'), { textContent: title }));
-                if (description) content.appendChild(Object.assign(document.createElement('p'), { textContent: description }));
-                card.appendChild(content);
-            }
-
-            return card;
-        }
-
-        async function loadWeekly() {
-            const gallery = document.getElementById('weeklyGallery');
-            if (!gallery) return;
-
-            const grid = gallery.querySelector('.weekly-grid');
-            const status = document.getElementById('weeklyStatus');
-
-            try {
-                const response = await fetch('/api/chat?mode=public-cms', { cache: 'no-store' });
-                const body = await response.json().catch(() => ({}));
-                if (!response.ok) throw new Error(body.error || 'CMS unavailable');
-
-                const weekly = body?.cms?.weeklyHighlights;
-                const items = [weekly?.highlight1, weekly?.highlight2];
-                const visible = items.map((item, index) => {
-                    const fallback = FALLBACKS[index];
-                    if (item && item.published === true && item.imageUrl) return slotCard(item, fallback, index + 1);
-                    if (!weekly) return slotCard(fallback, fallback, index + 1);
-                    return null;
-                }).filter(Boolean);
-
-                if (grid && visible.length) grid.replaceChildren(...visible);
-                if (status) status.textContent = '';
-            } catch {
-                if (grid) grid.replaceChildren(...FALLBACKS.map((item, index) => slotCard(item, item, index + 1)));
-                if (status) status.textContent = '';
-            }
-        }
-
-        loadWeekly();
+      }
+      loadWeekly();
     })();
     </script>
 </body>
