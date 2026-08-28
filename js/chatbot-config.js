@@ -13,3 +13,37 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   const emit=()=>document.dispatchEvent(new CustomEvent('vom-theme-changed',{detail:{dark:root.classList.contains('dark')}}));
   new MutationObserver(emit).observe(root,{attributes:true,attributeFilter:['class']});
 })();
+
+/* Add the dedicated Weekly Highlights page to the shared navigation. */
+(function(){
+  function addWeeklyLink(){
+    const desktopNav=document.querySelector('nav[aria-label="Main Navigation"]');
+    if(desktopNav && !desktopNav.querySelector('a[href="weekly.html"]')){
+      const link=document.createElement('a');
+      link.href='weekly.html';
+      link.className='nav-btn px-4 py-2 rounded-full text-sm font-medium transition';
+      link.textContent='Weekly';
+      const testimonials=desktopNav.querySelector('a[href="testimonials.html"]');
+      const resources=desktopNav.querySelector('a[href="resources.html"]');
+      if(testimonials) testimonials.insertAdjacentElement('beforebegin',link);
+      else if(resources) resources.insertAdjacentElement('afterend',link);
+      else desktopNav.appendChild(link);
+    }
+
+    const mobileMenu=document.getElementById('mobileMenu');
+    if(mobileMenu && !mobileMenu.querySelector('a[href="weekly.html"]')){
+      const link=document.createElement('a');
+      link.href='weekly.html';
+      link.className='block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition';
+      link.textContent='Weekly';
+      const testimonials=mobileMenu.querySelector('a[href="testimonials.html"]');
+      const resources=mobileMenu.querySelector('a[href="resources.html"]');
+      if(testimonials) testimonials.insertAdjacentElement('beforebegin',link);
+      else if(resources) resources.insertAdjacentElement('afterend',link);
+      else mobileMenu.appendChild(link);
+    }
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',addWeeklyLink);
+  else addWeeklyLink();
+})();
