@@ -341,3 +341,5 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     observer.observe(document.body,{childList:true,subtree:true});
   }
 })();
+
+/* deployment marker: 2026-08-28 ui reicon pass */
