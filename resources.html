@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <script>
-        // Tailwind config — must run before cdn.tailwindcss.com loads
         window.tailwind = window.tailwind || {};
         window.tailwind.config = {
             theme: {
@@ -23,7 +22,6 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Tailwind safelist injection to prevent purging of dynamic classes
         if (window.tailwind && window.tailwind.config) {
             window.tailwind.config.safelist = [
                 'bg-theme','bg-surface','bg-surface-warm','bg-gold-light','bg-green-light','bg-red-light',
@@ -38,6 +36,136 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        /* Weekly Highlights — Landscape Auto-Framing */
+        .weekly-section { margin-bottom: 3rem; }
+        .weekly-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+        @media (min-width: 768px) {
+            .weekly-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+        }
+        .weekly-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--light);
+            box-shadow: 0 8px 30px rgba(25,22,16,.07);
+            transition: transform .25s ease, box-shadow .25s ease;
+            cursor: pointer;
+        }
+        .weekly-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 40px rgba(25,22,16,.12);
+            border-color: var(--gold-muted);
+        }
+        .weekly-card .img-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: var(--surface-warm);
+        }
+        @media (max-width: 640px) {
+            .weekly-card .img-frame {
+                aspect-ratio: 16 / 10;
+                max-height: 220px;
+            }
+        }
+        .weekly-card .img-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: block;
+        }
+        .weekly-card:hover .img-frame img {
+            transform: scale(1.05);
+        }
+        .weekly-card .img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 45%, transparent 70%);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .weekly-card:hover .img-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 50%, transparent 75%);
+        }
+        .weekly-card .img-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.25rem 1.25rem 1rem;
+            color: #fff;
+            z-index: 2;
+        }
+        .weekly-card .img-caption h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.3;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            margin-bottom: 0.25rem;
+        }
+        .weekly-card .img-caption span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.85;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+        .weekly-card .badge-new {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--gold);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        /* Video wrapper fix */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        /* Lazy load fade */
+        img[loading="lazy"] {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        img[loading="lazy"].loaded,
+        img[loading="lazy"]:not([data-src]) {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body class="bg-theme text-main font-sans antialiased custom-scrollbar min-h-screen flex flex-col justify-between relative">
 
@@ -59,7 +187,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="index.html" class="flex items-center space-x-3 group cursor-pointer" aria-label="Go to homepage">
                 <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
-                    <img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
+                    <img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
                 </div>
                 <div class="flex flex-col">
                     <span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span>
@@ -68,7 +196,13 @@
             </a>
 
             <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
-                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Home</a><a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">About</a><a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Keynotes</a><a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Academy</a><a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Corporate</a><a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition ">Books</a><a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">Resources</a>
+                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Home</a>
+                <a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">About</a>
+                <a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Keynotes</a>
+                <a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Academy</a>
+                <a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Corporate</a>
+                <a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Books</a>
+                <a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">Resources</a>
             </nav>
 
             <div class="hidden lg:flex items-center space-x-3">
@@ -89,7 +223,14 @@
         </div>
 
         <div id="mobileMenu" class="hidden lg:hidden bg-theme border-b border-theme px-4 pt-2 pb-6 space-y-1 shadow-card">
-            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a><a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a><a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a><a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a><a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a><a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a><a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a><a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a>
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a>
+            <a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a>
+            <a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a>
+            <a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a>
+            <a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a>
+            <a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a>
+            <a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a>
+            <a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a>
             <div class="pt-4 px-2">
                 <a href="contact.html" class="block w-full btn-primary text-sm text-center">Book Keynote Event</a>
             </div>
@@ -97,67 +238,132 @@
     </header>
 
     <main class="flex-grow">
+        <div class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 sm:space-y-20">
 
-        <div class="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+            <!-- Header -->
             <div class="text-center max-w-3xl mx-auto">
                 <span class="text-sm font-bold text-gold tracking-widest uppercase">Free Masterclass Vault</span>
                 <div class="gold-divider mx-auto mt-3 mb-5"></div>
                 <h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">Resource of the Week</h1>
                 <p class="text-sec text-base mt-6 leading-relaxed">Watch this week's featured video and download instant guides, articulation checklists, and vocal warm-up frameworks.</p>
             </div>
-            <div class="material-card max-w-4xl mx-auto p-1 sm:p-5 bg-surface-warm">
-                <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-card group border border-theme">
-                    <div id="videoCover" class="absolute inset-0 z-20 cursor-pointer bg-cover bg-center" style="background-image: url('https://img.youtube.com/vi/KKNCiRWd_j0/maxresdefault.jpg');" onclick="playNativeVideo()">
-                        <div class="absolute inset-0 bg-black/25 hover:bg-black/15 transition flex items-center justify-center">
-                            <div class="w-16 h-16 bg-gold text-white rounded-full flex items-center justify-center shadow-gold-hover transform group-hover:scale-110 transition duration-300">
-                                <i class="fa-solid fa-play text-2xl ml-1"></i>
+
+            <!-- WEEKLY HIGHLIGHTS — 2 Landscape Images with Auto-Framing -->
+            <section class="weekly-section">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-heading">Weekly Highlights</h2>
+                        <p class="text-sm text-sec mt-1">Curated visuals from our latest sessions and events.</p>
+                    </div>
+                    <span class="hidden sm:inline-block text-xs font-bold text-gold uppercase tracking-wider bg-gold-light px-3 py-1.5 rounded-full">Updated Every Monday</span>
+                </div>
+                <div class="weekly-grid" id="weeklyImages">
+                    <!-- Highlight 1 -->
+                    <div class="weekly-card group">
+                        <div class="badge-new">This Week</div>
+                        <div class="img-frame">
+                            <img src="h1.jpg" alt="Weekly Highlight — Youth Public Speaking Workshop" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://placehold.co/800x450/FAFAF8/C9A227?text=Highlight+1';">
+                            <div class="img-overlay"></div>
+                            <div class="img-caption">
+                                <span>Workshop Snapshot</span>
+                                <h3>Youth Public Speaking Cohort</h3>
                             </div>
                         </div>
                     </div>
-                    <div id="videoContainer" class="absolute inset-0 z-10 w-full h-full"></div>
-                </div>
-                <div class="mt-6 px-4 pb-2">
-                    <h4 class="font-bold text-heading text-lg">What Is an AI Anyway?</h4>
-                    <p class="text-sm text-sec mt-2 leading-relaxed">A deep dive into communication, perception, and the evolving landscape of intelligence. Watch to glean insights on structured thought and presentation clarity.</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-                <div class="material-card p-7 flex flex-col justify-between h-full group">
-                    <div>
-                        <div class="w-12 h-12 rounded-xl bg-red-light flex items-center justify-center mb-5">
-                            <i class="fa-solid fa-file-pdf text-xl text-red"></i>
+                    <!-- Highlight 2 -->
+                    <div class="weekly-card group">
+                        <div class="img-frame">
+                            <img src="h2.jpg" alt="Weekly Highlight — Corporate Keynote Session" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://placehold.co/800x450/FAFAF8/C9A227?text=Highlight+2';">
+                            <div class="img-overlay"></div>
+                            <div class="img-caption">
+                                <span>Keynote Moment</span>
+                                <h3>Executive Communication Masterclass</h3>
+                            </div>
                         </div>
-                        <h3 class="font-bold text-heading mb-2">Vocal Warm-Up Checklist</h3>
-                        <p class="text-sm text-sec leading-relaxed mb-6">A 5-minute daily vocal exercise guide including breathing, articulation drills, and tongue twisters.</p>
                     </div>
-                    <button onclick="openResourceModal('Daily Vocal Warm-Up Checklist')" class="btn-secondary w-full text-sm">Download PDF</button>
                 </div>
-                <div class="material-card p-7 flex flex-col justify-between h-full group">
+            </section>
+
+            <!-- YouTube Video -->
+            <section>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-red-light flex items-center justify-center">
+                        <i class="fa-brands fa-youtube text-lg text-red"></i>
+                    </div>
                     <div>
-                        <div class="w-12 h-12 rounded-xl bg-red-light flex items-center justify-center mb-5">
-                            <i class="fa-solid fa-file-pdf text-xl text-red"></i>
-                        </div>
-                        <h3 class="font-bold text-heading mb-2">Stage Confidence Framework</h3>
-                        <p class="text-sm text-sec leading-relaxed mb-6">Practical steps parents can take at home to help children overcome public speaking anxiety.</p>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-heading">Featured Video</h2>
+                        <p class="text-sm text-sec">Watch, learn, and apply.</p>
                     </div>
-                    <button onclick="openResourceModal('Parent Stage Confidence Framework')" class="btn-secondary w-full text-sm">Download PDF</button>
                 </div>
-                <div class="material-card p-7 flex flex-col justify-between h-full group">
+                <div class="material-card max-w-4xl mx-auto p-1 sm:p-4 bg-surface-warm">
+                    <div class="video-wrapper shadow-card group border border-theme">
+                        <div id="videoCover" class="absolute inset-0 z-20 cursor-pointer bg-cover bg-center" style="background-image: url('https://img.youtube.com/vi/KKNCiRWd_j0/maxresdefault.jpg');" onclick="playNativeVideo('KKNCiRWd_j0')">
+                            <div class="absolute inset-0 bg-black/30 hover:bg-black/15 transition flex items-center justify-center">
+                                <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gold text-white rounded-full flex items-center justify-center shadow-gold-hover transform group-hover:scale-110 transition duration-300">
+                                    <i class="fa-solid fa-play text-xl sm:text-2xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="videoContainer" class="absolute inset-0 z-10 w-full h-full"></div>
+                    </div>
+                    <div class="mt-5 px-3 sm:px-4 pb-2">
+                        <h4 id="videoTitle" class="font-bold text-heading text-base sm:text-lg">What Is an AI Anyway?</h4>
+                        <p class="text-sm text-sec mt-1.5 leading-relaxed">A deep dive into communication, perception, and the evolving landscape of intelligence. Watch to glean insights on structured thought and presentation clarity.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Downloadable Resources -->
+            <section>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-gold-light flex items-center justify-center">
+                        <i class="fa-solid fa-download text-lg text-gold"></i>
+                    </div>
                     <div>
-                        <div class="w-12 h-12 rounded-xl bg-red-light flex items-center justify-center mb-5">
-                            <i class="fa-solid fa-file-pdf text-xl text-red"></i>
-                        </div>
-                        <h3 class="font-bold text-heading mb-2">Business Story Template</h3>
-                        <p class="text-sm text-sec leading-relaxed mb-6">A structured 3-act story outline template for business leaders crafting town hall speeches.</p>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-heading">Free Downloads</h2>
+                        <p class="text-sm text-sec">Instant guides for speakers at every level.</p>
                     </div>
-                    <button onclick="openResourceModal('Business Storytelling Template')" class="btn-secondary w-full text-sm">Download PDF</button>
                 </div>
-            </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+                    <div class="material-card p-6 sm:p-7 flex flex-col justify-between h-full group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-red-light flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-file-pdf text-xl text-red"></i>
+                            </div>
+                            <h3 class="font-bold text-heading mb-2">Vocal Warm-Up Checklist</h3>
+                            <p class="text-sm text-sec leading-relaxed mb-6">A 5-minute daily vocal exercise guide including breathing, articulation drills, and tongue twisters.</p>
+                        </div>
+                        <button onclick="openResourceModal('Daily Vocal Warm-Up Checklist')" class="btn-secondary w-full text-sm">Download PDF</button>
+                    </div>
+                    <div class="material-card p-6 sm:p-7 flex flex-col justify-between h-full group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-red-light flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-file-pdf text-xl text-red"></i>
+                            </div>
+                            <h3 class="font-bold text-heading mb-2">Stage Confidence Framework</h3>
+                            <p class="text-sm text-sec leading-relaxed mb-6">Practical steps parents can take at home to help children overcome public speaking anxiety.</p>
+                        </div>
+                        <button onclick="openResourceModal('Parent Stage Confidence Framework')" class="btn-secondary w-full text-sm">Download PDF</button>
+                    </div>
+                    <div class="material-card p-6 sm:p-7 flex flex-col justify-between h-full group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-red-light flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-file-pdf text-xl text-red"></i>
+                            </div>
+                            <h3 class="font-bold text-heading mb-2">Business Story Template</h3>
+                            <p class="text-sm text-sec leading-relaxed mb-6">A structured 3-act story outline template for business leaders crafting town hall speeches.</p>
+                        </div>
+                        <button onclick="openResourceModal('Business Storytelling Template')" class="btn-secondary w-full text-sm">Download PDF</button>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 
+    <!-- Resource Modal -->
     <div id="resourceModal" class="fixed inset-0 z-[60] modal-backdrop hidden items-center justify-center p-4">
-        <div class="material-card max-w-md w-full p-8 relative bg-theme">
+        <div class="material-card max-w-md w-full p-6 sm:p-8 relative bg-theme">
             <button onclick="closeResourceModal()" class="absolute top-4 right-4 text-muted hover:text-heading transition" aria-label="Close Resource Modal">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
@@ -182,6 +388,7 @@
         </div>
     </div>
 
+    <!-- Video Modal -->
     <div id="videoModal" class="fixed inset-0 z-[60] video-backdrop hidden items-center justify-center p-4">
         <div class="max-w-4xl w-full relative">
             <button onclick="closeVideoModal()" class="absolute -top-10 right-0 text-white/70 hover:text-white text-2xl transition" aria-label="Close Video Modal">
@@ -199,7 +406,7 @@
                 <div class="space-y-4 md:col-span-2 lg:col-span-1">
                     <div class="flex items-center space-x-2.5">
                         <div class="w-9 h-9 rounded-full border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
-                            <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
+                            <img src="logo.png" alt="Logo" class="w-full h-full object-contain" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
                         </div>
                         <span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span>
                     </div>
@@ -244,5 +451,58 @@
     <script src="js/main.js"></script>
     <script src="js/chatbot-config.js"></script>
     <script src="js/chatbot.js"></script>
+    <script>
+        // Inline helpers for resources page (in case main.js is missing these)
+        window.playNativeVideo = function(videoId) {
+            var container = document.getElementById('videoContainer');
+            var cover = document.getElementById('videoCover');
+            if (!container) return;
+            var id = videoId || 'KKNCiRWd_j0';
+            container.innerHTML = '<iframe class="w-full h-full" src="https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0" title="Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+            if (cover) cover.style.display = 'none';
+        };
+        window.closeVideoModal = function() {
+            var modal = document.getElementById('videoModal');
+            var iframe = document.getElementById('videoIframe');
+            if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+            if (iframe) iframe.src = '';
+        };
+        window.openResourceModal = function(title) {
+            var modal = document.getElementById('resourceModal');
+            var titleEl = document.getElementById('modalResourceTitle');
+            if (titleEl) titleEl.textContent = title || 'Resource';
+            if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        };
+        window.closeResourceModal = function() {
+            var modal = document.getElementById('resourceModal');
+            if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        };
+        window.handleResourceSubmit = function(event) {
+            event.preventDefault();
+            var name = document.getElementById('resourceName');
+            var email = document.getElementById('resourceEmail');
+            var nVal = name ? name.value.trim() : '';
+            var eVal = email ? email.value.trim() : '';
+            if (!nVal || !eVal) { alert('Please fill in all fields.'); return; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(eVal)) { alert('Please enter a valid email.'); return; }
+            alert('Thank you! Your download link will be sent to ' + eVal);
+            closeResourceModal();
+            if (name) name.value = '';
+            if (email) email.value = '';
+        };
+        // Lazy load observer
+        if ('IntersectionObserver' in window) {
+            var imgObs = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        var img = entry.target;
+                        img.classList.add('loaded');
+                        imgObs.unobserve(img);
+                    }
+                });
+            }, { rootMargin: '50px' });
+            document.querySelectorAll('img[loading="lazy"]').forEach(function(img) { imgObs.observe(img); });
+        }
+    </script>
 </body>
 </html>
