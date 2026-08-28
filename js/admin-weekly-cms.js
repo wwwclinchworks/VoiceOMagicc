@@ -4,6 +4,7 @@
   const ADMIN_DATA = '/api/chat?mode=admin-data';
   const ADMIN_SAVE = '/api/chat?mode=admin-save';
   const SECTION_ID = 'vomWeeklyHighlightsAdmin';
+  const REICON_LOADER = 'https://cdn.reicon.dev/backup-action.svg';
 
   const defaults = () => ({
     highlight1: { driveUrl: '', imageUrl: '', title: '', description: '', published: false },
@@ -77,6 +78,21 @@
     return wrap;
   }
 
+  function driveLoader() {
+    const loader = node('div', 'absolute inset-0 z-10 flex items-center justify-center bg-surface-warm');
+    loader.dataset.driveLoader = 'true';
+    const img = document.createElement('img');
+    img.src = REICON_LOADER;
+    img.alt = 'Loading image';
+    img.width = 180;
+    img.height = 180;
+    img.loading = 'eager';
+    img.decoding = 'async';
+    img.className = 'w-[110px] h-[110px] max-w-[32%] max-h-[32%] object-contain';
+    loader.append(img);
+    return loader;
+  }
+
   function makeSlot(title, item, index) {
     const card = node('article', 'rounded-2xl border border-theme p-5 bg-theme/60');
     card.dataset.slot = String(index);
@@ -84,28 +100,47 @@
     const heading = node('h3', 'font-bold text-lg text-heading', title);
     card.append(heading);
 
-    const preview = node('div', 'mt-4 rounded-xl border border-theme overflow-hidden bg-surface-warm min-h-[180px] flex items-center justify-center');
-    const previewText = node('p', 'p-5 text-sm text-muted text-center', 'Paste a Google Drive image link to preview the image.');
-    preview.append(previewText);
+    const preview = node('div', 'mt-4 relative rounded-xl border border-theme overflow-hidden bg-surface-warm min-h-[180px] flex items-center justify-center');
+    preview.style.aspectRatio = '16 / 9';
+    preview.append(node('p', 'p-5 text-sm text-muted text-center', 'Paste a Google Drive image link to preview the image.'));
 
     const refreshPreview = () => {
       preview.replaceChildren();
+
       if (!item.driveUrl) {
         preview.append(node('p', 'p-5 text-sm text-muted text-center', 'Paste a Google Drive image link to preview the image.'));
         return;
       }
+
       const imageUrl = normalizeDriveUrl(item.driveUrl);
       if (!imageUrl) {
         preview.append(node('p', 'p-5 text-sm text-red text-center', 'Invalid Google Drive link. Use a Drive file share link.'));
         return;
       }
+
+      const loader = driveLoader();
+      preview.append(loader);
+
       const image = document.createElement('img');
       image.src = imageUrl;
       image.alt = item.title || title;
       image.loading = 'eager';
       image.decoding = 'async';
-      image.className = 'w-full aspect-[16/9] object-cover';
-      image.onerror = () => preview.replaceChildren(node('p', 'p-5 text-sm text-red text-center', 'The image could not be loaded. Set Drive sharing to Anyone with the link → Viewer.'));
+      image.className = 'absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-200';
+
+      image.addEventListener('load', () => {
+        image.classList.remove('opacity-0');
+        image.classList.add('opacity-100');
+        loader.remove();
+      }, { once: true });
+
+      image.addEventListener('error', () => {
+        loader.remove();
+        preview.replaceChildren(
+          node('p', 'p-5 text-sm text-red text-center', 'The image could not be loaded. Set Drive sharing to Anyone with the link → Viewer.')
+        );
+      }, { once: true });
+
       preview.append(image);
     };
 
