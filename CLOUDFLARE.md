@@ -1,10 +1,22 @@
 # Cloudflare Workers deployment
 
-Voice-O-Magic now supports deployment as a Cloudflare Worker with Workers Static Assets. The Worker serves the existing static website and handles the backend routes that were previously provided by Vercel serverless functions.
+Voice-O-Magic is deployed as a Cloudflare Worker with Workers Static Assets. The Worker serves the static website and owns the production API, CMS, authentication, and canonical routing.
+
+## Production source of truth
+
+- GitHub repository: `wwwclinchworks/VoiceOMagicc`
+- Production branch: `main`
+- Worker entrypoint: `worker-entry.js`
+- Worker implementation: `worker.js`
+- Static assets: repository root, excluding runtime-only files through `.assetsignore`
+- CMS source of truth: `data/knowledge.json`
+- Canonical Resources URL: `/resources.html`
+
+Permanent production source changes must be made in GitHub and deployed through the connected Cloudflare build. Do not use the Cloudflare dashboard editor for permanent source changes on the Git-managed Worker.
 
 ## Required secrets
 
-Add these as **Cloudflare Worker Secrets**. Do not commit their values:
+Add these as **Cloudflare Worker Secrets**. Never commit their values:
 
 - `CMS_ADMIN_PASSWORD_HASH`
 - `CMS_SESSION_SECRET`
@@ -19,15 +31,7 @@ The CMS also accepts these optional non-secret variables:
 
 For the GitHub token, use a fine-grained token restricted to this repository with the minimum `Contents: Read and write` permission required by the CMS.
 
-## Deployment
-
-1. Create a Cloudflare Worker using this repository.
-2. Deploy with Wrangler or connect the repository through Cloudflare's Workers build/deploy integration.
-3. Add the four secrets above under **Settings → Variables and Secrets**.
-4. Keep the Worker bound to the static assets directory configured in `wrangler.jsonc`.
-5. Attach `voiceomagic.clinchworks.in` to the Worker after the deployment passes smoke tests.
-
-The Worker exposes:
+## Runtime routes
 
 - `/api/chat`
 - `/api/chat?mode=public-cms`
@@ -36,18 +40,29 @@ The Worker exposes:
 - `/api/chat?mode=admin-save`
 - `/api/chat?mode=admin-restore`
 - `/api/chat?mode=admin-logout`
-- `/api/weekly-highlights`
+- `/api/weekly-highlights` — protected admin endpoint
+- `/resources` → permanent redirect to `/resources.html`
+- `/resources/` → permanent redirect to `/resources.html`
+
+## CMS behavior
+
+Public pages read live CMS data through `/api/chat?mode=public-cms` with no-store semantics. The public client filters unpublished items before rendering. Weekly Highlights uses the public CMS snapshot for public rendering and the protected `/api/weekly-highlights` endpoint for admin editing.
+
+HTML responses are served with no-store/no-cache headers so CMS changes are not delayed by an HTML CDN/browser cache. Static JS, CSS, images, and fonts remain cacheable as ordinary assets.
 
 ## Verification
 
-After deployment:
+After every production deployment:
 
-- `GET /api/chat?mode=public-cms` should return the public CMS document.
-- `GET /api/chat?mode=admin-data` should return `401 Unauthorized` before login.
-- `/adminadmin` should load the Admin UI.
-- Admin login should create an HttpOnly, Secure, SameSite session cookie.
-- CMS saves should update `data/knowledge.json` through the GitHub API.
-- Weekly Highlights saves should update only the `weeklyHighlights` CMS section.
-- The public Resources page should render only published highlights.
+1. Confirm the active Cloudflare deployment corresponds to the merged `main` commit.
+2. `GET /api/chat?mode=public-cms` returns JSON with `cms`.
+3. `/resources` resolves directly to `/resources.html` through the Worker redirect.
+4. `/resources.html` renders the current published Weekly Highlights, Featured Video, and Resources.
+5. Admin login succeeds and creates the secure session cookie.
+6. Page Copy, Featured Video, Resources, Speaker Toolkit, Books, and Weekly Highlights can be saved and reloaded without overwriting unrelated sections.
+7. Version History loads and restore creates a new CMS commit.
+8. Unpublished content remains hidden from public responses and pages.
+9. Mobile and desktop layouts render without horizontal overflow or broken image frames.
+10. AI chat responds when `OPENROUTER_API_KEY` is configured.
 
-Do not remove the existing Vercel deployment until these checks pass on Cloudflare and the custom domain has been switched successfully.
+The repository no longer depends on the legacy Vercel `api/` runtime for production.
