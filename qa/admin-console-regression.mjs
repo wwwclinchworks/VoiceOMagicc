@@ -6,7 +6,7 @@ const requiredFiles = [
   'adminadmin.html',
   'js/admin.js',
   'js/weekly-highlights.js',
-  'js/weekly-highlights-admin.js',
+  'js/admin-weekly-sync.js',
   'worker.js',
   'worker-entry.js'
 ];
@@ -20,19 +20,20 @@ function checkNode(file) {
   if (result.status !== 0) failures.push(`JavaScript syntax error: ${file}\n${result.stderr.trim()}`);
 }
 
-for (const file of ['js/admin.js', 'js/weekly-highlights.js', 'js/weekly-highlights-admin.js', 'worker.js', 'worker-entry.js']) {
+for (const file of ['js/admin.js', 'js/weekly-highlights.js', 'js/admin-weekly-sync.js', 'worker.js', 'worker-entry.js']) {
   if (fs.existsSync(file)) checkNode(file);
 }
 
 const admin = fs.readFileSync('adminadmin.html', 'utf8');
 const client = fs.readFileSync('js/admin.js', 'utf8');
-const weeklyAdmin = fs.readFileSync('js/weekly-highlights-admin.js', 'utf8');
+const weeklyAdmin = fs.readFileSync('js/admin-weekly-sync.js', 'utf8');
 const worker = fs.readFileSync('worker.js', 'utf8');
 const entry = fs.readFileSync('worker-entry.js', 'utf8');
 
-for (const marker of ['js/admin.js', 'css/style.css', 'css/components.css', 'js/weekly-highlights-admin.js']) {
+for (const marker of ['js/admin.js', 'css/style.css', 'css/components.css', 'js/admin-weekly-sync.js']) {
   if (!admin.includes(marker)) failures.push(`Admin bootstrap missing: ${marker}`);
 }
+if (admin.includes('js/weekly-highlights-admin.js')) failures.push('Obsolete Weekly Highlights admin client must not be loaded.');
 for (const marker of [
   "'Page Copy':'settings'",
   "'Featured Video':'featuredVideo'",
@@ -46,7 +47,9 @@ for (const marker of [
 for (const marker of [
   "const ENDPOINT = '/api/weekly-highlights'",
   'MutationObserver',
-  'data-weekly-highlights-admin',
+  'data-weekly-highlights-admin-sync',
+  'data-weekly-sync-save',
+  'saveAll',
   "method: 'PUT'",
   "cache: 'no-store'",
   'Every published highlight needs a valid HTTPS image URL.'
