@@ -2,7 +2,7 @@ name: VoiceOMagic QA
 
 on:
   push:
-    branches: [main, 'agent/**', 'fix/**']
+    branches: [main, 'agent/**', 'fix/**', 'refactor/**']
   pull_request:
     branches: [main]
 
@@ -31,5 +31,7 @@ jobs:
         run: node qa/weekly-highlights-api-contract.mjs
       - name: Validate Cloudflare Worker syntax
         run: node --check worker.js
+      - name: Validate Cloudflare Worker entry syntax
+        run: node --check worker-entry.js
       - name: Validate Cloudflare Worker configuration
         run: npx --yes wrangler@latest deploy --dry-run
