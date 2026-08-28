@@ -1,28 +1,37 @@
 (function () {
   'use strict';
 
-  const REICON_URL = 'https://cdn.reicon.dev/backup-action.svg';
-  const SELECTORS = [
-    '#weeklyGallery img',
-    '[data-weekly-highlights-admin-sync] img'
+  // ReIcon illustrations chosen from the People → Profession collection.
+  const LOADING_ILLUSTRATION = 'https://cdn.reicon.dev/consultant-presenting.svg';
+  const EMPTY_ILLUSTRATION = 'https://cdn.reicon.dev/teacher.svg';
+
+  const IMAGE_SELECTORS = [
+    '#weeklyGallery img'
   ];
 
-  function eligible(img) {
-    if (!img || img.dataset.reiconLoadingBound === 'true') return false;
-    return SELECTORS.some((selector) => img.matches(selector));
+  function findWeeklyLoader(frame) {
+    return frame.querySelector('.weekly-loader, [data-reicon-loader]');
   }
 
-  function attach(img) {
-    if (!eligible(img)) return;
-    img.dataset.reiconLoadingBound = 'true';
+  function setLoaderIllustration(loader, src) {
+    if (!loader) return;
+    let icon = loader.querySelector('img');
+    if (!icon) {
+      icon = document.createElement('img');
+      icon.alt = '';
+      icon.width = 180;
+      icon.height = 180;
+      icon.decoding = 'async';
+      icon.loading = 'eager';
+      icon.style.cssText = 'width:110px;height:110px;max-width:32%;max-height:32%;object-fit:contain;opacity:1';
+      loader.appendChild(icon);
+    }
+    icon.src = src;
+  }
 
-    const frame = img.parentElement;
-    if (!frame) return;
-
-    const computed = window.getComputedStyle(frame);
-    if (computed.position === 'static') frame.style.position = 'relative';
-
+  function createLoader(frame, src) {
     const loader = document.createElement('div');
+    loader.className = 'weekly-loader';
     loader.setAttribute('data-reicon-loader', 'true');
     loader.setAttribute('aria-hidden', 'true');
     loader.style.cssText = [
@@ -36,37 +45,61 @@
       'opacity:1',
       'transition:opacity .2s ease'
     ].join(';');
-
-    const icon = document.createElement('img');
-    icon.src = REICON_URL;
-    icon.alt = '';
-    icon.width = 180;
-    icon.height = 180;
-    icon.decoding = 'async';
-    icon.style.cssText = 'width:110px;height:110px;max-width:30%;max-height:30%;object-fit:contain;opacity:1';
-
-    loader.appendChild(icon);
+    setLoaderIllustration(loader, src);
     frame.appendChild(loader);
+    return loader;
+  }
+
+  function prepareImage(img) {
+    if (!img || img.dataset.reiconLoadingPrepared === 'true') return;
+    img.dataset.reiconLoadingPrepared = 'true';
+
+    const frame = img.closest('.weekly-frame') || img.parentElement;
+    if (!frame) return;
+
+    if (window.getComputedStyle(frame).position === 'static') {
+      frame.style.position = 'relative';
+    }
+
+    const existingLoader = findWeeklyLoader(frame);
+    const loader = existingLoader || createLoader(frame, LOADING_ILLUSTRATION);
+    setLoaderIllustration(loader, LOADING_ILLUSTRATION);
 
     const finish = () => {
+      if (!loader.isConnected) return;
       loader.style.opacity = '0';
       loader.style.pointerEvents = 'none';
       window.setTimeout(() => loader.remove(), 220);
+    };
+
+    const failed = () => {
+      // Keep the illustration visible briefly on failures instead of flashing a broken image state.
+      setLoaderIllustration(loader, EMPTY_ILLUSTRATION);
+      loader.style.opacity = '1';
+      loader.style.pointerEvents = 'none';
     };
 
     if (img.complete && img.naturalWidth > 0) {
       finish();
     } else {
       img.addEventListener('load', finish, { once: true });
-      img.addEventListener('error', finish, { once: true });
+      img.addEventListener('error', failed, { once: true });
     }
   }
 
-  function scan(root = document) {
-    SELECTORS.forEach((selector) => {
-      root.querySelectorAll?.(selector).forEach(attach);
+  function prepareAdminLoader(root) {
+    root.querySelectorAll?.('[data-drive-loader] img').forEach((icon) => {
+      icon.src = LOADING_ILLUSTRATION;
+      icon.alt = '';
     });
-    if (root instanceof HTMLImageElement) attach(root);
+  }
+
+  function scan(root = document) {
+    IMAGE_SELECTORS.forEach((selector) => {
+      root.querySelectorAll?.(selector).forEach(prepareImage);
+    });
+    prepareAdminLoader(root);
+    if (root instanceof HTMLImageElement) prepareImage(root);
   }
 
   function boot() {
