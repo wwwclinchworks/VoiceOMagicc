@@ -1,38 +1,53 @@
 (function () {
   'use strict';
 
-  // ReIcon illustrations chosen from the People → Profession collection.
+  // ReIcon People → Profession illustrations selected for Voice-O-Magic.
+  // Loading: consultant-presenting (presentation / communication)
+  // Empty: teacher (friendly learning context)
+  // Error: coach-whistle (action / retry context)
   const LOADING_ILLUSTRATION = 'https://cdn.reicon.dev/consultant-presenting.svg';
   const EMPTY_ILLUSTRATION = 'https://cdn.reicon.dev/teacher.svg';
+  const ERROR_ILLUSTRATION = 'https://cdn.reicon.dev/coach-whistle.svg';
 
   const IMAGE_SELECTORS = [
     '#weeklyGallery img'
   ];
 
-  function findWeeklyLoader(frame) {
-    return frame.querySelector('.weekly-loader, [data-reicon-loader]');
-  }
+  function ensureIcon(container, src) {
+    if (!container) return null;
 
-  function setLoaderIllustration(loader, src) {
-    if (!loader) return;
-    let icon = loader.querySelector('img');
+    let icon = container.querySelector('img[data-reicon-illustration]');
     if (!icon) {
       icon = document.createElement('img');
+      icon.dataset.reiconIllustration = 'true';
       icon.alt = '';
       icon.width = 180;
       icon.height = 180;
-      icon.decoding = 'async';
       icon.loading = 'eager';
-      icon.style.cssText = 'width:110px;height:110px;max-width:32%;max-height:32%;object-fit:contain;opacity:1';
-      loader.appendChild(icon);
+      icon.decoding = 'async';
+      icon.style.cssText = [
+        'width:110px',
+        'height:110px',
+        'max-width:32%',
+        'max-height:32%',
+        'object-fit:contain',
+        'opacity:1'
+      ].join(';');
+      container.appendChild(icon);
     }
+
     icon.src = src;
+    return icon;
   }
 
-  function createLoader(frame, src) {
+  function findLoader(frame) {
+    return frame.querySelector('.weekly-loader, [data-reicon-loader]');
+  }
+
+  function createLoader(frame) {
     const loader = document.createElement('div');
     loader.className = 'weekly-loader';
-    loader.setAttribute('data-reicon-loader', 'true');
+    loader.dataset.reiconLoader = 'true';
     loader.setAttribute('aria-hidden', 'true');
     loader.style.cssText = [
       'position:absolute',
@@ -45,14 +60,20 @@
       'opacity:1',
       'transition:opacity .2s ease'
     ].join(';');
-    setLoaderIllustration(loader, src);
     frame.appendChild(loader);
     return loader;
   }
 
-  function prepareImage(img) {
-    if (!img || img.dataset.reiconLoadingPrepared === 'true') return;
-    img.dataset.reiconLoadingPrepared = 'true';
+  function finish(loader) {
+    if (!loader || !loader.isConnected) return;
+    loader.style.opacity = '0';
+    loader.style.pointerEvents = 'none';
+    window.setTimeout(() => loader.remove(), 220);
+  }
+
+  function bindWeeklyImage(img) {
+    if (!img || img.dataset.reiconLoadingBound === 'true') return;
+    img.dataset.reiconLoadingBound = 'true';
 
     const frame = img.closest('.weekly-frame') || img.parentElement;
     if (!frame) return;
@@ -61,49 +82,52 @@
       frame.style.position = 'relative';
     }
 
-    const existingLoader = findWeeklyLoader(frame);
-    const loader = existingLoader || createLoader(frame, LOADING_ILLUSTRATION);
-    setLoaderIllustration(loader, LOADING_ILLUSTRATION);
+    const loader = findLoader(frame) || createLoader(frame);
+    ensureIcon(loader, LOADING_ILLUSTRATION);
 
-    const finish = () => {
-      if (!loader.isConnected) return;
-      loader.style.opacity = '0';
-      loader.style.pointerEvents = 'none';
-      window.setTimeout(() => loader.remove(), 220);
-    };
-
-    const failed = () => {
-      // Keep the illustration visible briefly on failures instead of flashing a broken image state.
-      setLoaderIllustration(loader, EMPTY_ILLUSTRATION);
+    const onLoad = () => finish(loader);
+    const onError = () => {
+      ensureIcon(loader, ERROR_ILLUSTRATION);
       loader.style.opacity = '1';
       loader.style.pointerEvents = 'none';
     };
 
-    if (img.complete && img.naturalWidth > 0) {
-      finish();
+    if (img.complete) {
+      if (img.naturalWidth > 0) onLoad();
+      else onError();
     } else {
-      img.addEventListener('load', finish, { once: true });
-      img.addEventListener('error', failed, { once: true });
+      img.addEventListener('load', onLoad, { once: true });
+      img.addEventListener('error', onError, { once: true });
     }
   }
 
-  function prepareAdminLoader(root) {
-    root.querySelectorAll?.('[data-drive-loader] img').forEach((icon) => {
-      icon.src = LOADING_ILLUSTRATION;
-      icon.alt = '';
+  function styleExistingAdminLoaders(root) {
+    root.querySelectorAll?.('[data-drive-loader]').forEach((loader) => {
+      ensureIcon(loader, LOADING_ILLUSTRATION);
+    });
+  }
+
+  function addEmptyIllustration(root = document) {
+    root.querySelectorAll?.('#weeklyGallery .weekly-frame').forEach((frame) => {
+      if (frame.querySelector('img:not([data-reicon-illustration])')) return;
+      let loader = findLoader(frame);
+      if (!loader) loader = createLoader(frame);
+      ensureIcon(loader, EMPTY_ILLUSTRATION);
     });
   }
 
   function scan(root = document) {
     IMAGE_SELECTORS.forEach((selector) => {
-      root.querySelectorAll?.(selector).forEach(prepareImage);
+      root.querySelectorAll?.(selector).forEach(bindWeeklyImage);
     });
-    prepareAdminLoader(root);
-    if (root instanceof HTMLImageElement) prepareImage(root);
+    styleExistingAdminLoaders(root);
+    if (root instanceof HTMLImageElement) bindWeeklyImage(root);
   }
 
   function boot() {
+    if (!document.body) return;
     scan(document);
+
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         for (const added of mutation.addedNodes) {
@@ -111,7 +135,11 @@
         }
       }
     });
-    observer.observe(document.body, { childList: true, subtree: true });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   }
 
   if (document.readyState === 'loading') {
