@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -6,14 +7,12 @@
 
     <title>Free Resources | Voice-O-Magic — Shalini Mukund</title>
 
-    <meta name="description"
-          content="Voice-O-Magic by Shalini Mukund — Public Speaker, Communication Coach & Author. Keynotes, Youth Academy, Corporate Training, and Published Works.">
+    <meta name="description" content="Voice-O-Magic by Shalini Mukund — Public Speaker, Communication Coach & Author. Keynotes, Youth Academy, Corporate Training, and Published Works.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
     <script>
         // Tailwind config — must run before cdn.tailwindcss.com loads
@@ -72,87 +71,59 @@
         }
     </script>
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="css/style.css">
 
     <!-- =========================================================
-         WEEKLY HIGHLIGHTS IMAGE STYLES
+         WEEKLY HIGHLIGHTS STYLES
          ========================================================= -->
     <style>
-        .weekly-highlights {
+        .weekly-highlights-section {
             width: 100%;
             max-width: 1050px;
             margin: 0 auto;
         }
 
         .weekly-highlights-grid {
+            width: 100%;
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1.25rem;
+            gap: 20px;
         }
 
         .weekly-highlight-card {
-            position: relative;
             width: 100%;
             overflow: hidden;
-            border-radius: 1rem;
+            border-radius: 16px;
             border: 1px solid rgba(128, 128, 128, 0.18);
-            background: var(--surface-warm, #f7f5ef);
+            background: var(--surface-warm, #f8f6f0);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
         }
 
-        /*
-         * Landscape frame.
-         * 16 / 9 keeps the photos wide and prevents
-         * them from taking too much vertical space.
-         */
-        .weekly-highlight-image {
+        .weekly-highlight-frame {
             width: 100%;
             aspect-ratio: 16 / 9;
             overflow: hidden;
-            position: relative;
             background: #eeeeee;
         }
 
-        .weekly-highlight-image img {
+        .weekly-highlight-frame img {
+            display: block;
             width: 100%;
             height: 100%;
-            display: block;
-
-            /*
-             * Auto framing:
-             * fills the landscape frame while maintaining
-             * the original image proportions.
-             */
             object-fit: cover;
             object-position: center center;
-
-            transition: transform 0.35s ease;
-        }
-
-        .weekly-highlight-card:hover .weekly-highlight-image img {
-            transform: scale(1.02);
         }
 
         @media (max-width: 767px) {
             .weekly-highlights-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 16px;
             }
 
-            .weekly-highlight-image {
-                /*
-                 * Still landscape on mobile,
-                 * but slightly shorter to save screen space.
-                 */
+            .weekly-highlight-frame {
                 aspect-ratio: 16 / 9;
-            }
-
-            .weekly-highlight-image img {
-                object-fit: cover;
-                object-position: center center;
             }
         }
     </style>
@@ -168,7 +139,6 @@
     <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
 
         <div class="hidden md:flex items-center space-x-3">
-
             <span class="bg-gold text-white text-[10px] uppercase font-bold px-2.5 py-0.5 rounded tracking-wider">
                 Verified Winner
             </span>
@@ -176,26 +146,20 @@
             <span class="text-sec">
                 IIMB WSP Alumna • 22+ Yrs Leadership
             </span>
-
         </div>
 
         <div class="mx-auto md:mx-0 flex items-center gap-2">
-
             <i class="fa-solid fa-circle-info text-gold"></i>
 
             <span>
                 Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings
             </span>
-
         </div>
 
         <a href="contact.html"
            class="hidden lg:inline-flex items-center text-xs font-bold hover:underline transition">
-
             Inquire Now
-
             <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i>
-
         </a>
 
     </div>
@@ -208,7 +172,6 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
-            <!-- Logo -->
             <a href="index.html"
                class="flex items-center space-x-3 group cursor-pointer"
                aria-label="Go to homepage">
@@ -380,6 +343,7 @@
 
     </header>
 
+
     <!-- =========================================================
          MAIN CONTENT
          ========================================================= -->
@@ -409,10 +373,10 @@
 
 
             <!-- =====================================================
-                 1. WEEKLY HIGHLIGHTS IMAGES
+                 1. WEEKLY HIGHLIGHTS
                  ===================================================== -->
-            <section class="weekly-highlights"
-                     aria-labelledby="weeklyHighlightsHeading">
+            <section class="weekly-highlights-section"
+                     aria-labelledby="weeklyHighlightsTitle">
 
                 <div class="text-center mb-8">
 
@@ -420,26 +384,26 @@
                         Weekly Highlights
                     </span>
 
-                    <div class="gold-divider mx-auto mt-3 mb-4"></div>
+                    <div class="gold-divider mx-auto mt-3 mb-5"></div>
 
-                    <h2 id="weeklyHighlightsHeading"
-                        class="font-display text-2xl sm:text-3xl font-bold text-heading">
-
+                    <h2 id="weeklyHighlightsTitle"
+                        class="font-display text-3xl sm:text-4xl font-bold text-heading">
                         This Week's Highlights
-
                     </h2>
 
                 </div>
 
                 <div class="weekly-highlights-grid">
 
-                    <!-- Highlight Image 1 -->
+                    <!-- Highlight 1 -->
                     <div class="weekly-highlight-card">
 
-                        <div class="weekly-highlight-image">
+                        <div class="weekly-highlight-frame">
 
-                            <img src="h2.jpg"
-                                 alt="Voice-O-Magic Weekly Highlight"
+                            <img src="./h2.jpg"
+                                 alt="Voice-O-Magic Weekly Highlight 1"
+                                 width="1200"
+                                 height="675"
                                  loading="eager"
                                  decoding="async">
 
@@ -447,13 +411,16 @@
 
                     </div>
 
-                    <!-- Highlight Image 2 -->
+
+                    <!-- Highlight 2 -->
                     <div class="weekly-highlight-card">
 
-                        <div class="weekly-highlight-image">
+                        <div class="weekly-highlight-frame">
 
-                            <img src="h1.jpg"
-                                 alt="Voice-O-Magic Weekly Highlight"
+                            <img src="./h1.jpg"
+                                 alt="Voice-O-Magic Weekly Highlight 2"
+                                 width="1200"
+                                 height="675"
                                  loading="eager"
                                  decoding="async">
 
@@ -503,8 +470,9 @@
                     </h4>
 
                     <p class="text-sm text-sec mt-2 leading-relaxed">
-                        A deep dive into communication, perception, and the evolving landscape of intelligence.
-                        Watch to glean insights on structured thought and presentation clarity.
+                        A deep dive into communication, perception, and the evolving landscape
+                        of intelligence. Watch to glean insights on structured thought and
+                        presentation clarity.
                     </p>
 
                 </div>
@@ -649,9 +617,7 @@
 
                 <p id="modalResourceTitle"
                    class="text-sm text-sec mt-1">
-
                     Resource Title
-
                 </p>
 
             </div>
@@ -889,13 +855,11 @@
 
                 <div class="flex space-x-6">
 
-                    <a href="#"
-                       class="hover:text-heading transition">
+                    <a href="#" class="hover:text-heading transition">
                         Privacy Policy
                     </a>
 
-                    <a href="#"
-                       class="hover:text-heading transition">
+                    <a href="#" class="hover:text-heading transition">
                         Terms of Service
                     </a>
 
@@ -917,3 +881,4 @@
 
 </body>
 </html>
+```
