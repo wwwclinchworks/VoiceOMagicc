@@ -47,3 +47,18 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',addWeeklyLink);
   else addWeeklyLink();
 })();
+
+/* Load the Weekly Highlights illustration helper only on the dedicated page. */
+(function(){
+  function loadWeeklyIllustrations(){
+    if(!/\/weekly\.html(?:$|[?#])/i.test(window.location.pathname)) return;
+    if(document.querySelector('script[data-vom-weekly-illustrations]')) return;
+    const script=document.createElement('script');
+    script.src='js/reicon-image-loading.js?v=20260828';
+    script.async=true;
+    script.dataset.vomWeeklyIllustrations='true';
+    document.head.appendChild(script);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',loadWeeklyIllustrations,{once:true});
+  else loadWeeklyIllustrations();
+})();
