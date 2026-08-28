@@ -1,4 +1,5 @@
 worker.js
+worker-entry.js
 wrangler.jsonc
 api/
 .github/
@@ -7,3 +8,5 @@ api/
 README.md
 SECURITY.md
 vercel.json
+.wrangler/
+tmp/
