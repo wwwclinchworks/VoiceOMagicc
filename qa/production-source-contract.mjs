@@ -11,6 +11,7 @@ const weekly = read('js/weekly-highlights.js');
 const config = read('js/chatbot-config.js');
 const redirects = read('_redirects');
 const wrangler = read('wrangler.jsonc');
+const entry = read('worker-entry.js');
 const knowledge = JSON.parse(read('data/knowledge.json'));
 
 expect(main.includes('function resourceCard(item)'), 'main.js must define resourceCard.');
@@ -38,13 +39,21 @@ expect(weekly.includes('aspect-[4/3]'), 'Weekly Highlights must use fixed 4:3 fr
 expect(!weekly.includes('setInterval'), 'Weekly Highlights must not use polling.');
 expect(!config.includes("'/resources':'/resources.html'"), 'Resources must not use client-side route aliasing.');
 expect(!config.includes("'/resources/':'/resources.html'"), 'Resources trailing slash must not use client-side route aliasing.');
+expect(!config.includes("history.replaceState(window.history.state,'',target"), 'Resources must not rewrite the browser URL after load.');
 expect(config.includes("'/books':'/books.html'"), 'Books route alias must exist.');
-expect(redirects.includes('/resources /resources.html 301'), 'Resources must have a 301 canonical redirect.');
-expect(redirects.includes('/resources/ /resources.html 301'), 'Resources trailing slash must have a 301 canonical redirect.');
+expect(redirects.includes('/resources /resources.html 301'), 'Resources must retain the asset redirect rule.');
+expect(redirects.includes('/resources/ /resources.html 301'), 'Resources trailing slash must retain the asset redirect rule.');
 
+expect(wrangler.includes('"main": "./worker-entry.js"'), 'Wrangler must deploy the canonical Worker entrypoint.');
 expect(wrangler.includes('"/adminadmin"'), 'Wrangler must route /adminadmin through the Worker.');
 expect(wrangler.includes('"/adminadmin.html"'), 'Wrangler must route /adminadmin.html through the Worker.');
 expect(wrangler.includes('"/api/*"'), 'Wrangler must route API requests through the Worker.');
+
+expect(entry.includes("url.pathname === '/resources'"), 'Worker entry must recognize /resources.');
+expect(entry.includes("url.pathname === '/resources/'"), 'Worker entry must recognize /resources/.');
+expect(entry.includes("new URL('/resources.html', url.origin)"), 'Worker entry must redirect Resources to /resources.html.');
+expect(entry.includes('Response.redirect(destination.toString(), 301)'), 'Resources redirect must be a permanent 301 redirect.');
+expect(entry.includes("return handler.fetch(request, env, ctx)"), 'Worker entry must delegate all non-Resources requests to worker.js.');
 
 const highlights = knowledge.cms?.weeklyHighlights;
 expect(highlights?.highlight1?.published === true, 'Highlight 1 must be published.');
