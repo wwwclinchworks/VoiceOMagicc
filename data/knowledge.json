@@ -161,6 +161,22 @@
         "coverImageUrl": "",
         "destinationUrl": "https://www.voiceomagic.com/contact.html"
       }
-    ]
+    ],
+    "weeklyHighlights": {
+      "highlight1": {
+        "driveUrl": "https://drive.google.com/file/d/1sOiyJoaO3O_qp-V3WyHM_OiwvFgD3h5N/view?usp=sharing",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1sOiyJoaO3O_qp-V3WyHM_OiwvFgD3h5N&sz=w2000",
+        "title": "",
+        "description": "",
+        "published": true
+      },
+      "highlight2": {
+        "driveUrl": "https://drive.google.com/file/d/11459bTXUK6VU--JceVrxvZLQCDQdZERP/view?usp=sharing",
+        "imageUrl": "https://drive.google.com/thumbnail?id=11459bTXUK6VU--JceVrxvZLQCDQdZERP&sz=w2000",
+        "title": "",
+        "description": "",
+        "published": true
+      }
+    }
   }
 }
