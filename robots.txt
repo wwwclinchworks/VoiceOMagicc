@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /adminadmin.html
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://voiceomagic.clinchworks.in/sitemap.xml
