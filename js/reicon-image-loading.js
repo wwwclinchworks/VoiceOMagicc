@@ -1,9 +1,8 @@
 (function () {
   'use strict';
 
-  // Single ReIcon treatment for image loading/empty/error states.
   const APERTURE_ILLUSTRATION = 'https://cdn.reicon.dev/aperture.svg';
-  const IMAGE_SELECTORS = ['#weeklyGallery img'];
+  const IMAGE_SELECTORS = ['#weeklyGallery img:not([data-reicon-illustration])'];
 
   function ensureIcon(container, src = APERTURE_ILLUSTRATION) {
     if (!container) return null;
@@ -11,10 +10,10 @@
     if (!icon) {
       icon = document.createElement('img');
       icon.dataset.reiconIllustration = 'true';
-      icon.alt = 'Aperture';
+      icon.alt = '';
       icon.width = 180;
       icon.height = 180;
-      icon.loading = 'eager';
+      icon.loading = 'lazy';
       icon.decoding = 'async';
       icon.style.cssText = [
         'width:110px',
@@ -27,7 +26,6 @@
       container.appendChild(icon);
     }
     icon.src = src;
-    icon.alt = 'Aperture';
     return icon;
   }
 
@@ -63,15 +61,13 @@
   }
 
   function bindWeeklyImage(img) {
-    if (!img || img.dataset.reiconLoadingBound === 'true') return;
+    if (!img || img.dataset.reiconLoadingBound === 'true' || img.dataset.reiconIllustration === 'true') return;
     img.dataset.reiconLoadingBound = 'true';
 
     const frame = img.closest('.weekly-frame') || img.parentElement;
     if (!frame) return;
 
-    if (window.getComputedStyle(frame).position === 'static') {
-      frame.style.position = 'relative';
-    }
+    if (window.getComputedStyle(frame).position === 'static') frame.style.position = 'relative';
 
     const loader = findLoader(frame) || createLoader(frame);
     ensureIcon(loader);
@@ -93,9 +89,7 @@
   }
 
   function styleExistingAdminLoaders(root) {
-    root.querySelectorAll?.('[data-drive-loader]').forEach((loader) => {
-      ensureIcon(loader);
-    });
+    root.querySelectorAll?.('[data-drive-loader]').forEach((loader) => ensureIcon(loader));
   }
 
   function scan(root = document) {
@@ -106,27 +100,11 @@
     if (root instanceof HTMLImageElement) bindWeeklyImage(root);
   }
 
-  function boot() {
-    if (!document.body) return;
-    scan(document);
-
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const added of mutation.addedNodes) {
-          if (added.nodeType === Node.ELEMENT_NODE) scan(added);
-        }
-      }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-  }
+  window.VOMReIconImageLoading = { scan, bindWeeklyImage };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot, { once: true });
+    document.addEventListener('DOMContentLoaded', () => scan(document), { once: true });
   } else {
-    boot();
+    scan(document);
   }
 })();
