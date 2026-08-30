@@ -40,6 +40,11 @@
       {"id":"book-inspiration-unbound","title":"Inspiration Unbound","description":"A biography chronicling the life of Moolchand Singhvi, exploring timeless principles of resilience, simple living, high thinking, and navigating a 104-member family.","buttonText":"Buy on Amazon","order":0,"published":true,"bookHeading":"Inspiration Unbound","authors":"Shalini Mukund","categoryLabel":"Notion Press (2021)","coverImageUrl":"","destinationUrl":"https://www.amazon.in/Inspiration-Unbound-Shalini-Mukund/dp/B09M8G9F33"},
       {"id":"book-back-to-school","title":"Back to School, a Useful Guide to Navigate Through the Pandemic","description":"Co-authored with Lavitha Vaas, this practical guide helps parents and children navigate schooling and daily life through the challenges of the pandemic era.","buttonText":"Request Digital Copy","order":1,"published":true,"bookHeading":"Back to School, a Useful Guide to Navigate Through the Pandemic","authors":"Shalini Mukund & Lavitha Vaas","categoryLabel":"Copyrighted Resource","coverImageUrl":"","destinationUrl":"https://www.voiceomagic.com/contact.html"}
     ],
-    "weeklyHighlights": {"items": []}
+    "weeklyHighlights": {
+      "items": [
+        {"id":"weekly-1","driveUrl":"https://drive.google.com/file/d/1sOiyJoaO3O_qp-V3WyHM_OiwvFgD3h5N/view?usp=sharing","imageUrl":"https://drive.google.com/thumbnail?id=1sOiyJoaO3O_qp-V3WyHM_OiwvFgD3h5N&sz=w1200","title":"","description":"","order":0,"published":true},
+        {"id":"weekly-2","driveUrl":"https://drive.google.com/file/d/11459bTXUK6VU--JceVrxvZLQCDQdZERP/view?usp=sharing","imageUrl":"https://drive.google.com/thumbnail?id=11459bTXUK6VU--JceVrxvZLQCDQdZERP&sz=w1200","title":"","description":"","order":1,"published":true}
+      ]
+    }
   }
 }
