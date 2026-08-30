@@ -7,18 +7,18 @@
   <meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
   <title>Private Admin | Voice-O-Magic</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{gold:'var(--gold)'}}}};</script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/components.css">
 </head>
 <body class="bg-theme text-main font-sans antialiased min-h-screen">
   <script>
   (async function(){
     try{
-      const response=await fetch('js/admin.js',{cache:'no-store'});
+      const response=await fetch('/js/admin.js',{cache:'no-store'});
       if(!response.ok)throw new Error('Unable to load admin client.');
       let source=await response.text();
       source=source.replace(
@@ -28,6 +28,32 @@
       const script=document.createElement('script');
       script.textContent=source;
       document.body.append(script);
+
+      let attempts=0;
+      const weeklyLoader=setInterval(async()=>{
+        attempts+=1;
+        if(!document.getElementById('saveAll')){
+          if(attempts>=80)clearInterval(weeklyLoader);
+          return;
+        }
+        clearInterval(weeklyLoader);
+        try{
+          const weeklyResponse=await fetch('/js/admin-weekly-cms.js',{cache:'no-store'});
+          if(!weeklyResponse.ok)throw new Error('Unable to load Weekly Highlights editor.');
+          const weeklySource=await weeklyResponse.text();
+          const weeklyScript=document.createElement('script');
+          weeklyScript.textContent=weeklySource;
+          document.body.append(weeklyScript);
+          if(window.VOMWeeklyAdmin?.load) await window.VOMWeeklyAdmin.load();
+        }catch(error){
+          const node=document.createElement('div');
+          node.className='fixed right-5 bottom-5 z-[200] rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-xl';
+          node.style.background='#b42318';
+          node.textContent='Weekly Highlights unavailable: '+(error.message||'Failed to load.');
+          document.body.append(node);
+          setTimeout(()=>node.remove(),5000);
+        }
+      },100);
     }catch(error){
       document.body.replaceChildren();
       const box=document.createElement('main');
@@ -49,72 +75,8 @@
     function initial(){try{const s=localStorage.getItem('vom-theme');if(s)return s==='dark'}catch{}return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
     apply(initial());
     window.addEventListener('vom-admin-theme-toggle',function(event){apply(Boolean(event.detail));});
-
-    function showLogin(){
-      if(document.querySelector('[data-admin-login]'))return;
-      const shell=document.createElement('main');
-      shell.className='min-h-screen flex items-center justify-center p-5 bg-theme';
-      shell.dataset.adminLogin='true';
-      const card=document.createElement('section');
-      card.className='material-card w-full max-w-md p-7 md:p-8';
-      const eyebrow=document.createElement('div');
-      eyebrow.className='text-xs font-bold uppercase tracking-[0.18em] text-gold';
-      eyebrow.textContent='Private Control Center';
-      const title=document.createElement('h1');
-      title.className='font-display text-3xl font-bold mt-2 text-heading';
-      title.textContent='Voice-O-Magic Admin';
-      const copy=document.createElement('p');
-      copy.className='text-sm text-sec mt-2';
-      copy.textContent='Authorized administrator access only.';
-      const form=document.createElement('form');
-      form.className='space-y-4 mt-7';
-      const label=document.createElement('label');
-      label.className='block text-sm font-semibold text-sec';
-      label.textContent='Administrator password';
-      const input=document.createElement('input');
-      input.type='password';
-      input.autocomplete='current-password';
-      input.required=true;
-      input.className='md-input mt-1.5';
-      label.append(input);
-      const error=document.createElement('p');
-      error.className='text-sm text-red';
-      error.hidden=true;
-      const button=document.createElement('button');
-      button.className='btn-primary w-full';
-      button.type='submit';
-      button.textContent='Sign in';
-      form.append(label,error,button);
-      form.addEventListener('submit',async function(event){
-        event.preventDefault();
-        error.hidden=true;
-        button.disabled=true;
-        button.textContent='Signing in…';
-        try{
-          const response=await fetch('/api/chat?mode=admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:input.value})});
-          const body=await response.json().catch(()=>({}));
-          if(!response.ok)throw new Error(body.error||'Login failed.');
-          location.reload();
-        }catch(err){
-          error.textContent=err.message||'Login failed.';
-          error.hidden=false;
-          button.disabled=false;
-          button.textContent='Sign in';
-        }
-      });
-      card.append(eyebrow,title,copy,form);
-      shell.append(card);
-      document.body.replaceChildren(shell);
-      input.focus();
-    }
-
-    function inspect(){
-      if(window.__vomAdminUnauthorized)showLogin();
-    }
-    inspect();
-    new MutationObserver(inspect).observe(document.body,{childList:true,subtree:true});
   })();
   </script>
-  <script src="js/reicon-image-loading.js"></script>
+  <script src="/js/reicon-image-loading.js"></script>
 </body>
 </html>
