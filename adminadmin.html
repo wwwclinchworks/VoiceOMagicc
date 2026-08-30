@@ -8,28 +8,13 @@
   <title>Private Admin | Voice-O-Magic</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{gold:'var(--gold)'}}}};</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
 </head>
 <body class="bg-theme text-main font-sans antialiased min-h-screen">
-  <script>
-  (function(){
-    const originalFetch=window.fetch.bind(window);
-    window.fetch=async function(input,init){
-      const response=await originalFetch(input,init);
-      try{
-        const url=typeof input==='string'?input:input?.url||'';
-        if(url.includes('mode=admin-data') && response.status===401){
-          window.__vomAdminUnauthorized=true;
-        }
-      }catch{}
-      return response;
-    };
-  })();
-  </script>
   <script>
   (async function(){
     try{
@@ -130,8 +115,6 @@
     new MutationObserver(inspect).observe(document.body,{childList:true,subtree:true});
   })();
   </script>
-
-  <script src="js/admin-weekly-cms.js"></script>
   <script src="js/reicon-image-loading.js"></script>
 </body>
 </html>
