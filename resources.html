@@ -4,46 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Free Resources | Voice-O-Magic — Shalini Mukund</title>
-  <meta name="description" content="Voice-O-Magic by Shalini Mukund — Free resources, featured video, weekly highlights and speaker toolkit.">
+  <meta name="description" content="Voice-O-Magic by Shalini Mukund — Free resources, featured video and speaker toolkit.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <script>window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{gold:'var(--gold)'}}}};</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/components.css">
 </head>
 <body class="bg-theme text-main font-sans antialiased min-h-screen">
   <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
     <span class="hidden md:inline text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span>
     <span>Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings</span>
-    <a href="contact.html" class="hidden lg:inline-flex font-bold hover:underline">Inquire Now</a>
+    <a href="/contact.html" class="hidden lg:inline-flex font-bold hover:underline">Inquire Now</a>
   </div>
+
   <header class="sticky top-0 z-50 bg-theme/95 backdrop-blur-md border-b border-theme" id="mainHeader">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <a href="index.html" class="flex items-center space-x-3" aria-label="Go to homepage">
-        <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card"><img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain"></div>
+      <a href="/index.html" class="flex items-center space-x-3" aria-label="Go to homepage">
+        <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card"><img src="/logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain"></div>
         <div class="flex flex-col"><span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span><span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span></div>
       </a>
       <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
-        <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Home</a><a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">About</a><a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Keynotes</a><a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Academy</a><a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Corporate</a><a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Books</a><a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium active">Resources</a>
+        <a href="/index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Home</a>
+        <a href="/about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">About</a>
+        <a href="/keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Keynotes</a>
+        <a href="/academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Academy</a>
+        <a href="/corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Corporate</a>
+        <a href="/books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Books</a>
+        <a href="/resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium active">Resources</a>
       </nav>
-      <div class="flex items-center gap-2"><button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button><a href="contact.html" class="btn-primary text-sm hidden sm:inline-flex">Contact Us</a></div>
+      <div class="flex items-center gap-2"><button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button><a href="/contact.html" class="btn-primary text-sm hidden sm:inline-flex">Contact Us</a></div>
     </div>
   </header>
+
   <main id="resourcesRoot" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow py-14 sm:py-20">
     <div class="material-card p-8 text-center text-sec">Loading Resources…</div>
   </main>
+
   <footer class="pt-14 pb-10 text-sm border-t border-theme mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-      <div><div class="flex items-center gap-2.5 mb-4"><div class="w-9 h-9 rounded-full border border-theme p-0.5"><img src="logo.png" alt="Logo" class="w-full h-full object-contain"></div><span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span></div><p class="text-sec leading-relaxed">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p></div>
-      <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4><div class="space-y-2 text-sec"><a class="block hover:text-gold" href="about.html">About Founder</a><a class="block hover:text-gold" href="keynotes.html">Keynotes</a><a class="block hover:text-gold" href="academy.html">Youth Academy</a><a class="block hover:text-gold" href="corporate.html">Corporate</a></div></div>
-      <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Channels</h4><div class="flex gap-3"><a class="btn-secondary text-xs" href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram mr-2"></i>Instagram</a><a class="btn-secondary text-xs" href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook mr-2"></i>Facebook</a></div></div>
-    </div><div class="pt-8 mt-10 border-t border-theme text-xs text-muted">© 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div>
+          <div class="flex items-center gap-2.5 mb-4"><div class="w-9 h-9 rounded-full border border-theme p-0.5"><img src="/logo.png" alt="Logo" class="w-full h-full object-contain"></div><span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span></div>
+          <p class="text-sec leading-relaxed">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+          <div class="space-y-2 text-sec"><a class="block hover:text-gold" href="/about.html">About Founder</a><a class="block hover:text-gold" href="/keynotes.html">Keynotes</a><a class="block hover:text-gold" href="/academy.html">Youth Academy</a><a class="block hover:text-gold" href="/corporate.html">Corporate</a></div>
+        </div>
+        <div>
+          <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Channels</h4>
+          <div class="flex gap-3"><a class="btn-secondary text-xs" href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram mr-2"></i>Instagram</a><a class="btn-secondary text-xs" href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook mr-2"></i>Facebook</a></div>
+        </div>
+      </div>
+      <div class="pt-8 mt-10 border-t border-theme text-xs text-muted">© 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div>
+    </div>
   </footer>
+
   <script>
   (function(){
-    function setTheme(dark){document.documentElement.classList.toggle('dark',dark);try{localStorage.setItem('vom-theme',dark?'dark':'light')}catch{};document.querySelectorAll('#themeToggleBtn').forEach(b=>{b.innerHTML='<i class="fa-solid '+(dark?'fa-sun':'fa-moon')+'"></i>'})}
+    function setTheme(dark){
+      document.documentElement.classList.toggle('dark',dark);
+      try{localStorage.setItem('vom-theme',dark?'dark':'light')}catch{}
+      document.querySelectorAll('#themeToggleBtn').forEach(b=>{b.innerHTML='<i class="fa-solid '+(dark?'fa-sun':'fa-moon')+'"></i>'});
+    }
     window.toggleTheme=()=>setTheme(!document.documentElement.classList.contains('dark'));
     try{setTheme(localStorage.getItem('vom-theme')==='dark')}catch{}
 
@@ -51,23 +78,38 @@
     const esc=v=>String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\"':'&quot;'}[m]||m));
     const safeDrive=v=>{try{const u=new URL(v);return u.protocol==='https:'&&['drive.google.com','docs.google.com'].includes(u.hostname.toLowerCase())?u.toString():''}catch{return ''}};
     const safeHttp=v=>{try{const u=new URL(v);return u.protocol==='https:'?u.toString():''}catch{return ''}};
+
     function render(cms){
-      const s=cms.settings||{}; const video=cms.featuredVideo||{}; const weekly=(cms.weeklyHighlights&&Array.isArray(cms.weeklyHighlights.items)?cms.weeklyHighlights.items:[]).filter(x=>x&&x.published&&safeHttp(x.imageUrl));
+      const s=cms.settings||{};
+      const video=cms.featuredVideo||{};
       const resources=Array.isArray(cms.resources)?cms.resources.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
       const toolkit=Array.isArray(cms.toolkit)?cms.toolkit.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
       root.innerHTML='';
       root.insertAdjacentHTML('beforeend',`<section class="text-center max-w-3xl mx-auto"><span class="text-sm font-bold text-gold tracking-widest uppercase">${esc(s.resourcesLabel||'Free Resources')}</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">${esc(s.resourcesHeading||'Resources')}</h1><p class="text-sec text-base mt-5 leading-relaxed">${esc(s.resourcesParagraph||'')}</p>${s.resourcesExtraParagraph?`<p class="text-sec text-base mt-3 leading-relaxed">${esc(s.resourcesExtraParagraph)}</p>`:''}</section>`);
-      if(weekly.length){
-        const cards=weekly.map((x,i)=>`<article class="material-card overflow-hidden"><img src="${safeHttp(x.imageUrl)}" alt="${esc(x.title||'Weekly Highlight '+(i+1))}" class="block w-full aspect-video object-cover" loading="lazy" decoding="async"><div class="p-4">${x.title?`<h3 class="font-bold text-heading">${esc(x.title)}</h3>`:''}${x.description?`<p class="text-sm text-sec mt-1 leading-relaxed">${esc(x.description)}</p>`:''}</div></article>`).join('');
-        root.insertAdjacentHTML('beforeend',`<section class="mt-12"><div class="flex items-end justify-between gap-4 mb-5"><div><span class="text-xs font-bold uppercase tracking-widest text-gold">Weekly Highlights</span><h2 class="font-display text-3xl font-bold text-heading mt-1">This Week</h2></div><span class="text-xs text-muted">${weekly.length} published image${weekly.length===1?'':'s'}</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-5">${cards}</div></section>`);
+
+      if(video.published){
+        const videoUrl=safeHttp(video.url||'');
+        const isYoutube=/youtube(?:-nocookie)?\.com\/embed\/[A-Za-z0-9_-]{11}/i.test(videoUrl);
+        root.insertAdjacentHTML('beforeend',`<section class="material-card max-w-4xl mx-auto mt-12 p-4"><div class="aspect-video rounded-xl overflow-hidden bg-black">${isYoutube?`<iframe class="w-full h-full" src="${videoUrl}" title="${esc(video.title||'Featured Video')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`:''}</div><h3 class="font-bold text-heading text-xl mt-5">${esc(video.title||'Featured Video')}</h3><p class="text-sec text-sm mt-2 leading-relaxed">${esc(video.description||'')}</p></section>`);
       }
-      if(video.published){root.insertAdjacentHTML('beforeend',`<section class="material-card max-w-4xl mx-auto mt-12 p-4"><div class="aspect-video rounded-xl overflow-hidden bg-black"><iframe class="w-full h-full" src="${safeHttp(video.url||'').replace('/embed/','/embed/')}" title="${esc(video.title||'Featured Video')}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><h3 class="font-bold text-heading text-xl mt-5">${esc(video.title||'Featured Video')}</h3><p class="text-sec text-sm mt-2 leading-relaxed">${esc(video.description||'')}</p></section>`)}
-      if(resources.length){root.insertAdjacentHTML('beforeend',`<section class="mt-12"><h2 class="font-display text-3xl font-bold text-heading">Resources</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">${resources.map(x=>{const d=safeDrive(x.driveUrl);return `<article class="material-card p-6 flex flex-col"><h3 class="font-bold text-heading">${esc(x.title)}</h3><p class="text-sm text-sec leading-relaxed mt-2 mb-6">${esc(x.description||'')}</p>${d?`<a class="btn-secondary text-sm text-center mt-auto" href="${d}">${esc(x.buttonText||'Download')}</a>`:`<button type="button" class="btn-secondary text-sm mt-auto" onclick="alert('This resource will be provided through Voice-O-Magic.')">${esc(x.buttonText||'Download')}</button>`}</article>`}).join('')}</div></section>`)}
+
+      if(resources.length){
+        root.insertAdjacentHTML('beforeend',`<section class="mt-12"><h2 class="font-display text-3xl font-bold text-heading">Resources</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">${resources.map(x=>{const d=safeDrive(x.driveUrl);return `<article class="material-card p-6 flex flex-col"><h3 class="font-bold text-heading">${esc(x.title)}</h3><p class="text-sm text-sec leading-relaxed mt-2 mb-6">${esc(x.description||'')}</p>${d?`<a class="btn-secondary text-sm text-center mt-auto" href="${d}">${esc(x.buttonText||'Download')}</a>`:`<button type="button" class="btn-secondary text-sm mt-auto" onclick="alert('This resource will be provided through Voice-O-Magic.')">${esc(x.buttonText||'Download')}</button>`}</article>`}).join('')}</div></section>`)
+      }
+
       root.insertAdjacentHTML('beforeend',`<section class="mt-14"><h2 class="font-display text-3xl font-bold text-heading">${esc(s.toolkitHeading||'Speaker Toolkit')}</h2><p class="text-sec text-base mt-3">${esc(s.toolkitDescription||'')}</p>${toolkit.length?`<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">${toolkit.map(x=>`<article class="material-card p-6"><h3 class="font-bold text-heading">${esc(x.title)}</h3><p class="text-sm text-sec mt-2">${esc(x.description||'')}</p></article>`).join('')}</div>`:''}</section>`);
     }
-    fetch('/api/chat?mode=public-cms',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error('CMS unavailable'))).then(data=>render(data.cms||{})).catch(()=>{root.innerHTML='<div class="material-card p-8 text-center"><h1 class="font-display text-3xl font-bold text-heading">Resources</h1><p class="text-sec mt-3">Resources are temporarily unavailable. Please try again shortly.</p></div>'});
+
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),7000);
+    fetch('/api/chat?mode=public-cms',{cache:'no-store',signal:controller.signal})
+      .then(r=>r.ok?r.json():Promise.reject(new Error('CMS unavailable')))
+      .then(data=>render(data.cms||{}))
+      .catch(()=>{root.innerHTML='<div class="material-card p-8 text-center"><h1 class="font-display text-3xl font-bold text-heading">Resources</h1><p class="text-sec mt-3">Resources are temporarily unavailable. Please try again shortly.</p></div>'})
+      .finally(()=>clearTimeout(timeout));
   })();
   </script>
-  <script src="js/chatbot-config.js"></script><script src="js/chatbot.js"></script>
+  <script src="/js/chatbot-config.js"></script>
+  <script src="/js/chatbot.js"></script>
 </body>
 </html>
