@@ -1,216 +1,73 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Resources | Voice-O-Magic — Shalini Mukund</title>
-    <meta name="description" content="Voice-O-Magic by Shalini Mukund — Public Speaker, Communication Coach & Author. Free resources, featured video, speaker toolkit and downloadable guides.">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-
-    <script>
-        window.tailwind = window.tailwind || {};
-        window.tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { gold: 'var(--gold)' }
-                }
-            }
-        };
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        if (window.tailwind && window.tailwind.config) {
-            window.tailwind.config.safelist = [
-                'bg-theme','bg-surface','bg-surface-warm','bg-gold-light','bg-green-light','bg-red-light',
-                'text-heading','text-sec','text-muted','text-gold','text-gold-hover','text-green','text-red','text-main',
-                'border-theme','border-light','border-gold-muted',
-                'shadow-card','shadow-card-hover','shadow-gold','shadow-gold-hover',
-                'bg-theme/95','hover:bg-gold-light','hover:text-gold','hover:text-gold-hover','hover:text-heading',
-                'hover:border-gold-muted','group-hover:text-gold','group-hover:border-gold-muted',
-                'divide-light','bg-gold','border-gold'
-            ];
-        }
-    </script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Resources | Voice-O-Magic — Shalini Mukund</title>
+  <meta name="description" content="Voice-O-Magic by Shalini Mukund — Free resources, featured video, weekly highlights and speaker toolkit.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <script>window.tailwind=window.tailwind||{};window.tailwind.config={theme:{extend:{colors:{gold:'var(--gold)'}}}};</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-
-<body class="bg-theme text-main font-sans antialiased custom-scrollbar min-h-screen flex flex-col justify-between relative">
-
-    <div id="toastContainer"></div>
-
-    <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
-        <div class="hidden md:flex items-center space-x-3">
-            <span class="bg-gold text-white text-[10px] uppercase font-bold px-2.5 py-0.5 rounded tracking-wider">Verified Winner</span>
-            <span class="text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span>
-        </div>
-        <div class="mx-auto md:mx-0 flex items-center gap-2">
-            <i class="fa-solid fa-circle-info text-gold"></i>
-            <span>Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings</span>
-        </div>
-        <a href="contact.html" class="hidden lg:inline-flex items-center text-xs font-bold hover:underline transition">
-            Inquire Now <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i>
-        </a>
+<body class="bg-theme text-main font-sans antialiased min-h-screen">
+  <div class="announcement-bar font-semibold text-xs md:text-sm py-2.5 px-4 text-center flex justify-between items-center">
+    <span class="hidden md:inline text-sec">IIMB WSP Alumna • 22+ Yrs Leadership</span>
+    <span>Now Enrolling: Youth Public Speaking Cohorts & Keynote Bookings</span>
+    <a href="contact.html" class="hidden lg:inline-flex font-bold hover:underline">Inquire Now</a>
+  </div>
+  <header class="sticky top-0 z-50 bg-theme/95 backdrop-blur-md border-b border-theme" id="mainHeader">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center space-x-3" aria-label="Go to homepage">
+        <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card"><img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain"></div>
+        <div class="flex flex-col"><span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span><span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span></div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
+        <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Home</a><a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">About</a><a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Keynotes</a><a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Academy</a><a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Corporate</a><a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium">Books</a><a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium active">Resources</a>
+      </nav>
+      <div class="flex items-center gap-2"><button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button><a href="contact.html" class="btn-primary text-sm hidden sm:inline-flex">Contact Us</a></div>
     </div>
+  </header>
+  <main id="resourcesRoot" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow py-14 sm:py-20">
+    <div class="material-card p-8 text-center text-sec">Loading Resources…</div>
+  </main>
+  <footer class="pt-14 pb-10 text-sm border-t border-theme mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div><div class="flex items-center gap-2.5 mb-4"><div class="w-9 h-9 rounded-full border border-theme p-0.5"><img src="logo.png" alt="Logo" class="w-full h-full object-contain"></div><span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span></div><p class="text-sec leading-relaxed">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p></div>
+      <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4><div class="space-y-2 text-sec"><a class="block hover:text-gold" href="about.html">About Founder</a><a class="block hover:text-gold" href="keynotes.html">Keynotes</a><a class="block hover:text-gold" href="academy.html">Youth Academy</a><a class="block hover:text-gold" href="corporate.html">Corporate</a></div></div>
+      <div><h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Channels</h4><div class="flex gap-3"><a class="btn-secondary text-xs" href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram mr-2"></i>Instagram</a><a class="btn-secondary text-xs" href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook mr-2"></i>Facebook</a></div></div>
+    </div><div class="pt-8 mt-10 border-t border-theme text-xs text-muted">© 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div></div>
+  </footer>
+  <script>
+  (function(){
+    function setTheme(dark){document.documentElement.classList.toggle('dark',dark);try{localStorage.setItem('vom-theme',dark?'dark':'light')}catch{};document.querySelectorAll('#themeToggleBtn').forEach(b=>{b.innerHTML='<i class="fa-solid '+(dark?'fa-sun':'fa-moon')+'"></i>'})}
+    window.toggleTheme=()=>setTheme(!document.documentElement.classList.contains('dark'));
+    try{setTheme(localStorage.getItem('vom-theme')==='dark')}catch{}
 
-    <header class="sticky top-0 z-50 bg-theme/95 backdrop-blur-md border-b border-theme transition-all duration-300" id="mainHeader">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-
-            <a href="index.html" class="flex items-center space-x-3 group cursor-pointer" aria-label="Go to homepage">
-                <div class="w-10 h-10 rounded-full overflow-hidden border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
-                    <img src="logo.png" alt="Voice-O-Magic Official Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
-                </div>
-                <div class="flex flex-col">
-                    <span class="font-display font-bold text-lg sm:text-xl text-heading leading-none">Voice-O-Magic</span>
-                    <span class="text-[10px] text-sec uppercase font-semibold tracking-widest">Shalini Mukund</span>
-                </div>
-            </a>
-
-            <nav class="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
-                <a href="index.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Home</a>
-                <a href="about.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">About</a>
-                <a href="keynotes.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Keynotes</a>
-                <a href="academy.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Academy</a>
-                <a href="corporate.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Corporate</a>
-                <a href="books.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition">Books</a>
-                <a href="resources.html" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition active">Resources</a>
-            </nav>
-
-            <div class="hidden lg:flex items-center space-x-3">
-                <button onclick="toggleTheme()" id="themeToggleBtn" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
-                <a href="contact.html" class="btn-primary text-sm">Contact Us</a>
-            </div>
-
-            <div class="lg:hidden flex items-center gap-2">
-                <button onclick="toggleTheme()" id="themeToggleBtnMobile" class="theme-toggle" aria-label="Switch theme" title="Switch theme">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
-                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="text-sec p-2 rounded-full hover:bg-surface-warm focus:outline-none transition" aria-label="Toggle Navigation Menu">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-            </div>
-        </div>
-
-        <div id="mobileMenu" class="hidden lg:hidden bg-theme border-b border-theme px-4 pt-2 pb-6 space-y-1 shadow-card">
-            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Home</a>
-            <a href="about.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">About</a>
-            <a href="keynotes.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Keynotes</a>
-            <a href="academy.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Academy</a>
-            <a href="corporate.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Corporate</a>
-            <a href="books.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Books</a>
-            <a href="resources.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Resources</a>
-            <a href="contact.html" class="block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-gold-light hover:text-gold-hover font-medium transition">Contact & Booking</a>
-            <div class="pt-4 px-2">
-                <a href="contact.html" class="block w-full btn-primary text-sm text-center">Book Keynote Event</a>
-            </div>
-        </div>
-    </header>
-
-    <!--
-      IMPORTANT:
-      This page intentionally contains an empty main shell.
-      js/main.js loads the CMS data and renders the Resources page into <main>.
-      Weekly Highlights is intentionally NOT hard-coded here because it now
-      lives on weekly.html and is managed through the Weekly Highlights CMS.
-    -->
-    <main class="flex-grow"></main>
-
-    <!-- Resource download modal used by js/main.js for resources without a Drive URL. -->
-    <div id="resourceModal" class="fixed inset-0 z-[60] modal-backdrop hidden items-center justify-center p-4">
-        <div class="material-card max-w-md w-full p-8 relative bg-theme">
-            <button onclick="closeResourceModal()" class="absolute top-4 right-4 text-muted hover:text-heading transition" aria-label="Close Resource Modal">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-
-            <div class="text-center mb-6">
-                <div class="w-14 h-14 rounded-full bg-gold-light flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-file-arrow-down text-2xl text-gold"></i>
-                </div>
-                <h3 class="font-bold text-xl text-heading">Download Resource</h3>
-                <p id="modalResourceTitle" class="text-sm text-sec mt-1">Resource Title</p>
-            </div>
-
-            <form onsubmit="handleResourceSubmit(event)" class="space-y-4" novalidate>
-                <div>
-                    <label class="block text-sm font-medium text-sec mb-1.5">Full Name</label>
-                    <input type="text" id="resourceName" required placeholder="Your name" class="md-input">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-sec mb-1.5">Email Address</label>
-                    <input type="email" id="resourceEmail" required placeholder="email@example.com" class="md-input">
-                </div>
-                <button type="submit" class="btn-primary w-full mt-2">Get Free Download</button>
-            </form>
-        </div>
-    </div>
-
-    <footer class="pt-14 pb-10 text-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
-
-                <div class="space-y-4 md:col-span-2 lg:col-span-1">
-                    <div class="flex items-center space-x-2.5">
-                        <div class="w-9 h-9 rounded-full border border-theme bg-theme flex items-center justify-center p-0.5 shadow-card">
-                            <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/FAFAF8/C9A227?text=VM';">
-                        </div>
-                        <span class="font-display font-bold text-heading text-lg">Voice-O-Magic</span>
-                    </div>
-                    <p class="leading-relaxed text-sec">Founded by Shalini Mukund. Empowering voice, confidence, and executive articulation.</p>
-                    <div class="flex space-x-4 pt-1">
-                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Instagram">
-                            <i class="fa-brands fa-instagram text-base"></i>
-                        </a>
-                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-theme border border-theme flex items-center justify-center text-sec hover:text-gold hover:border-gold-muted transition" aria-label="Facebook">
-                            <i class="fa-brands fa-facebook text-base"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
-                    <ul class="space-y-3 text-sec">
-                        <li><a href="about.html" class="hover:text-gold transition">About Founder</a></li>
-                        <li><a href="keynotes.html" class="hover:text-gold transition">Keynotes</a></li>
-                        <li><a href="academy.html" class="hover:text-gold transition">Youth Academy</a></li>
-                        <li><a href="corporate.html" class="hover:text-gold transition">Corporate</a></li>
-                    </ul>
-                </div>
-
-                <div class="md:col-span-2 lg:col-span-2">
-                    <h4 class="font-bold text-heading mb-4 text-sm uppercase tracking-wider">Official Channels</h4>
-                    <p class="mb-5 text-sec leading-relaxed">Follow Shalini on Instagram and Facebook for public speaking tips, inspiration, and updates.</p>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="https://www.instagram.com/mukundshalini/" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs">
-                            <i class="fa-brands fa-instagram mr-2"></i>@mukundshalini
-                        </a>
-                        <a href="https://www.facebook.com/shalini.mukund.9" target="_blank" rel="noopener noreferrer" class="btn-secondary text-xs">
-                            <i class="fa-brands fa-facebook mr-2"></i>Facebook
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="pt-8 border-t border-theme flex flex-col sm:flex-row justify-between items-center text-xs gap-4 text-muted">
-                <div>&copy; 2026 Voice-O-Magic (Shalini Mukund). All Rights Reserved.</div>
-                <div class="flex space-x-6">
-                    <a href="#" class="hover:text-heading transition">Privacy Policy</a>
-                    <a href="#" class="hover:text-heading transition">Terms of Service</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="js/main.js"></script>
-    <script src="js/chatbot-config.js"></script>
-    <script src="js/chatbot.js"></script>
-
+    const root=document.getElementById('resourcesRoot');
+    const esc=v=>String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\"':'&quot;'}[m]||m));
+    const safeDrive=v=>{try{const u=new URL(v);return u.protocol==='https:'&&['drive.google.com','docs.google.com'].includes(u.hostname.toLowerCase())?u.toString():''}catch{return ''}};
+    const safeHttp=v=>{try{const u=new URL(v);return u.protocol==='https:'?u.toString():''}catch{return ''}};
+    function render(cms){
+      const s=cms.settings||{}; const video=cms.featuredVideo||{}; const weekly=(cms.weeklyHighlights&&Array.isArray(cms.weeklyHighlights.items)?cms.weeklyHighlights.items:[]).filter(x=>x&&x.published&&safeHttp(x.imageUrl));
+      const resources=Array.isArray(cms.resources)?cms.resources.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
+      const toolkit=Array.isArray(cms.toolkit)?cms.toolkit.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
+      root.innerHTML='';
+      root.insertAdjacentHTML('beforeend',`<section class="text-center max-w-3xl mx-auto"><span class="text-sm font-bold text-gold tracking-widest uppercase">${esc(s.resourcesLabel||'Free Resources')}</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">${esc(s.resourcesHeading||'Resources')}</h1><p class="text-sec text-base mt-5 leading-relaxed">${esc(s.resourcesParagraph||'')}</p>${s.resourcesExtraParagraph?`<p class="text-sec text-base mt-3 leading-relaxed">${esc(s.resourcesExtraParagraph)}</p>`:''}</section>`);
+      if(weekly.length){
+        const cards=weekly.map((x,i)=>`<article class="material-card overflow-hidden"><img src="${safeHttp(x.imageUrl)}" alt="${esc(x.title||'Weekly Highlight '+(i+1))}" class="block w-full aspect-video object-cover" loading="lazy" decoding="async"><div class="p-4">${x.title?`<h3 class="font-bold text-heading">${esc(x.title)}</h3>`:''}${x.description?`<p class="text-sm text-sec mt-1 leading-relaxed">${esc(x.description)}</p>`:''}</div></article>`).join('');
+        root.insertAdjacentHTML('beforeend',`<section class="mt-12"><div class="flex items-end justify-between gap-4 mb-5"><div><span class="text-xs font-bold uppercase tracking-widest text-gold">Weekly Highlights</span><h2 class="font-display text-3xl font-bold text-heading mt-1">This Week</h2></div><span class="text-xs text-muted">${weekly.length} published image${weekly.length===1?'':'s'}</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-5">${cards}</div></section>`);
+      }
+      if(video.published){root.insertAdjacentHTML('beforeend',`<section class="material-card max-w-4xl mx-auto mt-12 p-4"><div class="aspect-video rounded-xl overflow-hidden bg-black"><iframe class="w-full h-full" src="${safeHttp(video.url||'').replace('/embed/','/embed/')}" title="${esc(video.title||'Featured Video')}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><h3 class="font-bold text-heading text-xl mt-5">${esc(video.title||'Featured Video')}</h3><p class="text-sec text-sm mt-2 leading-relaxed">${esc(video.description||'')}</p></section>`)}
+      if(resources.length){root.insertAdjacentHTML('beforeend',`<section class="mt-12"><h2 class="font-display text-3xl font-bold text-heading">Resources</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">${resources.map(x=>{const d=safeDrive(x.driveUrl);return `<article class="material-card p-6 flex flex-col"><h3 class="font-bold text-heading">${esc(x.title)}</h3><p class="text-sm text-sec leading-relaxed mt-2 mb-6">${esc(x.description||'')}</p>${d?`<a class="btn-secondary text-sm text-center mt-auto" href="${d}">${esc(x.buttonText||'Download')}</a>`:`<button type="button" class="btn-secondary text-sm mt-auto" onclick="alert('This resource will be provided through Voice-O-Magic.')">${esc(x.buttonText||'Download')}</button>`}</article>`}).join('')}</div></section>`)}
+      root.insertAdjacentHTML('beforeend',`<section class="mt-14"><h2 class="font-display text-3xl font-bold text-heading">${esc(s.toolkitHeading||'Speaker Toolkit')}</h2><p class="text-sec text-base mt-3">${esc(s.toolkitDescription||'')}</p>${toolkit.length?`<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">${toolkit.map(x=>`<article class="material-card p-6"><h3 class="font-bold text-heading">${esc(x.title)}</h3><p class="text-sm text-sec mt-2">${esc(x.description||'')}</p></article>`).join('')}</div>`:''}</section>`);
+    }
+    fetch('/api/chat?mode=public-cms',{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error('CMS unavailable'))).then(data=>render(data.cms||{})).catch(()=>{root.innerHTML='<div class="material-card p-8 text-center"><h1 class="font-display text-3xl font-bold text-heading">Resources</h1><p class="text-sec mt-3">Resources are temporarily unavailable. Please try again shortly.</p></div>'});
+  })();
+  </script>
+  <script src="js/chatbot-config.js"></script><script src="js/chatbot.js"></script>
 </body>
 </html>
