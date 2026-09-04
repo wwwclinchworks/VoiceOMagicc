@@ -1,32 +1,87 @@
-/* Fixed portrait sizing for the About page. Keeps founder + trainer photos consistent on desktop and mobile. */
+/* About page portraits: fixed footprint, consistent 4:5 framing, and no forced upscaling of the source asset. */
+main .material-card:has(> img[src="shalini-mukund.jpg"]),
+main .material-card:has(> img[src="kirti-dhoot.webp"]),
+main .material-card:has(> img[src="manas-sm.webp"]) {
+  align-self: start !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: var(--surface) !important;
+}
+
+main .material-card:has(> img[src="shalini-mukund.jpg"]) {
+  width: min(100%, 400px) !important;
+  height: 500px !important;
+  aspect-ratio: 4 / 5 !important;
+  margin-inline: auto;
+}
+
+main .material-card:has(> img[src="kirti-dhoot.webp"]),
+main .material-card:has(> img[src="manas-sm.webp"]) {
+  width: min(100%, 320px) !important;
+  height: 400px !important;
+  aspect-ratio: 4 / 5 !important;
+  margin-inline: auto;
+}
+
 main img[src="shalini-mukund.jpg"],
 main img[src="kirti-dhoot.webp"],
 main img[src="manas-sm.webp"] {
   display: block !important;
-  width: 100% !important;
+  width: auto !important;
   height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
   min-height: 0 !important;
-  aspect-ratio: 4 / 5 !important;
-  object-fit: cover !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
   object-position: center !important;
+  margin: auto !important;
+  image-rendering: auto !important;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-@media (min-width: 1024px) {
-  main img[src="shalini-mukund.jpg"] {
-    max-width: 100%;
-    aspect-ratio: 4 / 5 !important;
-  }
-
-  main img[src="kirti-dhoot.webp"],
-  main img[src="manas-sm.webp"] {
-    aspect-ratio: 4 / 5 !important;
-  }
+/* Keep the existing grid geometry intact while preventing portrait cards from filling the text column height. */
+main .grid.items-stretch > .material-card:has(> img[src="kirti-dhoot.webp"]),
+main .grid.items-stretch > .material-card:has(> img[src="manas-sm.webp"]) {
+  height: 400px !important;
 }
 
 @media (max-width: 1023px) {
-  main img[src="shalini-mukund.jpg"],
-  main img[src="kirti-dhoot.webp"],
-  main img[src="manas-sm.webp"] {
-    aspect-ratio: 4 / 5 !important;
+  main .material-card:has(> img[src="shalini-mukund.jpg"]) {
+    width: min(100%, 340px) !important;
+    height: 425px !important;
+  }
+
+  main .material-card:has(> img[src="kirti-dhoot.webp"]),
+  main .material-card:has(> img[src="manas-sm.webp"]) {
+    width: min(100%, 300px) !important;
+    height: 375px !important;
+  }
+
+  main .grid.items-stretch > .material-card:has(> img[src="kirti-dhoot.webp"]),
+  main .grid.items-stretch > .material-card:has(> img[src="manas-sm.webp"]) {
+    height: 375px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  main .material-card:has(> img[src="shalini-mukund.jpg"]) {
+    width: min(100%, 300px) !important;
+    height: 375px !important;
+  }
+
+  main .material-card:has(> img[src="kirti-dhoot.webp"]),
+  main .material-card:has(> img[src="manas-sm.webp"]) {
+    width: min(100%, 280px) !important;
+    height: 350px !important;
+  }
+
+  main .grid.items-stretch > .material-card:has(> img[src="kirti-dhoot.webp"]),
+  main .grid.items-stretch > .material-card:has(> img[src="manas-sm.webp"]) {
+    height: 350px !important;
   }
 }
