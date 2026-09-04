@@ -1,0 +1,32 @@
+/* Fixed portrait sizing for the About page. Keeps founder + trainer photos consistent on desktop and mobile. */
+main img[src="shalini-mukund.jpg"],
+main img[src="kirti-dhoot.webp"],
+main img[src="manas-sm.webp"] {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 4 / 5 !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+@media (min-width: 1024px) {
+  main img[src="shalini-mukund.jpg"] {
+    max-width: 100%;
+    aspect-ratio: 4 / 5 !important;
+  }
+
+  main img[src="kirti-dhoot.webp"],
+  main img[src="manas-sm.webp"] {
+    aspect-ratio: 4 / 5 !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  main img[src="shalini-mukund.jpg"],
+  main img[src="kirti-dhoot.webp"],
+  main img[src="manas-sm.webp"] {
+    aspect-ratio: 4 / 5 !important;
+  }
+}
