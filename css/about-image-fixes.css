@@ -85,3 +85,18 @@ main .grid.items-stretch > .material-card:has(> img[src="manas-sm.webp"]) {
     height: 350px !important;
   }
 }
+
+/* Index page: correct the displayed co-author name without changing the card layout. */
+main > div:nth-of-type(3) .material-card:nth-child(2) p.text-muted:first-of-type {
+  font-size: 0 !important;
+  line-height: 1.5 !important;
+}
+
+main > div:nth-of-type(3) .material-card:nth-child(2) p.text-muted:first-of-type::after {
+  content: "Co-authored with Lavitha Vaz";
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
