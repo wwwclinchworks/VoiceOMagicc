@@ -1,0 +1,26 @@
+/* Contact Information: the real Gmail/WhatsApp/Instagram logos are injected by chatbot-config.js.
+   Hide the duplicate CSS-rendered copy in the left icon slot and keep one logo attached to the content. */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(2) > div:first-child,
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(3) > div:first-child,
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(4) > div:first-child {
+  display: none !important;
+}
+
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(2),
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(3),
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(4) {
+  gap: .75rem !important;
+}
+
+/* Keep the real injected brand marks aligned and free of inherited icon styling. */
+.material-card h3 + .space-y-7.text-sm.text-main img[data-vom-contact] {
+  display: inline-block !important;
+  width: 24px !important;
+  height: 24px !important;
+  flex: 0 0 24px !important;
+  object-fit: contain !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
