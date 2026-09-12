@@ -1,1 +1,0 @@
-Contact icon regression target: only one Gmail, WhatsApp, and Instagram logo should be visible per contact row.
