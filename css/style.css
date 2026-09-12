@@ -6,3 +6,6 @@
 
 /* Shared enterprise UI polish, including the final Contact icon treatment. */
 @import url("./enterprise-polish.css");
+
+/* Contact-specific cleanup: keep one real brand mark per row. */
+@import url("./contact-brand-fix.css");
