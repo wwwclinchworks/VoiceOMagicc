@@ -194,7 +194,8 @@ html.dark .fa-microphone-lines {
   }
 }
 
-/* Contact information brand marks: use the original ReIcon assets instead of font glyphs. */
+/* Legacy contact icon-container overrides are intentionally kept inert; the rules below
+   target the current contact.html structure directly so there is no translucent square. */
 .contact-info-icon:has(> i.fa-envelope),
 .contact-info-icon:has(> i.fa-whatsapp),
 .contact-info-icon:has(> i.fa-instagram) {
@@ -202,61 +203,79 @@ html.dark .fa-microphone-lines {
   overflow: hidden;
 }
 
-.contact-info-icon:has(> i.fa-envelope) i,
-.contact-info-icon:has(> i.fa-whatsapp) i,
-.contact-info-icon:has(> i.fa-instagram) i,
-.contact-info-icon:has(> i.fa-location-dot) i {
+/* Contact page — final icon treatment. The live markup uses plain FA icon containers,
+   so target those exact four rows and replace the glyphs with real image assets. */
+.material-card h3 + .space-y-7.text-sm.text-main > div {
+  align-items: flex-start !important;
+  gap: 1rem !important;
+}
+
+.material-card h3 + .space-y-7.text-sm.text-main > div > div:first-child {
+  width: 2rem !important;
+  height: 2rem !important;
+  min-width: 2rem !important;
+  flex: 0 0 2rem !important;
+  margin-top: .1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+}
+
+.material-card h3 + .space-y-7.text-sm.text-main > div > div:first-child > i {
   display: none !important;
 }
 
-.contact-info-icon:has(> i.fa-envelope)::before,
-.contact-info-icon:has(> i.fa-whatsapp)::before,
-.contact-info-icon:has(> i.fa-instagram)::before,
-.contact-info-icon:has(> i.fa-location-dot)::before {
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(1) > div:first-child::before,
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(2) > div:first-child::before,
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(3) > div:first-child::before,
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(4) > div:first-child::before {
   content: "";
   display: block;
-  width: 26px;
-  height: 26px;
-  background-repeat: no-repeat;
+  width: 32px;
+  height: 32px;
   background-position: center;
+  background-repeat: no-repeat;
   background-size: contain;
 }
 
-.contact-info-icon:has(> i.fa-envelope)::before {
+/* Training Centers */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(1) > div:first-child::before {
+  width: 28px;
+  height: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 21s7-7.33 7-13a7 7 0 1 0-14 0c0 5.67 7 13 7 13Z' fill='%23C9A227'/%3E%3Ccircle cx='12' cy='8' r='2.5' fill='white'/%3E%3C/svg%3E");
+}
+
+/* Gmail */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(2) > div:first-child::before {
   background-image: url("https://cdn.reicon.dev/logos/gmail/original.svg");
 }
 
-.contact-info-icon:has(> i.fa-whatsapp)::before {
+/* WhatsApp */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(3) > div:first-child::before {
   background-image: url("https://cdn.reicon.dev/logos/whatsapp/original.svg");
 }
 
-.contact-info-icon:has(> i.fa-instagram)::before {
+/* Instagram */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(4) > div:first-child::before {
   background-image: url("https://cdn.reicon.dev/logos/instagram/original.svg");
 }
 
-.contact-info-icon:has(> i.fa-location-dot)::before {
-  width: 23px;
-  height: 27px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C9A227'%3E%3Cpath d='M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z'/%3E%3C/svg%3E");
-}
-
-html.dark .contact-info-icon:has(> i.fa-envelope)::before,
-html.dark .contact-info-icon:has(> i.fa-whatsapp)::before,
-html.dark .contact-info-icon:has(> i.fa-instagram)::before {
-  filter: brightness(1.04) saturate(1.05);
-}
-
 @media (max-width: 767px) {
-  .contact-info-icon {
-    width: 2.6rem !important;
-    height: 2.6rem !important;
-    border-radius: .75rem !important;
+  .material-card h3 + .space-y-7.text-sm.text-main > div > div:first-child {
+    width: 2rem !important;
+    height: 2rem !important;
+    min-width: 2rem !important;
+    flex-basis: 2rem !important;
+    margin-top: .05rem !important;
   }
 
-  .contact-info-icon:has(> i.fa-envelope)::before,
-  .contact-info-icon:has(> i.fa-whatsapp)::before,
-  .contact-info-icon:has(> i.fa-instagram)::before {
-    width: 24px;
-    height: 24px;
+  .material-card h3 + .space-y-7.text-sm.text-main > div > div:first-child::before {
+    width: 30px;
+    height: 30px;
   }
 }
