@@ -193,3 +193,70 @@ html.dark .fa-microphone-lines {
     transition: none !important;
   }
 }
+
+/* Contact information brand marks: use the original ReIcon assets instead of font glyphs. */
+.contact-info-icon:has(> i.fa-envelope),
+.contact-info-icon:has(> i.fa-whatsapp),
+.contact-info-icon:has(> i.fa-instagram) {
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-info-icon:has(> i.fa-envelope) i,
+.contact-info-icon:has(> i.fa-whatsapp) i,
+.contact-info-icon:has(> i.fa-instagram) i,
+.contact-info-icon:has(> i.fa-location-dot) i {
+  display: none !important;
+}
+
+.contact-info-icon:has(> i.fa-envelope)::before,
+.contact-info-icon:has(> i.fa-whatsapp)::before,
+.contact-info-icon:has(> i.fa-instagram)::before,
+.contact-info-icon:has(> i.fa-location-dot)::before {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 26px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.contact-info-icon:has(> i.fa-envelope)::before {
+  background-image: url("https://cdn.reicon.dev/logos/gmail/original.svg");
+}
+
+.contact-info-icon:has(> i.fa-whatsapp)::before {
+  background-image: url("https://cdn.reicon.dev/logos/whatsapp/original.svg");
+}
+
+.contact-info-icon:has(> i.fa-instagram)::before {
+  background-image: url("https://cdn.reicon.dev/logos/instagram/original.svg");
+}
+
+.contact-info-icon:has(> i.fa-location-dot)::before {
+  width: 23px;
+  height: 27px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C9A227'%3E%3Cpath d='M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z'/%3E%3C/svg%3E");
+}
+
+html.dark .contact-info-icon:has(> i.fa-envelope)::before,
+html.dark .contact-info-icon:has(> i.fa-whatsapp)::before,
+html.dark .contact-info-icon:has(> i.fa-instagram)::before {
+  filter: brightness(1.04) saturate(1.05);
+}
+
+@media (max-width: 767px) {
+  .contact-info-icon {
+    width: 2.6rem !important;
+    height: 2.6rem !important;
+    border-radius: .75rem !important;
+  }
+
+  .contact-info-icon:has(> i.fa-envelope)::before,
+  .contact-info-icon:has(> i.fa-whatsapp)::before,
+  .contact-info-icon:has(> i.fa-instagram)::before {
+    width: 24px;
+    height: 24px;
+  }
+}
