@@ -3,3 +3,6 @@
 
 /* About-page portrait sizing fixes. */
 @import url("./about-image-fixes.css");
+
+/* Shared enterprise UI polish, including the final Contact icon treatment. */
+@import url("./enterprise-polish.css");
