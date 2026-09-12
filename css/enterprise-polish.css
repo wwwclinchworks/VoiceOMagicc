@@ -250,7 +250,20 @@ html.dark .fa-microphone-lines {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 21s7-7.33 7-13a7 7 0 1 0-14 0c0 5.67 7 13 7 13Z' fill='%23C9A227'/%3E%3Ccircle cx='12' cy='8' r='2.5' fill='white'/%3E%3C/svg%3E");
 }
 
+/* Gmail */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(2) > div:first-child::before {
+  background-image: url("https://cdn.reicon.dev/logos/gmail/original.svg");
+}
 
+/* WhatsApp */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(3) > div:first-child::before {
+  background-image: url("https://cdn.reicon.dev/logos/whatsapp/original.svg");
+}
+
+/* Instagram */
+.material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(4) > div:first-child::before {
+  background-image: url("https://cdn.reicon.dev/logos/instagram/original.svg");
+}
 
 @media (max-width: 767px) {
   .material-card h3 + .space-y-7.text-sm.text-main > div > div:first-child {
