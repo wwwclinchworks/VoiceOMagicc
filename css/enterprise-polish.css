@@ -134,6 +134,21 @@ main > div.relative > div.max-w-7xl {
   grid-column: span 8;
 }
 
+.homepage-book-card {
+  align-items: flex-start !important;
+}
+
+.homepage-book-card .homepage-book-copy {
+  min-width: 0;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.homepage-book-card .homepage-book-copy h4 {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
 @media (max-width: 1023px) {
   .about-founder-media {
     position: static;
