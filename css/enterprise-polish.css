@@ -274,13 +274,27 @@ a.btn-secondary:focus-visible {
 }
 
 /* Books: give the cover treatment enough width for clean titles and calmer hierarchy. */
+.books-page .material-card {
+  min-height: 25rem;
+}
+
+.books-page .material-card .w-32.h-48 {
+  width: 11rem !important;
+  height: 16rem !important;
+  padding: 1.25rem !important;
+}
+
 @media (max-width: 639px) {
-  .material-card .w-32.h-48 {
-    width: 9rem !important;
-    height: 11rem !important;
+  .books-page .material-card {
+    min-height: 0;
   }
 
-  .material-card .w-32.h-48 h4 {
+  .books-page .material-card .w-32.h-48 {
+    width: 10rem !important;
+    height: 14rem !important;
+  }
+
+  .books-page .material-card .w-32.h-48 h4 {
     font-size: .95rem;
     line-height: 1.3;
     overflow-wrap: normal;
