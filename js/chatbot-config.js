@@ -11,12 +11,12 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     gmail:'assets/icons/gmail.svg',
     drive:'assets/icons/drive.svg',
     lightbulb:'assets/icons/lightbulb.svg',
-    dock:'https://cdn.reicon.dev/dock.svg',
-    cookbook:'https://cdn.reicon.dev/cookbook.svg',
-    toolbox:'https://cdn.reicon.dev/toolbox.svg',
-    response:'https://cdn.reicon.dev/response.svg',
-    teacher:'https://cdn.reicon.dev/teacher.svg',
-    send:'https://cdn.reicon.dev/send.svg'
+    dock:'assets/icons/dock.svg',
+    cookbook:'assets/icons/cookbook.svg',
+    toolbox:'assets/icons/toolbox.svg',
+    response:'assets/icons/response.svg',
+    teacher:'assets/icons/teacher.svg',
+    send:'assets/icons/send.svg'
   };
   const page=()=>location.pathname.toLowerCase();
   const is=(name)=>page().endsWith('/'+name)||page().endsWith(name);

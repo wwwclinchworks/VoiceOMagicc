@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const APERTURE_ILLUSTRATION = 'https://cdn.reicon.dev/aperture.svg';
+  const APERTURE_ILLUSTRATION = 'assets/icons/aperture.svg';
   const IMAGE_SELECTORS = ['#weeklyGallery img:not([data-reicon-illustration])'];
 
   function ensureIcon(container, src = APERTURE_ILLUSTRATION) {
