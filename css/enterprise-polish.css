@@ -235,6 +235,15 @@ html.dark .contact-channel {
 .contact-form-card { box-shadow: 0 14px 38px rgba(25, 22, 16, .09) !important; }
 .contact-form-heading { padding-bottom: 1.25rem; border-bottom: 1px solid var(--theme-border); }
 
+/* Keep the mobile drawer aligned to the viewport instead of the narrowed content row. */
+@media (max-width: 1023px) {
+  header > #mobileMenu {
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+}
+
 /* Legacy contact icon containers remain supported for older page variants. */
 .contact-info-item {
   padding-block: .1rem;

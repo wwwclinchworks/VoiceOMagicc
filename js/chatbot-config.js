@@ -24,12 +24,13 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   function theme(){
     const dark=document.documentElement.classList.contains('dark');
     document.querySelectorAll('#themeToggleBtn,#themeToggleBtnMobile').forEach(btn=>{
-      if(!btn.querySelector('[data-vom-theme-logo]')){
-        btn.querySelectorAll('.fa-moon,.fa-sun').forEach(x=>x.remove());
-        const icon=img(REICON.lightbulb,'Theme',24);icon.dataset.vomThemeLogo='1';icon.className='w-6 h-6 object-contain';btn.replaceChildren(icon);
-      }
-      const icon=btn.querySelector('[data-vom-theme-logo]'); if(icon) icon.alt=dark?'Switch to light mode':'Switch to dark mode';
-      btn.title=dark?'Switch to light mode':'Switch to dark mode';btn.setAttribute('aria-label',btn.title);
+      btn.querySelectorAll('[data-vom-theme-logo],.fa-moon,.fa-sun').forEach(x=>x.remove());
+      const icon=document.createElement('i');
+      icon.className=dark?'fa-solid fa-sun':'fa-solid fa-moon';
+      icon.setAttribute('aria-hidden','true');
+      btn.append(icon);
+      btn.title=dark?'Switch to light mode':'Switch to dark mode';
+      btn.setAttribute('aria-label',btn.title);
     });
   }
   window.toggleTheme=()=>{const dark=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark',dark);try{localStorage.setItem('vom-theme',dark?'dark':'light')}catch{}theme();};
