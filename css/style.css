@@ -6,3 +6,9 @@
 
 /* Shared enterprise UI polish, including the final Contact icon treatment. */
 @import url("./enterprise-polish.css");
+
+/* Weekly Highlights: image-first presentation with no title/description overlay/details. */
+.weekly-content { display: none !important; }
+.weekly-frame { border-radius: 18px; }
+.weekly-frame > img { display: block; }
+.weekly-card { cursor: pointer; }
