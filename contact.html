@@ -46,18 +46,35 @@
         <div class="py-20 sm:py-28 bg-surface min-h-screen">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-16"><span class="text-sm font-bold text-gold tracking-widest uppercase">Get In Touch</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">Contact Us</h1><p class="text-sec text-base mt-4">Inquire about keynote bookings, corporate workshops, or enrolling in the Academy.</p></div>
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
-                    <div class="lg:col-span-4 space-y-6">
-                        <div class="material-card p-8 bg-theme h-full flex items-center justify-center">
-                            <div class="flex items-center justify-center gap-5" aria-label="Contact and social links">
-                                <a href="mailto:shalini@voiceomagic.com" class="w-14 h-14 rounded-full bg-surface-warm flex items-center justify-center text-gold hover:text-gold-hover hover:bg-gold-light transition shadow-card" aria-label="Email Voice-O-Magic" title="Email Voice-O-Magic"><i class="fa-solid fa-envelope text-xl" aria-hidden="true"></i></a>
-                                <a href="https://www.instagram.com/voiceomagic/" target="_blank" rel="noopener noreferrer" class="w-14 h-14 rounded-full bg-surface-warm flex items-center justify-center text-gold hover:text-gold-hover hover:bg-gold-light transition shadow-card" aria-label="Voice-O-Magic on Instagram" title="Instagram"><i class="fa-brands fa-instagram text-xl" aria-hidden="true"></i></a>
-                                <a href="https://wa.me/919902148227" target="_blank" rel="noopener noreferrer" class="w-14 h-14 rounded-full bg-green-light flex items-center justify-center text-green hover:opacity-90 transition shadow-card" aria-label="Voice-O-Magic on WhatsApp" title="WhatsApp"><i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i></a>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto contact-layout">
+                    <div class="lg:col-span-4">
+                        <div class="material-card contact-intro-card p-8 bg-theme h-full">
+                            <div class="contact-intro-mark" aria-hidden="true"><i class="fa-solid fa-paper-plane"></i></div>
+                            <p class="text-xs font-bold text-gold uppercase tracking-[.2em] mb-3">Start a conversation</p>
+                            <h2 class="font-display text-3xl font-bold text-heading leading-tight">Your next confident voice starts here.</h2>
+                            <p class="text-sec leading-relaxed mt-4">Tell us what you are working toward. Shalini and the team will help you find the right keynote, workshop, or Academy path.</p>
+                            <div class="contact-channels mt-8" aria-label="Contact and social links">
+                                <a href="mailto:shalini@voiceomagic.com" class="contact-channel" aria-label="Email Voice-O-Magic" title="Email Voice-O-Magic">
+                                    <span class="contact-channel-icon contact-channel-icon-gmail"><img src="https://cdn.reicon.dev/logos/gmail/original.svg" alt="Gmail" aria-hidden="true" data-vom-contact="gmail"></span>
+                                    <span><strong>Email us</strong><small>shalini@voiceomagic.com</small></span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                </a>
+                                <a href="https://wa.me/919902148227" target="_blank" rel="noopener noreferrer" class="contact-channel" aria-label="Voice-O-Magic on WhatsApp" title="WhatsApp">
+                                    <span class="contact-channel-icon contact-channel-icon-whatsapp"><img src="https://cdn.reicon.dev/logos/whatsapp/original.svg" alt="WhatsApp" aria-hidden="true" data-vom-contact="whatsapp"></span>
+                                    <span><strong>WhatsApp</strong><small>Quick questions welcome</small></span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                </a>
+                                <a href="https://www.instagram.com/voiceomagic/" target="_blank" rel="noopener noreferrer" class="contact-channel" aria-label="Voice-O-Magic on Instagram" title="Instagram">
+                                    <span class="contact-channel-icon contact-channel-icon-instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></span>
+                                    <span><strong>Instagram</strong><small>Follow along with us</small></span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
                     <div class="lg:col-span-8">
-                        <div class="material-card p-8 bg-theme">
+                        <div class="material-card contact-form-card p-8 bg-theme">
+                            <div class="contact-form-heading mb-7"><p class="text-xs font-bold text-gold uppercase tracking-[.2em] mb-2">Tell us more</p><h2 class="font-display text-2xl font-bold text-heading">How can we help?</h2><p class="text-sec text-sm mt-2">A few details help us prepare the most useful response.</p></div>
                             <form id="inquiryForm" onsubmit="handleFormSubmit(event)" class="space-y-6" novalidate>
                                 <div><label class="block text-sm font-bold text-heading mb-4">Inquiry Type</label><div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><label class="cursor-pointer"><input type="radio" name="inquiry_type" value="keynote" class="peer hidden" checked><div class="inquiry-option py-3 px-3 text-center rounded-xl text-sm font-semibold transition">Keynote</div></label><label class="cursor-pointer"><input type="radio" name="inquiry_type" value="academy" class="peer hidden"><div class="inquiry-option py-3 px-3 text-center rounded-xl text-sm font-semibold transition">Academy</div></label><label class="cursor-pointer"><input type="radio" name="inquiry_type" value="corporate" class="peer hidden"><div class="inquiry-option py-3 px-3 text-center rounded-xl text-sm font-semibold transition">Corporate</div></label><label class="cursor-pointer"><input type="radio" name="inquiry_type" value="book" class="peer hidden"><div class="inquiry-option py-3 px-3 text-center rounded-xl text-sm font-semibold transition">Books</div></label></div></div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6"><div><label class="block text-sm font-medium text-sec mb-1.5">Your Name *</label><input type="text" id="formName" required placeholder="Jane Doe" class="md-input"></div><div><label class="block text-sm font-medium text-sec mb-1.5">Email Address *</label><input type="email" id="formEmail" required placeholder="jane@example.com" class="md-input"></div></div>

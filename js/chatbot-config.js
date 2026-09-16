@@ -41,12 +41,13 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
     if(mobile&&!mobile.querySelector('a[href="weekly.html"]')){const r=mobile.querySelector('a[href="resources.html"]');const a=document.createElement('a');a.href='weekly.html';a.className='block w-full text-left px-4 py-3 rounded-lg text-sec hover:bg-surface-warm font-medium transition';a.textContent='Weekly';r?r.insertAdjacentElement('afterend',a):mobile.append(a);}
   }
   function social(){
-    [['instagram','instagram'],['facebook','facebook'],['linkedin','linkedin']].forEach(([kind,domain])=>document.querySelectorAll(`a[href*="${domain}.com/"]`).forEach(a=>{if(a.querySelector(`[data-vom-social="${kind}"]`))return;a.querySelectorAll(`.fa-${kind}`).forEach(x=>x.remove());const i=img(REICON[kind],kind,24);i.dataset.vomSocial=kind;a.insertBefore(i,a.firstChild);}));
+    [['instagram','instagram'],['facebook','facebook'],['linkedin','linkedin']].forEach(([kind,domain])=>document.querySelectorAll(`a[href*="${domain}.com/"]`).forEach(a=>{if(a.closest('.contact-channel')||a.querySelector(`[data-vom-social="${kind}"]`))return;a.querySelectorAll(`.fa-${kind}`).forEach(x=>x.remove());const i=img(REICON[kind],kind,24);i.dataset.vomSocial=kind;a.insertBefore(i,a.firstChild);}));
   }
   function contact(){
     if(!is('contact.html'))return;
     document.querySelectorAll('a[href*="wa.me/"]').forEach(a=>{if(a.querySelector('[data-vom-contact="whatsapp"]'))return;a.querySelectorAll('.fa-whatsapp').forEach(x=>x.remove());const i=img(REICON.whatsapp,'WhatsApp',24);i.dataset.vomContact='whatsapp';a.insertBefore(i,a.firstChild);});
     const email=[...document.querySelectorAll('main *')].find(n=>n.childElementCount===0&&n.textContent?.trim()==='shalini@voiceomagic.com');
+    if(email?.closest('.contact-channel'))return;
     if(email&&email.parentElement&&!email.parentElement.querySelector('[data-vom-contact="gmail"]')){const i=img(REICON.gmail,'Gmail',24);i.dataset.vomContact='gmail';email.parentElement.prepend(i);email.parentElement.style.cssText='display:flex;align-items:center;gap:.5rem';}
   }
   function art(){

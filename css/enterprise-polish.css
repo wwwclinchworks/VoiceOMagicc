@@ -127,7 +127,115 @@ a.btn-secondary:focus-visible {
   }
 }
 
-/* Contact: turn the info card into a clean list rather than four competing boxes. */
+/* Contact: give the conversation prompt and form equal visual weight. */
+.contact-layout {
+  align-items: stretch;
+}
+
+.contact-intro-card,
+.contact-form-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-intro-card {
+  background: linear-gradient(145deg, #fffdf7 0%, #f6f0df 100%) !important;
+}
+
+.contact-intro-card::after {
+  content: "";
+  position: absolute;
+  width: 12rem;
+  height: 12rem;
+  right: -5rem;
+  bottom: -5rem;
+  border: 1px solid rgba(201, 162, 39, .22);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.2rem rgba(201, 162, 39, .06), 0 0 0 2.4rem rgba(201, 162, 39, .04);
+  pointer-events: none;
+}
+
+html.dark .contact-intro-card {
+  background: linear-gradient(145deg, #211d12 0%, #17150f 100%) !important;
+}
+
+.contact-intro-mark {
+  width: 3.25rem;
+  height: 3.25rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand-gold), var(--brand-gold-hover));
+  box-shadow: 0 10px 24px rgba(201, 162, 39, .22);
+  transform: rotate(-8deg);
+}
+
+.contact-intro-mark i {
+  transform: rotate(8deg);
+}
+
+.contact-channels {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: .6rem;
+}
+
+.contact-channel {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem;
+  border: 1px solid rgba(201, 162, 39, .18);
+  border-radius: .9rem;
+  color: var(--theme-text);
+  background: rgba(255, 255, 255, .6);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.contact-channel:hover,
+.contact-channel:focus-visible {
+  border-color: var(--brand-gold);
+  background: var(--theme-surface);
+  transform: translateX(3px);
+  outline: none;
+}
+
+html.dark .contact-channel {
+  background: rgba(255, 255, 255, .04);
+  border-color: rgba(215, 177, 58, .22);
+}
+
+.contact-channel-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: .7rem;
+  font-size: 1.15rem;
+}
+
+.contact-channel-icon img {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.contact-channel-icon-gmail { background: #fff; }
+.contact-channel-icon-whatsapp { color: #159447; background: #e7f7ed; }
+.contact-channel-icon-instagram { color: #c13584; background: #fbe8f2; }
+.contact-channel strong,
+.contact-channel small { display: block; }
+.contact-channel strong { font-size: .8rem; }
+.contact-channel small { margin-top: .15rem; color: var(--theme-secondary); font-size: .7rem; overflow-wrap: anywhere; }
+.contact-channel > .fa-arrow-up-right-from-square { color: var(--brand-gold); font-size: .7rem; }
+
+.contact-form-card { box-shadow: 0 14px 38px rgba(25, 22, 16, .09) !important; }
+.contact-form-heading { padding-bottom: 1.25rem; border-bottom: 1px solid var(--theme-border); }
+
+/* Legacy contact icon containers remain supported for older page variants. */
 .contact-info-item {
   padding-block: .1rem;
 }
