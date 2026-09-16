@@ -149,6 +149,32 @@ main > div.relative > div.max-w-7xl {
   word-break: normal;
 }
 
+.homepage-book-cover {
+  width: 7rem !important;
+  height: 9rem !important;
+  padding: .65rem !important;
+}
+
+.homepage-book-cover span {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  font-size: .68rem;
+}
+
+@media (max-width: 639px) {
+  .homepage-book-cover {
+    width: 6rem !important;
+    height: 8rem !important;
+  }
+
+  .homepage-book-cover span {
+    font-size: .6rem;
+  }
+}
+
 @media (max-width: 1023px) {
   .about-founder-media {
     position: static;
