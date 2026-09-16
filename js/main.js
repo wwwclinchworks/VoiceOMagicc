@@ -14,13 +14,22 @@
     try { window.localStorage.setItem(key, value); } catch { /* Storage may be unavailable. */ }
   }
 
+  function setLocalIcon(button, name, alt) {
+    if (!button) return;
+    const icon = document.createElement('img');
+    icon.src = `assets/icons/${name}.svg`;
+    icon.alt = alt;
+    icon.width = 24;
+    icon.height = 24;
+    icon.className = 'local-control-icon';
+    button.replaceChildren(icon);
+  }
+
   function setTheme(dark) {
     document.documentElement.classList.toggle('dark', dark);
     storageSet('vom-theme', dark ? 'dark' : 'light');
     document.querySelectorAll('#themeToggleBtn, #themeToggleBtnMobile').forEach((btn) => {
-      const icon = document.createElement('i');
-      icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      btn.replaceChildren(icon);
+      setLocalIcon(btn, dark ? 'sun' : 'moon', dark ? 'Switch to light mode' : 'Switch to dark mode');
       btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
       btn.setAttribute('aria-label', btn.title);
     });
@@ -34,7 +43,10 @@
     if (!menu) return;
     const willOpen = menu.classList.contains('hidden');
     menu.classList.toggle('hidden', !willOpen);
-    if (button) button.setAttribute('aria-expanded', String(willOpen));
+    if (button) {
+      button.setAttribute('aria-expanded', String(willOpen));
+      setLocalIcon(button, willOpen ? 'close' : 'menu', willOpen ? 'Close navigation menu' : 'Open navigation menu');
+    }
   };
 
   function setupNavigationAccessibility() {
@@ -44,6 +56,7 @@
     if (!menu.id) menu.id = 'mobileMenu';
     button.setAttribute('aria-controls', menu.id);
     button.setAttribute('aria-expanded', String(!menu.classList.contains('hidden')));
+    setLocalIcon(button, menu.classList.contains('hidden') ? 'menu' : 'close', menu.classList.contains('hidden') ? 'Open navigation menu' : 'Close navigation menu');
   }
 
   function ensureSharedComponentsStyles() {

@@ -530,17 +530,17 @@ html.dark .fa-microphone-lines {
 
 /* Gmail */
 .material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(2) > div:first-child::before {
-  background-image: url("https://cdn.reicon.dev/logos/gmail/original.svg");
+  background-image: url("../assets/icons/gmail.svg");
 }
 
 /* WhatsApp */
 .material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(3) > div:first-child::before {
-  background-image: url("https://cdn.reicon.dev/logos/whatsapp/original.svg");
+  background-image: url("../assets/icons/whatsapp.svg");
 }
 
 /* Instagram */
 .material-card h3 + .space-y-7.text-sm.text-main > div:nth-child(4) > div:first-child::before {
-  background-image: url("https://cdn.reicon.dev/logos/instagram/original.svg");
+  background-image: url("../assets/icons/instagram.svg");
 }
 
 @media (max-width: 767px) {

@@ -4,13 +4,13 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
 (function(){
   'use strict';
   const REICON={
-    instagram:'https://cdn.reicon.dev/logos/instagram/original.svg',
-    facebook:'https://cdn.reicon.dev/logos/facebook/original.svg',
-    linkedin:'https://cdn.reicon.dev/logos/linkedin/original.svg',
-    whatsapp:'https://cdn.reicon.dev/logos/whatsapp/original.svg',
-    gmail:'https://cdn.reicon.dev/logos/gmail/original.svg',
-    drive:'https://cdn.reicon.dev/logos/google-drive-2026/original.svg',
-    lightbulb:'https://cdn.reicon.dev/lightbulb.svg',
+    instagram:'assets/icons/instagram.svg',
+    facebook:'assets/icons/facebook.svg',
+    linkedin:'assets/icons/linkedin.svg',
+    whatsapp:'assets/icons/whatsapp.svg',
+    gmail:'assets/icons/gmail.svg',
+    drive:'assets/icons/drive.svg',
+    lightbulb:'assets/icons/lightbulb.svg',
     dock:'https://cdn.reicon.dev/dock.svg',
     cookbook:'https://cdn.reicon.dev/cookbook.svg',
     toolbox:'https://cdn.reicon.dev/toolbox.svg',
@@ -24,11 +24,10 @@ window.VOM_AI_CONFIG={MODEL:"openrouter/free",SITE_URL:window.location.origin,SI
   function theme(){
     const dark=document.documentElement.classList.contains('dark');
     document.querySelectorAll('#themeToggleBtn,#themeToggleBtnMobile').forEach(btn=>{
-      btn.querySelectorAll('[data-vom-theme-logo],.fa-moon,.fa-sun').forEach(x=>x.remove());
-      const icon=document.createElement('i');
-      icon.className=dark?'fa-solid fa-sun':'fa-solid fa-moon';
-      icon.setAttribute('aria-hidden','true');
-      btn.append(icon);
+      const icon=img(dark?'assets/icons/sun.svg':'assets/icons/moon.svg',dark?'Switch to light mode':'Switch to dark mode',24);
+      icon.dataset.vomThemeLogo='1';
+      icon.className='local-control-icon';
+      btn.replaceChildren(icon);
       btn.title=dark?'Switch to light mode':'Switch to dark mode';
       btn.setAttribute('aria-label',btn.title);
     });
