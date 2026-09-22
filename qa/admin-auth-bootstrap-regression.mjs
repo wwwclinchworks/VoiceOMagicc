@@ -19,8 +19,8 @@ expect(!adminHtml.includes('setInterval'), 'Admin bootstrap must not poll for th
 expect(adminJs.includes("'Page Copy':'settings'"), 'Admin client must map Page Copy.');
 expect(adminJs.includes("'Featured Video':'featuredVideo'"), 'Admin client must map Featured Video.');
 expect(adminJs.includes("'Speaker Toolkit':'toolkit'"), 'Admin client must map Speaker Toolkit.');
-expect(adminJs.includes("'Resources':'resources'"), 'Admin client must map Resources.');
-expect(adminJs.includes("'Books':'books'"), 'Admin client must map Books.');
+expect(adminJs.includes("Resources:'resources'") || adminJs.includes("'Resources':'resources'"), 'Admin client must map Resources.');
+expect(adminJs.includes("Books:'books'") || adminJs.includes("'Books':'books'"), 'Admin client must map Books.');
 expect(adminJs.includes("new CustomEvent('vom-admin-rendered')"), 'Admin must announce dashboard rerenders.');
 
 expect(weekly.includes("window.addEventListener('vom-admin-rendered'"), 'Weekly Highlights must survive Admin dashboard rerenders.');
