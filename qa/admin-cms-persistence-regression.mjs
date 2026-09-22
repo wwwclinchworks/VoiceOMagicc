@@ -10,10 +10,10 @@ const books = fs.readFileSync('books.html', 'utf8');
 const failures = [];
 const expect = (condition, message) => { if (!condition) failures.push(message); };
 
-expect(resources.includes('cms.weeklyHighlights?.items'), 'Resources page must consume Weekly Highlights from live CMS.');
-expect(resources.includes('slice(0,2)'), 'Resources page must show at most two Weekly Highlights.');
-expect(resources.includes('Weekly Highlights'), 'Resources page must render the Weekly Highlights section.');
-expect(resources.includes("fetch('/api/chat?mode=public-cms'"), 'Resources page must read live public CMS data.');
+expect(!resources.includes('cms.weeklyHighlights?.items'), 'Resources page must not render Weekly Highlights.');
+expect(!resources.includes('Recent moments, photographs, and updates from Voice-O-Magic.'), 'Resources page must not contain Weekly Highlights copy.');
+expect(!resources.includes('>Weekly Highlights</h1>'), 'Resources page must not contain a Weekly Highlights heading.');
+expect(resources.includes("fetch('/api/chat?mode=public-cms'"), 'Resources page must continue reading live public CMS data.');
 
 expect(books.includes('<script src="js/main.js"></script>'), 'Books page must use the shared CMS renderer.');
 expect(weekly.includes("fetch('/api/chat?mode=public-cms'"), 'Weekly page must read live public CMS data.');
