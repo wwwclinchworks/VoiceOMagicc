@@ -84,8 +84,15 @@
       const video=cms.featuredVideo||{};
       const resources=Array.isArray(cms.resources)?cms.resources.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
       const toolkit=Array.isArray(cms.toolkit)?cms.toolkit.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
+      const weekly=Array.isArray(cms.weeklyHighlights?.items)
+        ? cms.weeklyHighlights.items
+            .filter(x=>x&&x.published&&safeHttp(x.imageUrl||''))
+            .sort((a,b)=>(a.order||0)-(b.order||0))
+            .slice(0,2)
+        : [];
       root.innerHTML='';
-      root.insertAdjacentHTML('beforeend',`<section class="text-center max-w-3xl mx-auto"><span class="text-sm font-bold text-gold tracking-widest uppercase">${esc(s.resourcesLabel||'Free Resources')}</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">${esc(s.resourcesHeading||'Resources')}</h1><p class="text-sec text-base mt-5 leading-relaxed">${esc(s.resourcesParagraph||'')}</p>${s.resourcesExtraParagraph?`<p class="text-sec text-base mt-3 leading-relaxed">${esc(s.resourcesExtraParagraph)}</p>`:''}</section>`);
+      root.insertAdjacentHTML('beforeend',`<section class="max-w-6xl mx-auto"><div class="flex items-end justify-between gap-4"><div><span class="text-sm font-bold text-gold tracking-widest uppercase">Weekly Highlights</span><div class="gold-divider mt-3 mb-5"></div><h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">Weekly Highlights</h1><p class="text-sec text-base mt-4 leading-relaxed">Recent moments, photographs, and updates from Voice-O-Magic.</p></div><a href="/weekly.html" class="btn-secondary text-sm hidden sm:inline-flex">View all ↗</a></div>${weekly.length?`<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">${weekly.map((x,i)=>`<article class="material-card overflow-hidden"><div class="aspect-[4/3] bg-surface-warm overflow-hidden"><img src="${safeHttp(x.imageUrl)||''}" alt="${esc(x.title||`Weekly Highlight ${i+1}`)}" class="w-full h-full object-cover" loading="${i===0?'eager':'lazy'}" decoding="async"></div>${(x.title||x.description)?`<div class="p-5">${x.title?`<h2 class="font-bold text-heading text-lg">${esc(x.title)}</h2>`:''}${x.description?`<p class="text-sm text-sec mt-2 leading-relaxed">${esc(x.description)}</p>`:''}</div>`:''}</article>`).join('')}</div>`: `<div class="material-card p-8 text-center text-muted mt-8">Weekly highlights will appear here soon.</div>`}</section>`);
+      root.insertAdjacentHTML('beforeend',`<section class="text-center max-w-3xl mx-auto mt-16"><span class="text-sm font-bold text-gold tracking-widest uppercase">${esc(s.resourcesLabel||'Free Resources')}</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h2 class="font-display text-4xl sm:text-5xl font-bold text-heading">${esc(s.resourcesHeading||'Resources')}</h2><p class="text-sec text-base mt-5 leading-relaxed">${esc(s.resourcesParagraph||'')}</p>${s.resourcesExtraParagraph?`<p class="text-sec text-base mt-3 leading-relaxed">${esc(s.resourcesExtraParagraph)}</p>`:''}</section>`);
 
       if(video.published){
         const videoUrl=safeHttp(video.url||'');
