@@ -287,16 +287,38 @@
     const main = document.querySelector('main');
     if (!main || !state.cms) return;
     main.replaceChildren();
-    const settings = state.cms.settings || {};
-    const intro = create('section', 'py-20 sm:py-28');
-    intro.append(create('span', 'text-sm font-bold text-gold tracking-widest uppercase', settings.resourcesLabel || 'Free Resources'));
-    intro.append(create('h1', 'font-display text-4xl sm:text-5xl font-bold text-heading mt-3', settings.resourcesHeading || 'Resources'));
-    intro.append(create('p', 'text-sec text-base mt-5 leading-relaxed', settings.resourcesParagraph || ''));
-    if (settings.resourcesExtraParagraph) intro.append(create('p', 'text-sec text-base mt-3 leading-relaxed', settings.resourcesExtraParagraph));
-    main.append(intro);
+
+    const highlights = Array.isArray(state.cms.weeklyHighlights?.items)
+      ? state.cms.weeklyHighlights.items
+          .filter((item) => item && item.published && safeUrl(item.imageUrl || ''))
+          .sort((a, b) => a.order - b.order)
+          .slice(0, 2)
+      : [];
+
+    const highlightsSection = create('section', 'pt-6 sm:pt-8');
+    highlightsSection.append(create('h1', 'font-display text-3xl sm:text-4xl font-bold text-heading', 'Weekly Highlights'));
+    const highlightsGrid = create('div', 'grid grid-cols-1 md:grid-cols-2 gap-6 mt-6');
+
+    highlights.forEach((item, index) => {
+      const card = create('article', 'material-card overflow-hidden');
+      const frame = create('div', 'aspect-[4/3] bg-surface-warm overflow-hidden');
+      const image = document.createElement('img');
+      image.src = safeUrl(item.imageUrl || '') || '';
+      image.alt = item.title || `Weekly Highlight ${index + 1}`;
+      image.loading = index === 0 ? 'eager' : 'lazy';
+      image.decoding = 'async';
+      image.className = 'w-full h-full object-cover';
+      frame.append(image);
+      card.append(frame);
+      highlightsGrid.append(card);
+    });
+
+    if (highlights.length) highlightsSection.append(highlightsGrid);
+    else highlightsSection.append(create('p', 'text-sm text-muted mt-4', 'Weekly highlights will appear here soon.'));
+    main.append(highlightsSection);
 
     const video = state.cms.featuredVideo || {};
-    const videoBox = create('section', 'material-card max-w-4xl mx-auto p-4');
+    const videoBox = create('section', 'material-card max-w-4xl mx-auto p-4 mt-12');
     const videoArea = create('div', 'aspect-video bg-black rounded-xl overflow-hidden');
     if (video.published) {
       try {
@@ -313,25 +335,25 @@
         }
       } catch {}
     }
-    videoBox.append(videoArea, create('h3', 'font-bold text-heading text-xl mt-5', video.title || 'Featured Video'), create('p', 'text-sec text-sm mt-2 leading-relaxed', video.description || ''));
+    videoBox.append(
+      videoArea,
+      create('h3', 'font-bold text-heading text-xl mt-5', video.title || 'Featured Video'),
+      create('p', 'text-sec text-sm mt-2 leading-relaxed', video.description || '')
+    );
     main.append(videoBox);
 
     const resources = Array.isArray(state.cms.resources) ? state.cms.resources : [];
-    const grid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-12');
-    resources.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => grid.append(resourceCard(x)));
-    main.append(grid);
-
-    const toolkit = create('section', 'mt-16');
-    toolkit.append(create('h2', 'font-display text-3xl font-bold text-heading', settings.toolkitHeading || 'Speaker Toolkit'));
-    toolkit.append(create('p', 'text-sec text-base mt-3', settings.toolkitDescription || ''));
-    const toolkitGrid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-7');
-    const toolkitItems = Array.isArray(state.cms.toolkit) ? state.cms.toolkit : [];
-    toolkitItems.filter((x) => x && x.published).sort((a,b) => a.order - b.order).forEach((x) => toolkitGrid.append(resourceCard(x)));
-    toolkit.append(toolkitGrid);
-    main.append(toolkit);
+    const resourcesSection = create('section', 'mt-12 pb-20');
+    resourcesSection.append(create('h2', 'font-display text-3xl font-bold text-heading', 'Resources'));
+    const grid = create('div', 'grid grid-cols-1 md:grid-cols-3 gap-6 mt-7');
+    resources
+      .filter((item) => item && item.published)
+      .sort((a, b) => a.order - b.order)
+      .forEach((item) => grid.append(resourceCard(item)));
+    resourcesSection.append(grid);
+    main.append(resourcesSection);
     showMaintenance();
   }
-
   function bookCard(item) {
     const card = create('article', 'material-card p-8 flex flex-col gap-4');
     const imageUrl = safeUrl(item.coverImageUrl || '');
@@ -380,15 +402,32 @@
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), CMS_TIMEOUT_MS);
     try {
-      const response = await fetch(`/data/knowledge.json?cms=${Date.now()}`, { cache: 'no-store', signal: controller.signal });
-      if (!response.ok) return;
-      const data = await response.json();
+      const live = await fetch('/api/chat?mode=public-cms', {
+        cache: 'no-store',
+        signal: controller.signal,
+        credentials: 'same-origin'
+      });
+      if (live.ok) {
+        const payload = await live.json();
+        if (payload && typeof payload.cms === 'object' && payload.cms) {
+          state.cms = payload.cms;
+          if (location.pathname.endsWith('/resources.html')) renderResources();
+          else if (location.pathname.endsWith('/books.html')) renderBooks();
+          return;
+        }
+      }
+      const fallback = await fetch(`/data/knowledge.json?cms=${Date.now()}`, {
+        cache: 'no-store',
+        signal: controller.signal
+      });
+      if (!fallback.ok) return;
+      const data = await fallback.json();
       if (!data || typeof data.cms !== 'object' || !data.cms) return;
       state.cms = data.cms;
       if (location.pathname.endsWith('/resources.html')) renderResources();
       else if (location.pathname.endsWith('/books.html')) renderBooks();
     } catch {
-      // Static page content remains available if the CMS source is unavailable.
+      // Static page content remains available if the live CMS source is unavailable.
     } finally {
       window.clearTimeout(timeout);
     }
