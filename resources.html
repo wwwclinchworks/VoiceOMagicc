@@ -125,7 +125,7 @@
     fetch('/api/chat?mode=public-cms',{cache:'no-store',signal:controller.signal})
       .then(r=>r.ok?r.json():Promise.reject(new Error('CMS unavailable')))
       .then(data=>render(data.cms||{}))
-      .catch(()=>{root.innerHTML='<div class="material-card p-8 text-center"><h1 class="font-display text-3xl font-bold text-heading">Resources</h1><p class="text-sec mt-3">Resources are temporarily unavailable. Please try again shortly.</p></div>'})
+      .catch(()=>{root.innerHTML='<div class="material-card p-8 text-center"><h2 class="font-display text-3xl font-bold text-heading">Resources</h2><p class="text-sec mt-3">Resources are temporarily unavailable. Please try again shortly.</p></div>'})
       .finally(()=>clearTimeout(timeout));
   })();
   </script>
