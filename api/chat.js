@@ -104,7 +104,7 @@ async function publicCms(res) {
   res.setHeader('Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
-  res.setHeader('X-Robots-Tag', 'index, follow');
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
   return json(res, 200, { cms });
 }
 
