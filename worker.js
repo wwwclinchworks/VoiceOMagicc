@@ -66,7 +66,10 @@ function security(response, api = false, admin = false) {
     "connect-src 'self' https://api.github.com https://openrouter.ai; " +
     "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com"
   );
-  if (api) headers.set('Cache-Control', 'no-store, max-age=0');
+  if (api) {
+    headers.set('Cache-Control', 'no-store, max-age=0');
+    headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  }
   if (admin) headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }

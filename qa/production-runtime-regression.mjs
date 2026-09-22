@@ -17,8 +17,11 @@ const checks = [
   [worker.includes("mode === 'admin-login'"), 'Worker must support admin login.'],
   [worker.includes("mode === 'admin-data'"), 'Worker must support admin data.'],
   [worker.includes("mode === 'admin-save'"), 'Worker must support admin save.'],
-  [entry.includes("url.pathname === '/resources'"), 'Canonical Resources redirect must exist.'],
-  [entry.includes("new URL('/resources.html', url.origin)"), 'Resources redirect must target resources.html.'],
+  [entry.includes("'/resources': '/resources.html'"), 'Canonical Resources redirect must exist.'],
+  [entry.includes("'/about': '/about.html'")], 'About pretty-route redirect must exist.',
+  [entry.includes("'/weekly': '/weekly.html'")], 'Weekly pretty-route redirect must exist.',
+  [entry.includes("'/admin': '/adminadmin.html'")], 'Admin pretty-route redirect must exist.',
+  [entry.includes("new URL(prettyRoutes[url.pathname], url.origin)"), 'Pretty-route redirects must target canonical .html pages.'],
   [wrangler.includes('"main": "./worker-entry.js"'), 'Wrangler must use worker-entry.js.'],
   [ignore.includes('api/'), 'Legacy Vercel API must be excluded from Cloudflare assets.']
 ];
