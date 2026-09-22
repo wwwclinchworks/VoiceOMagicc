@@ -98,7 +98,15 @@ async function readFile(ref = BRANCH) { const d = await github('GET', `/repos/${
 async function writeFile(data, sha, message) { const content = Buffer.from(JSON.stringify(data, null, 2) + '\n').toString('base64'); return github('PUT', `/repos/${REPO}/contents/${PATH}`, { message, content, sha, branch: BRANCH }); }
 async function listVersions() { const commits = await github('GET', `/repos/${REPO}/commits?path=${encodeURIComponent(PATH)}&sha=${encodeURIComponent(BRANCH)}&per_page=30`); if (!Array.isArray(commits)) return []; return commits.map((commit) => ({ id: commit.sha, at: commit.commit?.author?.date || commit.commit?.committer?.date || null, message: clean(commit.commit?.message || 'CMS update', 160) })); }
 function requireSession(req, res) { if (!validCookie(req)) { json(res, 401, { error: 'Unauthorized' }); return false; } return true; }
-async function publicCms(res) { const file = await readFile(); const cms = publicSnapshot(file.data.cms); res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300'); res.setHeader('X-Robots-Tag', 'index, follow'); return json(res, 200, { cms }); }
+async function publicCms(res) {
+  const file = await readFile();
+  const cms = publicSnapshot(file.data.cms);
+  res.setHeader('Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('X-Robots-Tag', 'index, follow');
+  return json(res, 200, { cms });
+}
 
 export default async function handler(req, res) {
   const mode = req.query?.mode || '';
