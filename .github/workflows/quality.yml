@@ -23,5 +23,9 @@ jobs:
         run: node scripts/qa-check.mjs
       - name: Run Admin authentication/bootstrap regression checks
         run: node qa/admin-auth-bootstrap-regression.mjs
+      - name: Run production runtime regression checks
+        run: node qa/production-runtime-regression.mjs
+      - name: Validate Cloudflare Worker syntax
+        run: node --check worker.js && node --check worker-entry.js
       - name: Run security smoke checks
         run: node scripts/security-smoke.mjs
