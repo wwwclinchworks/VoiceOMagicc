@@ -11,8 +11,20 @@ function withNoStore(response) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    if (url.pathname === '/resources' || url.pathname === '/resources/') {
-      const destination = new URL('/resources.html', url.origin);
+    const prettyRoutes = {
+      '/about': '/about.html',
+      '/keynotes': '/keynotes.html',
+      '/academy': '/academy.html',
+      '/corporate': '/corporate.html',
+      '/books': '/books.html',
+      '/resources': '/resources.html',
+      '/contact': '/contact.html',
+      '/testimonials': '/testimonials.html',
+      '/weekly': '/weekly.html',
+      '/admin': '/adminadmin.html'
+    };
+    if (prettyRoutes[url.pathname]) {
+      const destination = new URL(prettyRoutes[url.pathname], url.origin);
       destination.search = url.search;
       return new Response(null, {
         status: 301,
