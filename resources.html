@@ -105,7 +105,7 @@
       const resources=Array.isArray(cms.resources)?cms.resources.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
       const toolkit=Array.isArray(cms.toolkit)?cms.toolkit.filter(x=>x&&x.published).sort((a,b)=>(a.order||0)-(b.order||0)):[];
       root.innerHTML='';
-      root.insertAdjacentHTML('beforeend',`<section class="text-center max-w-3xl mx-auto mt-16"><span class="text-sm font-bold text-gold tracking-widest uppercase">${esc(s.resourcesLabel||'Free Resources')}</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h1 class="font-display text-4xl sm:text-5xl font-bold text-heading">${esc(s.resourcesHeading||'Resources')}</h2><p class="text-sec text-base mt-5 leading-relaxed">${esc(s.resourcesParagraph||'')}</p>${s.resourcesExtraParagraph?`<p class="text-sec text-base mt-3 leading-relaxed">${esc(s.resourcesExtraParagraph)}</p>`:''}</section>`);
+      root.insertAdjacentHTML('beforeend',`<section class="text-center max-w-3xl mx-auto mt-16"><span class="text-sm font-bold text-gold tracking-widest uppercase">${esc(s.resourcesLabel||'Free Resources')}</span><div class="gold-divider mx-auto mt-3 mb-5"></div><h2 class="font-display text-4xl sm:text-5xl font-bold text-heading">${esc(s.resourcesHeading||'Resources')}</h2><p class="text-sec text-base mt-5 leading-relaxed">${esc(s.resourcesParagraph||'')}</p>${s.resourcesExtraParagraph?`<p class="text-sec text-base mt-3 leading-relaxed">${esc(s.resourcesExtraParagraph)}</p>`:''}</section>`);
 
       if(video.published){
         const videoUrl=safeHttp(video.url||'');
