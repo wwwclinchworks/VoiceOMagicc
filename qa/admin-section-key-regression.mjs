@@ -1,7 +1,18 @@
 import fs from 'node:fs';
 
-const html=fs.readFileSync('adminadmin.html','utf8');
-if(!html.includes("'Speaker_Toolkit':'toolkit'")) throw new Error('Expected legacy mapping marker is not present in source loader fixture.');
-if(!html.includes("'Speaker Toolkit':'toolkit'")) throw new Error('Correct Speaker Toolkit mapping is missing.');
-if(!html.includes("source=source.replace(")) throw new Error('Admin source correction bootstrap is missing.');
+const source=fs.readFileSync('js/admin.js','utf8');
+const expected={
+  'Page Copy':'settings',
+  'Featured Video':'featuredVideo',
+  'Resources':'resources',
+  'Speaker Toolkit':'toolkit',
+  'Books':'books'
+};
+
+for(const [label,key] of Object.entries(expected)){
+  if(!source.includes(`'${label}':'${key}'`) && !source.includes(`${label}:'${key}'`)){
+    throw new Error(`Missing CMS section mapping for ${label}`);
+  }
+}
+if(source.includes('source=source.replace(')) throw new Error('Runtime admin source rewriting must remain removed.');
 console.log('Admin section-key regression check passed.');
