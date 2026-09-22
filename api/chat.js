@@ -41,7 +41,7 @@ const DEFAULT_CMS = {
 
 function json(res, status, body) { res.status(status).json(body); }
 function clean(v, max = 5000) { return String(v ?? '').replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, max); }
-function securityHeaders(res) { res.setHeader('Cache-Control', 'no-store, max-age=0'); res.setHeader('X-Content-Type-Options', 'nosniff'); res.setHeader('X-Frame-Options', 'DENY'); res.setHeader('Referrer-Policy', 'no-referrer'); res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()'); res.setHeader('X-Robots-Tag', 'noindex, nofollow'); }
+function securityHeaders(res) { res.setHeader('Cache-Control', 'no-store, max-age=0'); res.setHeader('X-Content-Type-Options', 'nosniff'); res.setHeader('X-Frame-Options', 'DENY'); res.setHeader('Referrer-Policy', 'no-referrer'); res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()'); res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive'); }
 function originOk(req) { const origin = req.headers.origin; if (!origin) return false; const proto = String(req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim(); return origin === `${proto}://${req.headers.host}`; }
 function clientIp(req) { return String(req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim().slice(0, 128); }
 function bodyTooLarge(req) { const length = Number.parseInt(String(req.headers['content-length'] || ''), 10); return Number.isFinite(length) && length > MAX_BODY_BYTES; }
