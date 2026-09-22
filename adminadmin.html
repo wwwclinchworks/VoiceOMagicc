@@ -16,65 +16,184 @@
 </head>
 <body class="bg-theme text-main font-sans antialiased min-h-screen">
   <script>
-  (async function(){
-    try{
-      const response=await fetch('/js/admin.js',{cache:'no-store'});
-      if(!response.ok)throw new Error('Unable to load admin client.');
-      let source=await response.text();
-      source=source.replace(
-        "const sectionKeys={Page_Copy:'settings',Featured_Video:'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit',Books:'books'};",
-        "const sectionKeys={Page_Copy:'settings','Page Copy':'settings',Featured_Video:'featuredVideo','Featured Video':'featuredVideo',Resources:'resources','Speaker_Toolkit':'toolkit','Speaker Toolkit':'toolkit',Books:'books'};"
-      );
+  (function(){
+    'use strict';
+
+    function applyTheme(dark){
+      document.documentElement.classList.toggle('dark', Boolean(dark));
+      try { localStorage.setItem('vom-theme', dark ? 'dark' : 'light'); } catch {}
+    }
+
+    function initialTheme(){
+      try {
+        const stored=localStorage.getItem('vom-theme');
+        if(stored) return stored==='dark';
+      } catch {}
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    applyTheme(initialTheme());
+    window.addEventListener('vom-admin-theme-toggle', event => applyTheme(Boolean(event.detail)));
+
+    const rootClass='min-h-screen flex items-center justify-center p-6 text-center';
+    const panelClass='material-card max-w-xl w-full p-8 text-left';
+    const api=async(mode,options={})=>{
+      const response=await fetch('/api/chat?mode='+encodeURIComponent(mode),{
+        cache:'no-store',
+        credentials:'same-origin',
+        ...options
+      });
+      const body=await response.json().catch(()=>({}));
+      return {response,body};
+    };
+
+    function showShell(){
+      document.body.replaceChildren();
+      const main=document.createElement('main');
+      main.className=rootClass;
+      const panel=document.createElement('section');
+      panel.className=panelClass;
+      main.append(panel);
+      document.body.append(main);
+      return panel;
+    }
+
+    function showLogin(message=''){
+      const panel=showShell();
+      panel.innerHTML='';
+      const eyebrow=document.createElement('div');
+      eyebrow.className='text-sm font-bold uppercase tracking-wider text-gold';
+      eyebrow.textContent='Voice-O-Magic Admin';
+      const title=document.createElement('h1');
+      title.className='text-2xl font-bold text-heading mt-2';
+      title.textContent='Private Control Center';
+      const copy=document.createElement('p');
+      copy.className='text-sm text-sec leading-relaxed mt-3';
+      copy.textContent='Authorized administrator access only.';
+      const form=document.createElement('form');
+      form.className='mt-6 space-y-4';
+      const label=document.createElement('label');
+      label.className='block';
+      const caption=document.createElement('span');
+      caption.className='block text-sm font-semibold text-sec mb-1.5';
+      caption.textContent='Administrator password';
+      const input=document.createElement('input');
+      input.className='md-input';
+      input.type='password';
+      input.autocomplete='current-password';
+      input.required=true;
+      const error=document.createElement('p');
+      error.className='text-sm text-red';
+      error.hidden=!message;
+      error.textContent=message;
+      const button=document.createElement('button');
+      button.className='btn-primary w-full';
+      button.type='submit';
+      button.textContent='Sign in';
+      label.append(caption,input);
+      form.append(label,error,button);
+      panel.append(eyebrow,title,copy,form);
+      form.addEventListener('submit',async event=>{
+        event.preventDefault();
+        error.hidden=true;
+        button.disabled=true;
+        button.textContent='Signing in…';
+        try{
+          const {response,body}=await api('admin-login',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({password:input.value})
+          });
+          if(response.status===401) throw new Error(body.error||'Invalid password.');
+          if(!response.ok) throw new Error(body.error||'Admin authentication is temporarily unavailable.');
+          await bootAdmin();
+        }catch(err){
+          error.textContent=err.message||'Login failed.';
+          error.hidden=false;
+        }finally{
+          button.disabled=false;
+          button.textContent='Sign in';
+        }
+      });
+      input.focus();
+    }
+
+    function showFatal(message){
+      const panel=showShell();
+      panel.className=panelClass+' text-center';
+      panel.innerHTML='';
+      const eyebrow=document.createElement('div');
+      eyebrow.className='text-sm font-bold uppercase tracking-wider text-gold';
+      eyebrow.textContent='Voice-O-Magic Admin';
+      const title=document.createElement('h1');
+      title.className='text-2xl font-bold text-heading mt-2';
+      title.textContent='Unable to load the admin console';
+      const copy=document.createElement('p');
+      copy.className='text-sm text-sec leading-relaxed mt-4';
+      copy.textContent=message;
+      const hint=document.createElement('p');
+      hint.className='text-xs text-muted mt-3';
+      hint.textContent='Check the deployment configuration and CMS environment variables, then retry.';
+      const retry=document.createElement('button');
+      retry.className='btn-primary mt-6';
+      retry.type='button';
+      retry.textContent='Retry';
+      retry.onclick=()=>location.reload();
+      panel.append(eyebrow,title,copy,hint,retry);
+    }
+
+    async function loadScriptSource(path){
+      const response=await fetch(path,{cache:'no-store',credentials:'same-origin'});
+      if(!response.ok) throw new Error('Unable to load '+path+'.');
+      const source=await response.text();
       const script=document.createElement('script');
       script.textContent=source;
       document.body.append(script);
+    }
 
-      let attempts=0;
-      const weeklyLoader=setInterval(async()=>{
-        attempts+=1;
-        if(!document.getElementById('saveAll')){
-          if(attempts>=80)clearInterval(weeklyLoader);
+    function waitForAdminDashboard(){
+      return new Promise(resolve=>{
+        if(document.getElementById('saveAll')) return resolve();
+        const observer=new MutationObserver(()=>{
+          if(document.getElementById('saveAll')){
+            observer.disconnect();
+            resolve();
+          }
+        });
+        observer.observe(document.body,{childList:true,subtree:true});
+      });
+    }
+
+    async function bootAdmin(){
+      const panel=document.createElement('main');
+      panel.className=rootClass;
+      const loader=document.createElement('section');
+      loader.className=panelClass+' text-center';
+      loader.textContent='Loading admin console…';
+      panel.append(loader);
+      document.body.replaceChildren(panel);
+      await loadScriptSource('/js/admin.js');
+      await waitForAdminDashboard();
+      await loadScriptSource('/js/admin-weekly-cms.js');
+      if(window.VOMWeeklyAdmin?.load) await window.VOMWeeklyAdmin.load();
+    }
+
+    (async function(){
+      try{
+        const {response,body}=await api('admin-data');
+        if(response.ok){
+          await bootAdmin();
           return;
         }
-        clearInterval(weeklyLoader);
-        try{
-          const weeklyResponse=await fetch('/js/admin-weekly-cms.js',{cache:'no-store'});
-          if(!weeklyResponse.ok)throw new Error('Unable to load Weekly Highlights editor.');
-          const weeklySource=await weeklyResponse.text();
-          const weeklyScript=document.createElement('script');
-          weeklyScript.textContent=weeklySource;
-          document.body.append(weeklyScript);
-          if(window.VOMWeeklyAdmin?.load) await window.VOMWeeklyAdmin.load();
-        }catch(error){
-          const node=document.createElement('div');
-          node.className='fixed right-5 bottom-5 z-[200] rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-xl';
-          node.style.background='#b42318';
-          node.textContent='Weekly Highlights unavailable: '+(error.message||'Failed to load.');
-          document.body.append(node);
-          setTimeout(()=>node.remove(),5000);
+        if(response.status===401){
+          showLogin();
+          return;
         }
-      },100);
-    }catch(error){
-      document.body.replaceChildren();
-      const box=document.createElement('main');
-      box.className='min-h-screen flex items-center justify-center p-6 text-center';
-      const message=document.createElement('p');
-      message.className='text-red font-semibold';
-      message.textContent=error.message||'Unable to load the admin console.';
-      box.append(message);
-      document.body.append(box);
-    }
-  })();
-  </script>
-  <script>
-  (function(){
-    function apply(dark){
-      document.documentElement.classList.toggle('dark',dark);
-      try{localStorage.setItem('vom-theme',dark?'dark':'light')}catch{}
-    }
-    function initial(){try{const s=localStorage.getItem('vom-theme');if(s)return s==='dark'}catch{}return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
-    apply(initial());
-    window.addEventListener('vom-admin-theme-toggle',function(event){apply(Boolean(event.detail));});
+        showFatal(body.error||'Admin authentication is temporarily unavailable.');
+      }catch(error){
+        showFatal(error.message||'Unable to contact the Admin service.');
+      }
+    })();
   })();
   </script>
   <script src="/js/reicon-image-loading.js"></script>
