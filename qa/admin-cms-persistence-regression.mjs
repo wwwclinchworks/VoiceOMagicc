@@ -4,6 +4,7 @@ const resources = fs.readFileSync('resources.html', 'utf8');
 const admin = fs.readFileSync('js/admin.js', 'utf8');
 const api = fs.readFileSync('api/chat.js', 'utf8');
 const weekly = fs.readFileSync('weekly.html', 'utf8');
+const adminWeekly = fs.readFileSync('js/admin-weekly-cms.js', 'utf8');
 const books = fs.readFileSync('books.html', 'utf8');
 
 const failures = [];
@@ -26,7 +27,7 @@ expect(api.includes("res.setHeader('Cache-Control', 'no-store, no-cache, max-age
 expect(api.includes("res.setHeader('Pragma', 'no-cache')"), 'Public CMS must emit a no-cache pragma.');
 expect(admin.includes("toast(result.commitSha?('All CMS changes saved to GitHub • '+result.commitSha.slice(0,7))"), 'Save All must surface the persisted GitHub commit.');
 expect(admin.includes("const refreshed=await api('admin-data')"), 'Save All must refresh version history without turning a successful save into a failure.');
-expect(weekly.includes('result.commitSha?'), 'Weekly Highlights save must surface the persisted GitHub commit.');
+expect(adminWeekly.includes('result.commitSha?'), 'Weekly Highlights save must surface the persisted GitHub commit.');
 
 if (failures.length) {
   for (const failure of failures) console.error('FAIL:', failure);
