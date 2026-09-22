@@ -29,5 +29,7 @@ jobs:
         run: node qa/admin-cms-persistence-regression.mjs
       - name: Validate Cloudflare Worker syntax
         run: node --check worker.js && node --check worker-entry.js
+      - name: Run SEO crawl/indexing regression checks
+        run: node qa/seo-crawl-regression.mjs
       - name: Run security smoke checks
         run: node scripts/security-smoke.mjs
